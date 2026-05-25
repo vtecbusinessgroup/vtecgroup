@@ -3598,7 +3598,7 @@
     });
     window.addEventListener('hashchange', syncFromHash);
     var frame = document.getElementById('team-frame');
-    frame.addEventListener('load', function(){
+    if (frame) frame.addEventListener('load', function(){
       try {
         var doc = frame.contentDocument; if (!doc) return;
         doc.querySelectorAll('a').forEach(function(a){
