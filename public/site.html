@@ -4108,7 +4108,7 @@
   <span style="font-size:22px;">🧠</span>
   <div style="flex:1; font-size:14px; line-height:1.4;">
     <strong>Free Tool:</strong> Get your AI Business Diagnosis
-    <div><a href="/business-diagnostic" target="_parent">Start now →</a></div>
+    <div><a href="/business-diagnostic" target="_parent" data-diagnostic-link>Start now →</a></div>
   </div>
   <button id="vtecDiagClose" aria-label="Dismiss">×</button>
 </div>
@@ -4122,6 +4122,19 @@
       if (!b) return;
       b.classList.add('show');
     }, 8000);
+    document.querySelectorAll('[data-diagnostic-link]').forEach(function(link){
+      link.addEventListener('click', function(e){
+        e.preventDefault();
+        var path = '/business-diagnostic';
+        try {
+          if (window.parent && window.parent !== window) {
+            window.parent.location.href = path;
+            return;
+          }
+        } catch(err) {}
+        window.location.href = path;
+      });
+    });
     var close = document.getElementById('vtecDiagClose');
     if (close) close.addEventListener('click', function(){
       var b = document.getElementById('vtecDiagBanner');
