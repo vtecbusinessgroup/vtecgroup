@@ -3583,8 +3583,8 @@
 <script>
   (function(){
     var overlay = document.getElementById('team-overlay');
-    function openTeam(){ overlay.classList.add('open'); document.body.classList.add('team-open'); window.scrollTo(0,0); }
-    function closeTeam(){ overlay.classList.remove('open'); document.body.classList.remove('team-open'); }
+    function openTeam(){ if (!overlay) return; overlay.classList.add('open'); document.body.classList.add('team-open'); window.scrollTo(0,0); }
+    function closeTeam(){ if (!overlay) return; overlay.classList.remove('open'); document.body.classList.remove('team-open'); }
     function syncFromHash(){ if (location.hash === '#/team') openTeam(); else if (location.hash !== '#/our-story') closeTeam(); }
     document.addEventListener('click', function(e){
       var a = e.target.closest && e.target.closest('a');
