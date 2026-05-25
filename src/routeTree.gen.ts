@@ -9,38 +9,65 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as BusinessDiagnosticRouteImport } from './routes/business-diagnostic'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiDiagnosticRouteImport } from './routes/api/diagnostic'
 
+const BusinessDiagnosticRoute = BusinessDiagnosticRouteImport.update({
+  id: '/business-diagnostic',
+  path: '/business-diagnostic',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiDiagnosticRoute = ApiDiagnosticRouteImport.update({
+  id: '/api/diagnostic',
+  path: '/api/diagnostic',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/business-diagnostic': typeof BusinessDiagnosticRoute
+  '/api/diagnostic': typeof ApiDiagnosticRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/business-diagnostic': typeof BusinessDiagnosticRoute
+  '/api/diagnostic': typeof ApiDiagnosticRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/business-diagnostic': typeof BusinessDiagnosticRoute
+  '/api/diagnostic': typeof ApiDiagnosticRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/business-diagnostic' | '/api/diagnostic'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/business-diagnostic' | '/api/diagnostic'
+  id: '__root__' | '/' | '/business-diagnostic' | '/api/diagnostic'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BusinessDiagnosticRoute: typeof BusinessDiagnosticRoute
+  ApiDiagnosticRoute: typeof ApiDiagnosticRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/business-diagnostic': {
+      id: '/business-diagnostic'
+      path: '/business-diagnostic'
+      fullPath: '/business-diagnostic'
+      preLoaderRoute: typeof BusinessDiagnosticRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +75,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/diagnostic': {
+      id: '/api/diagnostic'
+      path: '/api/diagnostic'
+      fullPath: '/api/diagnostic'
+      preLoaderRoute: typeof ApiDiagnosticRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BusinessDiagnosticRoute: BusinessDiagnosticRoute,
+  ApiDiagnosticRoute: ApiDiagnosticRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
