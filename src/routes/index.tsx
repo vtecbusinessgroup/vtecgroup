@@ -1,26 +1,34 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "VTEC Business Group | Visionary Trade, Empowerment & Consultancy" },
+      {
+        name: "description",
+        content:
+          "Kenya's dynamic holding entity powering financial education, strategic consultancy, and commerce. Empowering Kenya. One Venture at a Time.",
+      },
+      { property: "og:title", content: "VTEC Business Group" },
+      { property: "og:description", content: "Empowering Kenya. One Venture at a Time." },
+      { property: "og:type", content: "website" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. For sites with multiple pages (About, Services, Contact, etc.),
-// create separate route files (about.tsx, services.tsx, contact.tsx) — don't put all pages in this file.
-function PlaceholderIndex() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}
-
 function Index() {
-  return <PlaceholderIndex />;
+  return (
+    <iframe
+      src="/site.html"
+      title="VTEC Business Group"
+      style={{
+        position: "fixed",
+        inset: 0,
+        width: "100%",
+        height: "100%",
+        border: "none",
+      }}
+    />
+  );
 }
