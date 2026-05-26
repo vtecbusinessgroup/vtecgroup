@@ -197,6 +197,8 @@ function BusinessDiagnostic() {
           team: answers.team,
           goal: answers.goal,
           name: answers.name,
+          email: answers.email,
+          whatsapp: answers.whatsapp,
         }),
       });
       const data = (await res.json()) as { report?: Report; error?: string };
