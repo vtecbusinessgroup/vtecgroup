@@ -730,7 +730,7 @@ function Question({
 function RadioCards(props: {
   value: string;
   onChange: (v: string) => void;
-  options: { value: string; label: string; sub?: string; icon?: string }[];
+  options: { value: string; label: string; sub?: string; icon?: LucideIcon }[];
   columns?: 1 | 2;
 }) {
   const { value, onChange, options, columns = 1 } = props;
@@ -744,6 +744,7 @@ function RadioCards(props: {
     >
       {options.map((o) => {
         const selected = value === o.value;
+        const Icon = o.icon;
         return (
           <button
             type="button"
@@ -763,7 +764,22 @@ function RadioCards(props: {
               color: "#0A1628",
             }}
           >
-            {o.icon && <span style={{ fontSize: 24, lineHeight: 1 }}>{o.icon}</span>}
+            {Icon && (
+              <span
+                style={{
+                  display: "grid",
+                  placeItems: "center",
+                  width: 36,
+                  height: 36,
+                  borderRadius: 8,
+                  background: selected ? TEAL : "rgba(0,200,150,0.10)",
+                  color: selected ? "#04221A" : GREEN_BRIGHT,
+                  flexShrink: 0,
+                }}
+              >
+                <Icon size={20} strokeWidth={2} />
+              </span>
+            )}
             <div style={{ flex: 1 }}>
               <div style={{ fontWeight: 600, fontSize: 15 }}>{o.label}</div>
               {o.sub && (
