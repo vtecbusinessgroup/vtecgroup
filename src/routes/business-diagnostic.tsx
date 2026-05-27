@@ -236,7 +236,7 @@ function BusinessDiagnostic() {
     } catch (e) {
       console.error(e);
       setErrMsg(
-        "Something went wrong generating your report. Our team has been notified. Please WhatsApp us at +254 700 000 000 for your free diagnosis.",
+        "Something went wrong generating your report. Our team has been notified. Please WhatsApp us at +254 116 6644 204 for your free diagnosis.",
       );
       setView("error");
     }
