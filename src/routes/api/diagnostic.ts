@@ -7,8 +7,7 @@ export const APIRoute = createAPIFileRoute("/api/diagnostic")({
       const body = await request.json();
       const { stage, industry, challenge, revenue, team, goal, name } = body;
 
-      // Aggressively check for the API key in both environment contexts for Cloudflare Edge
-      const apiKey = process.env.GEMINI_API_KEY || import.meta.env?.GEMINI_API_KEY;
+      const apiKey = process.env.GEMINI_API_KEY;
       
       if (!apiKey) {
         console.error("ERROR: GEMINI_API_KEY is missing from environment variables.");
