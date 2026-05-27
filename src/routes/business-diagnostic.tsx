@@ -1161,7 +1161,7 @@ function ErrorBlock({ message, onRetry }: { message: string; onRetry: () => void
           padding: 32,
         }}
       >
-        <div style={{ fontSize: 38, marginBottom: 12 }}>⚠️</div>
+        <div style={{ display: "grid", placeItems: "center", margin: "0 auto 16px", width: 56, height: 56, borderRadius: 14, background: "rgba(0,200,150,0.12)", color: TEAL }}><AlertTriangle size={28} /></div>
         <p style={{ marginBottom: 22, lineHeight: 1.6 }}>{message}</p>
         <button type="button" onClick={onRetry} style={primaryBtn}>
           Try again
