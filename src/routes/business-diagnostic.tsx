@@ -1096,11 +1096,11 @@ function Results({ report, answers }: { report: Report; answers: Answers }) {
 }
 
 function ResultCard({
-  icon,
+  icon: Icon,
   title,
   children,
 }: {
-  icon: string;
+  icon: LucideIcon;
   title: string;
   children: React.ReactNode;
 }) {
@@ -1126,7 +1126,19 @@ function ResultCard({
           alignItems: "center",
         }}
       >
-        <span style={{ fontSize: 22 }}>{icon}</span>
+        <span
+          style={{
+            display: "grid",
+            placeItems: "center",
+            width: 34,
+            height: 34,
+            borderRadius: 8,
+            background: "rgba(0,200,150,0.15)",
+            color: TEAL,
+          }}
+        >
+          <Icon size={18} strokeWidth={2} />
+        </span>
         {title}
       </h3>
       <div style={{ color: "rgba(255,255,255,0.85)" }}>{children}</div>
