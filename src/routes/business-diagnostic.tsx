@@ -91,30 +91,30 @@ const SERIF_STACK =
 
 /* ---------------- Question data ---------------- */
 
-const STAGE_OPTS = [
-  { v: "Idea Stage", icon: "🌱", label: "Idea Stage", sub: "I have a concept but haven't started" },
-  { v: "Early Stage", icon: "🚀", label: "Early Stage", sub: "Started but under 1 year old" },
-  { v: "Growing", icon: "📈", label: "Growing", sub: "1 to 3 years, gaining traction" },
-  { v: "Established", icon: "🏢", label: "Established", sub: "3+ years, stable operations" },
+const STAGE_OPTS: { v: string; icon: LucideIcon; label: string; sub: string }[] = [
+  { v: "Idea Stage", icon: Sprout, label: "Idea Stage", sub: "I have a concept but haven't started" },
+  { v: "Early Stage", icon: Rocket, label: "Early Stage", sub: "Started but under 1 year old" },
+  { v: "Growing", icon: TrendingUp, label: "Growing", sub: "1 to 3 years, gaining traction" },
+  { v: "Established", icon: Building2, label: "Established", sub: "3+ years, stable operations" },
 ];
 
-const INDUSTRY_OPTS = [
-  { v: "Education / Training", icon: "📚" },
-  { v: "Retail / E commerce", icon: "🛍️" },
-  { v: "Professional Services", icon: "💼" },
-  { v: "Food & Hospitality", icon: "🍽️" },
-  { v: "Tech / Digital", icon: "💻" },
-  { v: "Construction / Real Estate", icon: "🏗️" },
-  { v: "Other", icon: "✨" },
+const INDUSTRY_OPTS: { v: string; icon: LucideIcon }[] = [
+  { v: "Education / Training", icon: GraduationCap },
+  { v: "Retail / E commerce", icon: ShoppingBag },
+  { v: "Professional Services", icon: Briefcase },
+  { v: "Food & Hospitality", icon: Utensils },
+  { v: "Tech / Digital", icon: Laptop },
+  { v: "Construction / Real Estate", icon: HardHat },
+  { v: "Other", icon: Sparkles },
 ];
 
-const CHALLENGE_OPTS = [
-  { v: "Getting more customers / leads", icon: "💰" },
-  { v: "Weak brand presence / marketing", icon: "📣" },
-  { v: "Operations and systems are messy", icon: "⚙️" },
-  { v: "Building the right team", icon: "👥" },
-  { v: "Cash flow and financial management", icon: "💵" },
-  { v: "I don't have a clear strategy", icon: "🤷" },
+const CHALLENGE_OPTS: { v: string; icon: LucideIcon }[] = [
+  { v: "Getting more customers / leads", icon: Wallet },
+  { v: "Weak brand presence / marketing", icon: Megaphone },
+  { v: "Operations and systems are messy", icon: Settings },
+  { v: "Building the right team", icon: Users },
+  { v: "Cash flow and financial management", icon: Banknote },
+  { v: "I don't have a clear strategy", icon: HelpCircle },
 ];
 
 const REVENUE_OPTS = [
