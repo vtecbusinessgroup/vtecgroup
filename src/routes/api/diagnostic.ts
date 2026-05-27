@@ -3,18 +3,18 @@ import { createAPIFileRoute } from "@tanstack/react-start/api";
 
 export const APIRoute = createAPIFileRoute("/api/diagnostic")({
   GET: async () => {
-    return json({ message: "Diagnostic API endpoint is ready" }, { status: 200 });
+    return json({ message: "Diagnostic API is ready" }, { status: 200 });
   },
   POST: async ({ request }) => {
     try {
       const body = await request.json();
       const { stage, industry, challenge, revenue, team, goal, name } = body;
 
-      // Cloudflare edge environment check
-      const apiKey = process.env.GEMINI_API_KEY;
-      
+      // API Key embedded directly
+      const apiKey = "AIzaSyDHi8kY5ywip8n6O-HQrjMR5uO9IjzqpUI";
+
       if (!apiKey) {
-        console.error("ERROR: GEMINI_API_KEY is missing from environment variables.");
+        console.error("ERROR: API key is missing");
         return json({ error: "API key not configured" }, { status: 500 });
       }
 
@@ -30,16 +30,16 @@ Team Size: ${team}
 12-Month Goal: ${goal}
 Name: ${name}
 
-Return a JSON object with exactly these fields:
+Return ONLY a valid JSON object with exactly these fields (no markdown, no code blocks, just pure JSON):
 {
   "healthScore": (number 0-100),
   "profileSummary": (2-3 sentence paragraph),
   "criticalGap": (1 paragraph, specific and honest),
   "actionSteps": ["step 1", "step 2", "step 3"],
   "roadmap": {
-    "month1": "...",
-    "month2": "...",
-    "month3": "..."
+    "month1": "specific milestone",
+    "month2": "specific milestone",
+    "month3": "specific milestone"
   },
   "vtecRecommendation": {
     "service": "InvestorMind Academy | VTEC Consultancy | Both",
@@ -48,7 +48,8 @@ Return a JSON object with exactly these fields:
   }
 }`;
 
-      // Call the Gemini API utilizing the correct gemini-1.5-flash model
+      console.log("Calling Gemini API with embedded key...");
+
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
         {
@@ -67,24 +68,44 @@ Return a JSON object with exactly these fields:
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("Gemini API error (Status " + response.status + "):", errorText);
-        return json({ error: "AI service error", details: errorText }, { status: 500 });
+        console.error(
+          `Gemini API error (Status ${response.status}):`,
+          errorText
+        );
+        return json(
+          { error: "AI service error", details: errorText },
+          { status: 500 }
+        );
       }
 
       const data = await response.json();
+      console.log("Gemini API Response:", data);
+
       const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
       if (!text) {
-        console.error("Gemini returned an empty response");
-        return json({ error: "Invalid AI response structure" }, { status: 500 });
+        console.error("Gemini returned empty response");
+        return json(
+          { error: "Invalid AI response - no text returned" },
+          { status: 500 }
+        );
       }
 
+      console.log("Raw text from Gemini:", text);
+
       const report = JSON.parse(text);
+      console.log("Parsed report:", report);
+
       return json(report);
-      
     } catch (err) {
-      console.error("Diagnostic catch block error:", err);
-      return json({ error: "Failed to generate report" }, { status: 500 });
+      console.error("API Error:", err);
+      return json(
+        {
+          error: "Failed to generate report",
+          details: err instanceof Error ? err.message : String(err),
+        },
+        { status: 500 }
+      );
     }
   },
 });
