@@ -997,15 +997,15 @@ function Results({ report, answers }: { report: Report; answers: Answers }) {
           </div>
         </div>
 
-        <ResultCard icon="📊" title="Your Business Profile Summary">
+        <ResultCard icon={ClipboardList} title="Your Business Profile Summary">
           <p>{report.profileSummary}</p>
         </ResultCard>
 
-        <ResultCard icon="⚠️" title="Your Critical Gap">
+        <ResultCard icon={AlertTriangle} title="Your Critical Gap">
           <p>{report.criticalGap}</p>
         </ResultCard>
 
-        <ResultCard icon="🎯" title="3 Immediate Action Steps">
+        <ResultCard icon={Target} title="3 Immediate Action Steps">
           <ol style={{ paddingLeft: 22, display: "grid", gap: 12 }}>
             {report.actionSteps.map((s, i) => (
               <li key={i} style={{ lineHeight: 1.55 }}>
@@ -1015,7 +1015,7 @@ function Results({ report, answers }: { report: Report; answers: Answers }) {
           </ol>
         </ResultCard>
 
-        <ResultCard icon="🚀" title="90 Day Priority Roadmap">
+        <ResultCard icon={MapIcon} title="90 Day Priority Roadmap">
           <div style={{ display: "grid", gap: 14 }}>
             {(["month1", "month2", "month3"] as const).map((k, i) => (
               <div
@@ -1036,7 +1036,7 @@ function Results({ report, answers }: { report: Report; answers: Answers }) {
           </div>
         </ResultCard>
 
-        <ResultCard icon="💡" title="VTEC Recommendation">
+        <ResultCard icon={Lightbulb} title="VTEC Recommendation">
           <div style={{ marginBottom: 10, fontWeight: 700, color: TEAL, fontSize: 18 }}>
             {report.vtecRecommendation.service}
           </div>
