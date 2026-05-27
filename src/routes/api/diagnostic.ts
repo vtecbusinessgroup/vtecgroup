@@ -2,6 +2,9 @@ import { json } from "@tanstack/react-start";
 import { createAPIFileRoute } from "@tanstack/react-start/api";
 
 export const APIRoute = createAPIFileRoute("/api/diagnostic")({
+  GET: async () => {
+    return json({ message: "Diagnostic API endpoint is ready" }, { status: 200 });
+  },
   POST: async ({ request }) => {
     try {
       const body = await request.json();
@@ -15,7 +18,7 @@ export const APIRoute = createAPIFileRoute("/api/diagnostic")({
         return json({ error: "API key not configured" }, { status: 500 });
       }
 
-      const prompt = `You are a senior business strategist at VTEC Business Group, a Nairobi-based holding company. You specialise in the Kenyan SME market. Write in clear, confident, direct English — no fluff, no jargon. Be specific to Kenya's economic context (NSE, SACCOs, M-Pesa, Nairobi market, etc.). Never be generic.
+      const prompt = `You are a senior business strategist at VTEC Business Group, a Nairobi-based holding company. You specialise in the Kenyan SME market. Write in clear, confident, direct English.
 
 Generate a business diagnostic report for the following profile:
 
