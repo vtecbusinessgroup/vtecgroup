@@ -7,7 +7,9 @@ export const APIRoute = createAPIFileRoute("/api/diagnostic")({
       const body = await request.json();
       const { stage, industry, challenge, revenue, team, goal, name } = body;
 
+      // Cloudflare edge environment check
       const apiKey = process.env.GEMINI_API_KEY;
+      
       if (!apiKey) {
         console.error("ERROR: GEMINI_API_KEY is missing from environment variables.");
         return json({ error: "API key not configured" }, { status: 500 });
@@ -43,11 +45,9 @@ Return a JSON object with exactly these fields:
   }
 }`;
 
-      console.log("Sending request to Gemini 3.5 Flash...");
-
-      // Call the Gemini API via fetch utilizing the gemini-3.5-flash model
+      // Call the Gemini API utilizing the correct gemini-1.5-flash model
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
         {
           method: "POST",
           headers: {
@@ -56,7 +56,6 @@ Return a JSON object with exactly these fields:
           body: JSON.stringify({
             contents: [{ role: "user", parts: [{ text: prompt }] }],
             generationConfig: {
-              // Enforces standard JSON without markdown wrappers
               responseMimeType: "application/json",
             },
           }),
@@ -73,16 +72,11 @@ Return a JSON object with exactly these fields:
       const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
       if (!text) {
-        console.error("Gemini returned an empty or unexpected response structure:", JSON.stringify(data, null, 2));
+        console.error("Gemini returned an empty response");
         return json({ error: "Invalid AI response structure" }, { status: 500 });
       }
 
-      console.log("Raw text from Gemini:", text);
-
-      // Parse and return the JSON
       const report = JSON.parse(text);
-      console.log("Successfully parsed JSON report.");
-
       return json(report);
       
     } catch (err) {
