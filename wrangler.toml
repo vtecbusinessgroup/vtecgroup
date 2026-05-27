@@ -2,9 +2,7 @@ name = "vtecgroup"
 type = "javascript"
 account_id = ""
 workers_dev = true
-route = ""
-zone_id = ""
-main = "dist/index.js"
+main = ".output/server/index.js"
 compatibility_date = "2024-12-01"
 
 [build]
@@ -14,7 +12,7 @@ watch_paths = ["src/**/*.ts", "src/**/*.tsx"]
 
 [build.upload]
 format = "modules"
-main = "dist/index.js"
+main = ".output/server/index.js"
 
 [env.production]
 routes = [
