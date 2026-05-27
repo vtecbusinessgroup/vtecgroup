@@ -7,9 +7,9 @@ export const APIRoute = createAPIFileRoute("/api/diagnostic")({
       const body = await request.json();
       const { stage, industry, challenge, revenue, team, goal, name } = body;
 
-      // Ensure you update your environment variable to GEMINI_API_KEY
       const apiKey = process.env.GEMINI_API_KEY;
       if (!apiKey) {
+        console.error("ERROR: GEMINI_API_KEY is missing from environment variables.");
         return json({ error: "API key not configured" }, { status: 500 });
       }
 
@@ -43,23 +43,20 @@ Return a JSON object with exactly these fields:
   }
 }`;
 
-      // Call the Gemini API via fetch
+      console.log("Sending request to Gemini 3.5 Flash...");
+
+      // Call the Gemini API via fetch utilizing the gemini-3.5-flash model
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            contents: [
-              {
-                role: "user",
-                parts: [{ text: prompt }],
-              },
-            ],
+            contents: [{ role: "user", parts: [{ text: prompt }] }],
             generationConfig: {
-              // This forces Gemini to return standard JSON without markdown wrappers
+              // Enforces standard JSON without markdown wrappers
               responseMimeType: "application/json",
             },
           }),
@@ -68,21 +65,28 @@ Return a JSON object with exactly these fields:
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("Gemini API error:", errorText);
-        return json({ error: "AI service error" }, { status: 500 });
+        console.error("Gemini API error (Status " + response.status + "):", errorText);
+        return json({ error: "AI service error", details: errorText }, { status: 500 });
       }
 
       const data = await response.json();
-      
-      // Navigate the Gemini response object to extract the generated text
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      if (!text) {
+        console.error("Gemini returned an empty or unexpected response structure:", JSON.stringify(data, null, 2));
+        return json({ error: "Invalid AI response structure" }, { status: 500 });
+      }
+
+      console.log("Raw text from Gemini:", text);
 
       // Parse and return the JSON
       const report = JSON.parse(text);
+      console.log("Successfully parsed JSON report.");
 
       return json(report);
+      
     } catch (err) {
-      console.error("Diagnostic error:", err);
+      console.error("Diagnostic catch block error:", err);
       return json({ error: "Failed to generate report" }, { status: 500 });
     }
   },
