@@ -7,7 +7,8 @@ export const APIRoute = createAPIFileRoute("/api/diagnostic")({
       const body = await request.json();
       const { stage, industry, challenge, revenue, team, goal, name } = body;
 
-      const apiKey = process.env.ANTHROPIC_API_KEY;
+      // Ensure you update your environment variable to GEMINI_API_KEY
+      const apiKey = process.env.GEMINI_API_KEY;
       if (!apiKey) {
         return json({ error: "API key not configured" }, { status: 500 });
       }
@@ -40,39 +41,44 @@ Return a JSON object with exactly these fields:
     "reason": "1-2 sentences why this fits them specifically",
     "ctaText": "compelling CTA button text"
   }
-}
+}`;
 
-Return ONLY the JSON. No preamble, no markdown backticks.`;
-
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": apiKey,
-          "anthropic-version": "2023-06-01",
-        },
-        body: JSON.stringify({
-          model: "claude-haiku-4-5-20251001",
-          max_tokens: 1500,
-          messages: [{ role: "user", content: prompt }],
-        }),
-      });
+      // Call the Gemini API via fetch
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                role: "user",
+                parts: [{ text: prompt }],
+              },
+            ],
+            generationConfig: {
+              // This forces Gemini to return standard JSON without markdown wrappers
+              responseMimeType: "application/json",
+            },
+          }),
+        }
+      );
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("Anthropic API error:", errorText);
+        console.error("Gemini API error:", errorText);
         return json({ error: "AI service error" }, { status: 500 });
       }
 
       const data = await response.json();
-      const text = data.content
-        .map((item: { type: string; text?: string }) =>
-          item.type === "text" ? item.text || "" : ""
-        )
-        .join("");
+      
+      // Navigate the Gemini response object to extract the generated text
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
 
-      const clean = text.replace(/```json|```/g, "").trim();
-      const report = JSON.parse(clean);
+      // Parse and return the JSON
+      const report = JSON.parse(text);
 
       return json(report);
     } catch (err) {
