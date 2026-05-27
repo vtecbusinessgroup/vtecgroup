@@ -1,5 +1,31 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ComponentType } from "react";
+import {
+  Sprout,
+  Rocket,
+  TrendingUp,
+  Building2,
+  GraduationCap,
+  ShoppingBag,
+  Briefcase,
+  Utensils,
+  Laptop,
+  HardHat,
+  Sparkles,
+  Wallet,
+  Megaphone,
+  Settings,
+  Users,
+  Banknote,
+  HelpCircle,
+  ClipboardList,
+  AlertTriangle,
+  Target,
+  Map as MapIcon,
+  Lightbulb,
+} from "lucide-react";
+
+type LucideIcon = ComponentType<{ size?: number | string; color?: string; strokeWidth?: number }>;
 
 export const Route = createFileRoute("/business-diagnostic")({
   head: () => ({
@@ -65,30 +91,30 @@ const SERIF_STACK =
 
 /* ---------------- Question data ---------------- */
 
-const STAGE_OPTS = [
-  { v: "Idea Stage", icon: "🌱", label: "Idea Stage", sub: "I have a concept but haven't started" },
-  { v: "Early Stage", icon: "🚀", label: "Early Stage", sub: "Started but under 1 year old" },
-  { v: "Growing", icon: "📈", label: "Growing", sub: "1 to 3 years, gaining traction" },
-  { v: "Established", icon: "🏢", label: "Established", sub: "3+ years, stable operations" },
+const STAGE_OPTS: { v: string; icon: LucideIcon; label: string; sub: string }[] = [
+  { v: "Idea Stage", icon: Sprout, label: "Idea Stage", sub: "I have a concept but haven't started" },
+  { v: "Early Stage", icon: Rocket, label: "Early Stage", sub: "Started but under 1 year old" },
+  { v: "Growing", icon: TrendingUp, label: "Growing", sub: "1 to 3 years, gaining traction" },
+  { v: "Established", icon: Building2, label: "Established", sub: "3+ years, stable operations" },
 ];
 
-const INDUSTRY_OPTS = [
-  { v: "Education / Training", icon: "📚" },
-  { v: "Retail / E commerce", icon: "🛍️" },
-  { v: "Professional Services", icon: "💼" },
-  { v: "Food & Hospitality", icon: "🍽️" },
-  { v: "Tech / Digital", icon: "💻" },
-  { v: "Construction / Real Estate", icon: "🏗️" },
-  { v: "Other", icon: "✨" },
+const INDUSTRY_OPTS: { v: string; icon: LucideIcon }[] = [
+  { v: "Education / Training", icon: GraduationCap },
+  { v: "Retail / E commerce", icon: ShoppingBag },
+  { v: "Professional Services", icon: Briefcase },
+  { v: "Food & Hospitality", icon: Utensils },
+  { v: "Tech / Digital", icon: Laptop },
+  { v: "Construction / Real Estate", icon: HardHat },
+  { v: "Other", icon: Sparkles },
 ];
 
-const CHALLENGE_OPTS = [
-  { v: "Getting more customers / leads", icon: "💰" },
-  { v: "Weak brand presence / marketing", icon: "📣" },
-  { v: "Operations and systems are messy", icon: "⚙️" },
-  { v: "Building the right team", icon: "👥" },
-  { v: "Cash flow and financial management", icon: "💵" },
-  { v: "I don't have a clear strategy", icon: "🤷" },
+const CHALLENGE_OPTS: { v: string; icon: LucideIcon }[] = [
+  { v: "Getting more customers / leads", icon: Wallet },
+  { v: "Weak brand presence / marketing", icon: Megaphone },
+  { v: "Operations and systems are messy", icon: Settings },
+  { v: "Building the right team", icon: Users },
+  { v: "Cash flow and financial management", icon: Banknote },
+  { v: "I don't have a clear strategy", icon: HelpCircle },
 ];
 
 const REVENUE_OPTS = [
@@ -704,7 +730,7 @@ function Question({
 function RadioCards(props: {
   value: string;
   onChange: (v: string) => void;
-  options: { value: string; label: string; sub?: string; icon?: string }[];
+  options: { value: string; label: string; sub?: string; icon?: LucideIcon }[];
   columns?: 1 | 2;
 }) {
   const { value, onChange, options, columns = 1 } = props;
@@ -718,6 +744,7 @@ function RadioCards(props: {
     >
       {options.map((o) => {
         const selected = value === o.value;
+        const Icon = o.icon;
         return (
           <button
             type="button"
@@ -737,7 +764,22 @@ function RadioCards(props: {
               color: "#0A1628",
             }}
           >
-            {o.icon && <span style={{ fontSize: 24, lineHeight: 1 }}>{o.icon}</span>}
+            {Icon && (
+              <span
+                style={{
+                  display: "grid",
+                  placeItems: "center",
+                  width: 36,
+                  height: 36,
+                  borderRadius: 8,
+                  background: selected ? TEAL : "rgba(0,200,150,0.10)",
+                  color: selected ? "#04221A" : GREEN_BRIGHT,
+                  flexShrink: 0,
+                }}
+              >
+                <Icon size={20} strokeWidth={2} />
+              </span>
+            )}
             <div style={{ flex: 1 }}>
               <div style={{ fontWeight: 600, fontSize: 15 }}>{o.label}</div>
               {o.sub && (
@@ -955,15 +997,15 @@ function Results({ report, answers }: { report: Report; answers: Answers }) {
           </div>
         </div>
 
-        <ResultCard icon="📊" title="Your Business Profile Summary">
+        <ResultCard icon={ClipboardList} title="Your Business Profile Summary">
           <p>{report.profileSummary}</p>
         </ResultCard>
 
-        <ResultCard icon="⚠️" title="Your Critical Gap">
+        <ResultCard icon={AlertTriangle} title="Your Critical Gap">
           <p>{report.criticalGap}</p>
         </ResultCard>
 
-        <ResultCard icon="🎯" title="3 Immediate Action Steps">
+        <ResultCard icon={Target} title="3 Immediate Action Steps">
           <ol style={{ paddingLeft: 22, display: "grid", gap: 12 }}>
             {report.actionSteps.map((s, i) => (
               <li key={i} style={{ lineHeight: 1.55 }}>
@@ -973,7 +1015,7 @@ function Results({ report, answers }: { report: Report; answers: Answers }) {
           </ol>
         </ResultCard>
 
-        <ResultCard icon="🚀" title="90 Day Priority Roadmap">
+        <ResultCard icon={MapIcon} title="90 Day Priority Roadmap">
           <div style={{ display: "grid", gap: 14 }}>
             {(["month1", "month2", "month3"] as const).map((k, i) => (
               <div
@@ -994,7 +1036,7 @@ function Results({ report, answers }: { report: Report; answers: Answers }) {
           </div>
         </ResultCard>
 
-        <ResultCard icon="💡" title="VTEC Recommendation">
+        <ResultCard icon={Lightbulb} title="VTEC Recommendation">
           <div style={{ marginBottom: 10, fontWeight: 700, color: TEAL, fontSize: 18 }}>
             {report.vtecRecommendation.service}
           </div>
@@ -1054,11 +1096,11 @@ function Results({ report, answers }: { report: Report; answers: Answers }) {
 }
 
 function ResultCard({
-  icon,
+  icon: Icon,
   title,
   children,
 }: {
-  icon: string;
+  icon: LucideIcon;
   title: string;
   children: React.ReactNode;
 }) {
@@ -1084,7 +1126,19 @@ function ResultCard({
           alignItems: "center",
         }}
       >
-        <span style={{ fontSize: 22 }}>{icon}</span>
+        <span
+          style={{
+            display: "grid",
+            placeItems: "center",
+            width: 34,
+            height: 34,
+            borderRadius: 8,
+            background: "rgba(0,200,150,0.15)",
+            color: TEAL,
+          }}
+        >
+          <Icon size={18} strokeWidth={2} />
+        </span>
         {title}
       </h3>
       <div style={{ color: "rgba(255,255,255,0.85)" }}>{children}</div>
@@ -1107,7 +1161,7 @@ function ErrorBlock({ message, onRetry }: { message: string; onRetry: () => void
           padding: 32,
         }}
       >
-        <div style={{ fontSize: 38, marginBottom: 12 }}>⚠️</div>
+        <div style={{ display: "grid", placeItems: "center", margin: "0 auto 16px", width: 56, height: 56, borderRadius: 14, background: "rgba(0,200,150,0.12)", color: TEAL }}><AlertTriangle size={28} /></div>
         <p style={{ marginBottom: 22, lineHeight: 1.6 }}>{message}</p>
         <button type="button" onClick={onRetry} style={primaryBtn}>
           Try again
@@ -1144,10 +1198,20 @@ function FooterCTA() {
           VTEC Consultancy Services offers hands on strategy sessions for Kenyan businesses ready to grow.
         </p>
         <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
-          <a href="/#contact" style={{ ...primaryBtn, textDecoration: "none" }}>
+          <a
+            href="https://wa.me/254116644204"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ ...primaryBtn, textDecoration: "none" }}
+          >
             Book a Consultation →
           </a>
-          <a href="/#services" style={{ ...outlineBtn, textDecoration: "none" }}>
+          <a
+            href="/ai-diagnostic-info"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ ...outlineBtn, textDecoration: "none" }}
+          >
             Learn About Our Services
           </a>
         </div>

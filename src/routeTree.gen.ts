@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as BusinessDiagnosticRouteImport } from './routes/business-diagnostic'
+import { Route as AiDiagnosticInfoRouteImport } from './routes/ai-diagnostic-info'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiDiagnosticRouteImport } from './routes/api/diagnostic'
 
 const BusinessDiagnosticRoute = BusinessDiagnosticRouteImport.update({
   id: '/business-diagnostic',
   path: '/business-diagnostic',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiDiagnosticInfoRoute = AiDiagnosticInfoRouteImport.update({
+  id: '/ai-diagnostic-info',
+  path: '/ai-diagnostic-info',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -31,30 +37,43 @@ const ApiDiagnosticRoute = ApiDiagnosticRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ai-diagnostic-info': typeof AiDiagnosticInfoRoute
   '/business-diagnostic': typeof BusinessDiagnosticRoute
   '/api/diagnostic': typeof ApiDiagnosticRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ai-diagnostic-info': typeof AiDiagnosticInfoRoute
   '/business-diagnostic': typeof BusinessDiagnosticRoute
   '/api/diagnostic': typeof ApiDiagnosticRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ai-diagnostic-info': typeof AiDiagnosticInfoRoute
   '/business-diagnostic': typeof BusinessDiagnosticRoute
   '/api/diagnostic': typeof ApiDiagnosticRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/business-diagnostic' | '/api/diagnostic'
+  fullPaths:
+    | '/'
+    | '/ai-diagnostic-info'
+    | '/business-diagnostic'
+    | '/api/diagnostic'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/business-diagnostic' | '/api/diagnostic'
-  id: '__root__' | '/' | '/business-diagnostic' | '/api/diagnostic'
+  to: '/' | '/ai-diagnostic-info' | '/business-diagnostic' | '/api/diagnostic'
+  id:
+    | '__root__'
+    | '/'
+    | '/ai-diagnostic-info'
+    | '/business-diagnostic'
+    | '/api/diagnostic'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AiDiagnosticInfoRoute: typeof AiDiagnosticInfoRoute
   BusinessDiagnosticRoute: typeof BusinessDiagnosticRoute
   ApiDiagnosticRoute: typeof ApiDiagnosticRoute
 }
@@ -66,6 +85,13 @@ declare module '@tanstack/react-router' {
       path: '/business-diagnostic'
       fullPath: '/business-diagnostic'
       preLoaderRoute: typeof BusinessDiagnosticRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-diagnostic-info': {
+      id: '/ai-diagnostic-info'
+      path: '/ai-diagnostic-info'
+      fullPath: '/ai-diagnostic-info'
+      preLoaderRoute: typeof AiDiagnosticInfoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -87,6 +113,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AiDiagnosticInfoRoute: AiDiagnosticInfoRoute,
   BusinessDiagnosticRoute: BusinessDiagnosticRoute,
   ApiDiagnosticRoute: ApiDiagnosticRoute,
 }
