@@ -1,6 +1,5 @@
 import { json } from "@tanstack/react-start";
-import { createAPIFileRoute } from "@tanstack/react-start/api";
-
+import { createAPIFileRoute } from "@tanstack/react-start";
 export const Route = createAPIFileRoute("/api/diagnostic")({
   POST: async ({ request }) => {
     try {
