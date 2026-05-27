@@ -1,5 +1,31 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ComponentType } from "react";
+import {
+  Sprout,
+  Rocket,
+  TrendingUp,
+  Building2,
+  GraduationCap,
+  ShoppingBag,
+  Briefcase,
+  Utensils,
+  Laptop,
+  HardHat,
+  Sparkles,
+  Wallet,
+  Megaphone,
+  Settings,
+  Users,
+  Banknote,
+  HelpCircle,
+  ClipboardList,
+  AlertTriangle,
+  Target,
+  Map as MapIcon,
+  Lightbulb,
+} from "lucide-react";
+
+type LucideIcon = ComponentType<{ size?: number | string; color?: string; strokeWidth?: number }>;
 
 export const Route = createFileRoute("/business-diagnostic")({
   head: () => ({
