@@ -1198,10 +1198,20 @@ function FooterCTA() {
           VTEC Consultancy Services offers hands on strategy sessions for Kenyan businesses ready to grow.
         </p>
         <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
-          <a href="/#contact" style={{ ...primaryBtn, textDecoration: "none" }}>
+          <a
+            href="https://wa.me/254116644204"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ ...primaryBtn, textDecoration: "none" }}
+          >
             Book a Consultation →
           </a>
-          <a href="/#services" style={{ ...outlineBtn, textDecoration: "none" }}>
+          <a
+            href="/ai-diagnostic-info"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ ...outlineBtn, textDecoration: "none" }}
+          >
             Learn About Our Services
           </a>
         </div>
