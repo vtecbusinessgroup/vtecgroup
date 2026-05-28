@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as BusinessDiagnosticRouteImport } from './routes/business-diagnostic'
 import { Route as AiDiagnosticInfoRouteImport } from './routes/ai-diagnostic-info'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiDiagnosticRouteImport } from './routes/api/diagnostic'
 
 const BusinessDiagnosticRoute = BusinessDiagnosticRouteImport.update({
   id: '/business-diagnostic',
@@ -29,53 +28,35 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiDiagnosticRoute = ApiDiagnosticRouteImport.update({
-  id: '/api/diagnostic',
-  path: '/api/diagnostic',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ai-diagnostic-info': typeof AiDiagnosticInfoRoute
   '/business-diagnostic': typeof BusinessDiagnosticRoute
-  '/api/diagnostic': typeof ApiDiagnosticRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ai-diagnostic-info': typeof AiDiagnosticInfoRoute
   '/business-diagnostic': typeof BusinessDiagnosticRoute
-  '/api/diagnostic': typeof ApiDiagnosticRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/ai-diagnostic-info': typeof AiDiagnosticInfoRoute
   '/business-diagnostic': typeof BusinessDiagnosticRoute
-  '/api/diagnostic': typeof ApiDiagnosticRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/ai-diagnostic-info'
-    | '/business-diagnostic'
-    | '/api/diagnostic'
+  fullPaths: '/' | '/ai-diagnostic-info' | '/business-diagnostic'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ai-diagnostic-info' | '/business-diagnostic' | '/api/diagnostic'
-  id:
-    | '__root__'
-    | '/'
-    | '/ai-diagnostic-info'
-    | '/business-diagnostic'
-    | '/api/diagnostic'
+  to: '/' | '/ai-diagnostic-info' | '/business-diagnostic'
+  id: '__root__' | '/' | '/ai-diagnostic-info' | '/business-diagnostic'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AiDiagnosticInfoRoute: typeof AiDiagnosticInfoRoute
   BusinessDiagnosticRoute: typeof BusinessDiagnosticRoute
-  ApiDiagnosticRoute: typeof ApiDiagnosticRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -101,13 +82,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/diagnostic': {
-      id: '/api/diagnostic'
-      path: '/api/diagnostic'
-      fullPath: '/api/diagnostic'
-      preLoaderRoute: typeof ApiDiagnosticRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -115,8 +89,17 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AiDiagnosticInfoRoute: AiDiagnosticInfoRoute,
   BusinessDiagnosticRoute: BusinessDiagnosticRoute,
-  ApiDiagnosticRoute: ApiDiagnosticRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
