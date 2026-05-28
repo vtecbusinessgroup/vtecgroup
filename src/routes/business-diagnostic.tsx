@@ -24,6 +24,8 @@ import {
   Map as MapIcon,
   Lightbulb,
 } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { generateDiagnostic } from "@/lib/diagnostic.functions";
 
 type LucideIcon = ComponentType<{ size?: number | string; color?: string; strokeWidth?: number }>;
 
@@ -205,6 +207,8 @@ function BusinessDiagnostic() {
     }
   }
 
+  const runDiagnostic = useServerFn(generateDiagnostic);
+
   async function submit() {
     setView("loading");
     try {
@@ -212,10 +216,8 @@ function BusinessDiagnostic() {
         answers.industry === "Other" && answers.industryOther.trim()
           ? answers.industryOther.trim()
           : answers.industry;
-      const res = await fetch("/api/diagnostic", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      const result = await runDiagnostic({
+        data: {
           stage: answers.stage,
           industry: industryFinal,
           challenge: answers.challenge,
@@ -225,13 +227,12 @@ function BusinessDiagnostic() {
           name: answers.name,
           email: answers.email,
           whatsapp: answers.whatsapp,
-        }),
+        },
       });
-      const data = (await res.json()) as { report?: Report; error?: string };
-      if (!res.ok || !data.report) {
-        throw new Error(data.error || "AI failed");
+      if (!("report" in result) || !result.report) {
+        throw new Error(("error" in result && result.error) || "AI failed");
       }
-      setReport(data.report);
+      setReport(result.report as Report);
       setView("results");
     } catch (e) {
       console.error(e);
