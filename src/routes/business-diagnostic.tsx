@@ -24,6 +24,8 @@ import {
   Map as MapIcon,
   Lightbulb,
 } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { generateDiagnostic } from "@/lib/diagnostic.functions";
 
 type LucideIcon = ComponentType<{ size?: number | string; color?: string; strokeWidth?: number }>;
 
