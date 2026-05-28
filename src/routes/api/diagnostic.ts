@@ -1,10 +1,17 @@
-import { json } from "@tanstack/react-start";
-import { createAPIFileRoute } from "@tanstack/react-start/api";
+import { createFileRoute } from "@tanstack/react-router";
+
+const json = (data: unknown, init?: ResponseInit) =>
+  new Response(JSON.stringify(data), {
+    ...init,
+    headers: { "content-type": "application/json", ...(init?.headers ?? {}) },
+  });
 
 const SYSTEM_PROMPT = `You are a financial diagnostics advisor for InvestorMind Academy by VTEC Business Group. Analyze the user's financial situation based on their inputs and provide a clear, actionable diagnosis with 3-5 tailored recommendations. Keep the tone professional but accessible. End with a call-to-action encouraging them to explore InvestorMind Academy's e-books or courses. Be specific to Kenya's economic context (NSE, SACCOs, M-Pesa, Nairobi market) where relevant. Never be generic.`;
 
-export const Route = createAPIFileRoute("/api/diagnostic")({
-  POST: async ({ request }) => {
+export const Route = createFileRoute("/api/diagnostic")({
+  server: {
+    handlers: {
+      POST: async ({ request }: { request: Request }) => {
     try {
       const body = await request.json();
       const { stage, industry, challenge, revenue, team, goal, name, email, whatsapp } = body ?? {};
