@@ -104,8 +104,11 @@ Return ONLY a JSON object with exactly these fields:
       console.error("Diagnostic error:", err);
       return json({ error: "Failed to generate report" }, { status: 500 });
     }
+      },
+    },
   },
 });
+
 
 async function sendEmails(
   payload: {
