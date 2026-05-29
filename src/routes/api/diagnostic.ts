@@ -155,21 +155,21 @@ async function sendEmails(input: {
   if (input.email && /.+@.+\..+/.test(input.email)) {
     tasks.push(
       resendSend(resendKey, {
-        from: "InvestorMind Academy <noreply@vtecgroup.co.ke>",
+        from: "InvestorMind Academy <onboarding@garujoroo.resend.app>",
         to: [input.email],
         subject: "Your Free Financial Diagnosis – InvestorMind Academy",
         html: buildReportEmail(input.name, input.report),
-      }),
+      }).catch((err) => console.error("Failed to send user report email", err)),
     );
   }
 
   tasks.push(
     resendSend(resendKey, {
-      from: "VTEC Diagnostic <noreply@vtecgroup.co.ke>",
+      from: "VTEC Diagnostic <onboarding@garujoroo.resend.app>",
       to: ["vtecgroup@outlook.com"],
       subject: `New diagnostic lead – ${input.name || "Unknown"}`,
       html: buildLeadEmail(input),
-    }),
+    }).catch((err) => console.error("Failed to send lead notification email", err)),
   );
 
   await Promise.allSettled(tasks);
@@ -190,7 +190,9 @@ async function resendSend(
   if (!res.ok) {
     const t = await res.text();
     console.error("Resend send failed", res.status, t);
+    throw new Error(`Resend API error ${res.status}: ${t}`);
   }
+  return res.json();
 }
 
 function esc(s: string): string {
@@ -240,7 +242,7 @@ function buildReportEmail(name: string, r: Report): string {
           <p style="margin:0 0 22px;color:#374151;line-height:1.6;">${esc(r.vtecRecommendation.reason)}</p>
 
           <div style="text-align:center;margin:28px 0 8px;">
-            <a href="https://vtecgroup.co.ke" style="display:inline-block;background:${TEAL};color:#04221A;text-decoration:none;font-weight:700;padding:14px 26px;border-radius:10px;">Explore InvestorMind Academy →</a>
+            <a href="https://vtecgroup.co.ke" style="display:inline-block;background:${TEAL};color:#04221A;text-decoration:none;font-weight:700;padding:14px 26px;border-radius:10px;">Explore InvestorMind Academy</a>
           </div>
         </td></tr>
         <tr><td style="background:#0A1628;color:#fff;padding:20px;text-align:center;font-size:12px;">
