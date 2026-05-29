@@ -13,6 +13,7 @@ import { Route as BusinessDiagnosticRouteImport } from './routes/business-diagno
 import { Route as AiDiagnosticInfoRouteImport } from './routes/ai-diagnostic-info'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiDiagnosticRouteImport } from './routes/api/diagnostic'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 
 const BusinessDiagnosticRoute = BusinessDiagnosticRouteImport.update({
   id: '/business-diagnostic',
@@ -34,17 +35,24 @@ const ApiDiagnosticRoute = ApiDiagnosticRouteImport.update({
   path: '/api/diagnostic',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ai-diagnostic-info': typeof AiDiagnosticInfoRoute
   '/business-diagnostic': typeof BusinessDiagnosticRoute
+  '/api/chat': typeof ApiChatRoute
   '/api/diagnostic': typeof ApiDiagnosticRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ai-diagnostic-info': typeof AiDiagnosticInfoRoute
   '/business-diagnostic': typeof BusinessDiagnosticRoute
+  '/api/chat': typeof ApiChatRoute
   '/api/diagnostic': typeof ApiDiagnosticRoute
 }
 export interface FileRoutesById {
@@ -52,6 +60,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/ai-diagnostic-info': typeof AiDiagnosticInfoRoute
   '/business-diagnostic': typeof BusinessDiagnosticRoute
+  '/api/chat': typeof ApiChatRoute
   '/api/diagnostic': typeof ApiDiagnosticRoute
 }
 export interface FileRouteTypes {
@@ -60,14 +69,21 @@ export interface FileRouteTypes {
     | '/'
     | '/ai-diagnostic-info'
     | '/business-diagnostic'
+    | '/api/chat'
     | '/api/diagnostic'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ai-diagnostic-info' | '/business-diagnostic' | '/api/diagnostic'
+  to:
+    | '/'
+    | '/ai-diagnostic-info'
+    | '/business-diagnostic'
+    | '/api/chat'
+    | '/api/diagnostic'
   id:
     | '__root__'
     | '/'
     | '/ai-diagnostic-info'
     | '/business-diagnostic'
+    | '/api/chat'
     | '/api/diagnostic'
   fileRoutesById: FileRoutesById
 }
@@ -75,6 +91,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AiDiagnosticInfoRoute: typeof AiDiagnosticInfoRoute
   BusinessDiagnosticRoute: typeof BusinessDiagnosticRoute
+  ApiChatRoute: typeof ApiChatRoute
   ApiDiagnosticRoute: typeof ApiDiagnosticRoute
 }
 
@@ -108,6 +125,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiDiagnosticRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -115,6 +139,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AiDiagnosticInfoRoute: AiDiagnosticInfoRoute,
   BusinessDiagnosticRoute: BusinessDiagnosticRoute,
+  ApiChatRoute: ApiChatRoute,
   ApiDiagnosticRoute: ApiDiagnosticRoute,
 }
 export const routeTree = rootRouteImport

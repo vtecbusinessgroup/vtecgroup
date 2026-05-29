@@ -1,182 +1,272 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Send, X, MessageCircle } from 'lucide-react';
+import { useState, useRef, useEffect, type FormEvent } from "react";
+import { Send, X, MessageCircle } from "lucide-react";
 
-interface Message {
+type Message = {
   id: string;
-  text: string;
-  sender: 'user' | 'bot';
-  timestamp: Date;
-}
+  role: "user" | "assistant";
+  content: string;
+};
 
-export const ChatBot: React.FC = () => {
+const SUGGESTIONS = [
+  "Which course is right for me?",
+  "How can VTEC help my business?",
+  "I want to book a consultation",
+  "Tell me about InvestorMind Academy",
+];
+
+const GREETING: Message = {
+  id: "greeting",
+  role: "assistant",
+  content:
+    "Hi, I'm VTEC Assistant. I can help you find the right programme, learn about our services, or book a consultation. How can I help today?",
+};
+
+export const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: 'Hello! Welcome to VTec Group. How can I help you today?',
-      sender: 'bot',
-      timestamp: new Date(),
-    },
-  ]);
-  const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([GREETING]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages]);
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
 
-  const sendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
+  useEffect(() => {
+    if (isOpen) inputRef.current?.focus();
+  }, [isOpen]);
 
-    if (!input.trim()) return;
+  const send = async (text: string) => {
+    const trimmed = text.trim();
+    if (!trimmed || loading) return;
 
-    // Add user message
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      text: input,
-      sender: 'user',
-      timestamp: new Date(),
+    const userMsg: Message = {
+      id: `u-${Date.now()}`,
+      role: "user",
+      content: trimmed,
     };
+    const history = messages
+      .filter((m) => m.id !== "greeting")
+      .map((m) => ({ role: m.role, content: m.content }));
 
-    setMessages((prev) => [...prev, userMessage]);
-    setInput('');
-    setIsLoading(true);
+    setMessages((prev) => [...prev, userMsg]);
+    setInput("");
+    setLoading(true);
 
     try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: input,
-          conversationHistory: messages,
-        }),
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: trimmed, history }),
       });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error ?? "Chat failed");
 
-      if (!response.ok) {
-        throw new Error('Failed to get response');
-      }
-
-      const data = await response.json();
-
-      const botMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: data.reply,
-        sender: 'bot',
-        timestamp: new Date(),
-      };
-
-      setMessages((prev) => [...prev, botMessage]);
-    } catch (error) {
-      console.error('Chat error:', error);
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: 'Sorry, I encountered an error. Please try again later.',
-        sender: 'bot',
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, errorMessage]);
+      setMessages((prev) => [
+        ...prev,
+        { id: `a-${Date.now()}`, role: "assistant", content: data.reply },
+      ]);
+    } catch (err) {
+      console.error(err);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `e-${Date.now()}`,
+          role: "assistant",
+          content:
+            "Sorry, I'm having trouble connecting right now. You can reach us at info@vtecgroup.co.ke or WhatsApp +254 116 644204.",
+        },
+      ]);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  if (!isOpen) {
-    return (
-      <button
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 rounded-full shadow-lg hover:bg-blue-700 transition-colors flex items-center justify-center text-white z-50"
-        aria-label="Open chat"
-      >
-        <MessageCircle className="w-6 h-6" />
-      </button>
-    );
-  }
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    void send(input);
+  };
 
   return (
-    <Card className="fixed bottom-6 right-6 w-96 h-[600px] shadow-2xl flex flex-col z-50">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-t-lg flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <MessageCircle className="w-5 h-5" />
-          <h3 className="font-semibold">VTec Support</h3>
-        </div>
+    <>
+      {/* Floating button */}
+      {!isOpen && (
         <button
-          onClick={() => setIsOpen(false)}
-          className="hover:bg-blue-800 p-1 rounded transition-colors"
-          aria-label="Close chat"
+          type="button"
+          onClick={() => setIsOpen(true)}
+          aria-label="Open VTEC Assistant chat"
+          className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-2xl transition-transform hover:scale-105"
+          style={{
+            backgroundColor: "#00C896",
+            boxShadow: "0 0 0 0 rgba(0,200,150,0.6)",
+            animation: "vtec-pulse 2s infinite",
+          }}
         >
-          <X className="w-5 h-5" />
+          <MessageCircle className="h-6 w-6" />
         </button>
-      </div>
+      )}
 
-      {/* Messages */}
-      <ScrollArea className="flex-1 p-4">
-        <div className="space-y-4">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${
-                message.sender === 'user' ? 'justify-end' : 'justify-start'
-              }`}
-            >
+      {/* Chat panel */}
+      {isOpen && (
+        <div
+          className="fixed z-50 flex flex-col overflow-hidden shadow-2xl
+            inset-x-0 bottom-0 top-0 w-full rounded-none
+            sm:inset-auto sm:bottom-5 sm:right-5 sm:top-auto sm:h-[600px] sm:w-[380px] sm:rounded-2xl"
+          style={{ backgroundColor: "#0A1628" }}
+        >
+          {/* Header */}
+          <div
+            className="flex items-center justify-between px-4 py-3 border-b"
+            style={{ borderColor: "rgba(0,200,150,0.2)" }}
+          >
+            <div className="flex items-center gap-3">
               <div
-                className={`max-w-xs px-4 py-2 rounded-lg ${
-                  message.sender === 'user'
-                    ? 'bg-blue-600 text-white rounded-br-none'
-                    : 'bg-gray-200 text-gray-900 rounded-bl-none'
-                }`}
+                className="flex h-9 w-9 items-center justify-center rounded-lg font-bold text-sm"
+                style={{ backgroundColor: "#00C896", color: "#0A1628" }}
               >
-                <p className="text-sm">{message.text}</p>
-                <span className="text-xs mt-1 block opacity-70">
-                  {message.timestamp.toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </span>
+                V
               </div>
-            </div>
-          ))}
-          {isLoading && (
-            <div className="flex justify-start">
-              <div className="bg-gray-200 text-gray-900 px-4 py-2 rounded-lg rounded-bl-none">
-                <div className="flex gap-2">
-                  <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-100"></div>
-                  <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-200"></div>
+              <div>
+                <div className="text-white font-semibold text-sm leading-tight">
+                  VTEC Assistant
+                </div>
+                <div className="flex items-center gap-1.5 text-[11px] text-white/70">
+                  <span
+                    className="inline-block h-2 w-2 rounded-full"
+                    style={{ backgroundColor: "#00C896" }}
+                  />
+                  Online
                 </div>
               </div>
             </div>
-          )}
-          <div ref={scrollRef} />
-        </div>
-      </ScrollArea>
+            <button
+              type="button"
+              onClick={() => setIsOpen(false)}
+              aria-label="Close chat"
+              className="rounded-md p-1.5 text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
 
-      {/* Input Form */}
-      <form onSubmit={sendMessage} className="border-t p-4 flex gap-2">
-        <Input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type your message..."
-          disabled={isLoading}
-          className="flex-1"
-        />
-        <Button
-          type="submit"
-          disabled={isLoading || !input.trim()}
-          className="bg-blue-600 hover:bg-blue-700"
-        >
-          <Send className="w-4 h-4" />
-        </Button>
-      </form>
-    </Card>
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+            {messages.map((m) =>
+              m.role === "user" ? (
+                <div key={m.id} className="flex justify-end">
+                  <div
+                    className="max-w-[80%] rounded-2xl rounded-br-sm px-4 py-2 text-sm"
+                    style={{ backgroundColor: "#00C896", color: "#0A1628" }}
+                  >
+                    {m.content}
+                  </div>
+                </div>
+              ) : (
+                <div key={m.id} className="flex justify-start">
+                  <div
+                    className="max-w-[85%] rounded-2xl rounded-bl-sm px-4 py-2 text-sm text-white border"
+                    style={{
+                      backgroundColor: "#13243d",
+                      borderColor: "rgba(0,200,150,0.35)",
+                    }}
+                  >
+                    {m.content.split("\n").map((line, i) => (
+                      <p key={i} className={i > 0 ? "mt-2" : ""}>
+                        {line}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              ),
+            )}
+
+            {loading && (
+              <div className="flex justify-start">
+                <div
+                  className="rounded-2xl rounded-bl-sm px-4 py-3 border"
+                  style={{
+                    backgroundColor: "#13243d",
+                    borderColor: "rgba(0,200,150,0.35)",
+                  }}
+                >
+                  <div className="flex gap-1">
+                    <span className="h-2 w-2 rounded-full bg-white/60 animate-bounce" />
+                    <span
+                      className="h-2 w-2 rounded-full bg-white/60 animate-bounce"
+                      style={{ animationDelay: "0.15s" }}
+                    />
+                    <span
+                      className="h-2 w-2 rounded-full bg-white/60 animate-bounce"
+                      style={{ animationDelay: "0.3s" }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {messages.length === 1 && !loading && (
+              <div className="pt-2 space-y-2">
+                <div className="text-[11px] uppercase tracking-wider text-white/50 px-1">
+                  Suggested
+                </div>
+                {SUGGESTIONS.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => void send(s)}
+                    className="block w-full text-left text-sm text-white rounded-lg border px-3 py-2 transition-colors hover:bg-white/5"
+                    style={{ borderColor: "rgba(0,200,150,0.35)" }}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <div ref={scrollRef} />
+          </div>
+
+          {/* Input */}
+          <form
+            onSubmit={onSubmit}
+            className="border-t p-3 flex gap-2"
+            style={{ borderColor: "rgba(0,200,150,0.2)" }}
+          >
+            <input
+              ref={inputRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type your message..."
+              disabled={loading}
+              className="flex-1 rounded-lg border px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-1"
+              style={{
+                backgroundColor: "#0d1c33",
+                borderColor: "rgba(0,200,150,0.25)",
+              }}
+            />
+            <button
+              type="submit"
+              disabled={loading || !input.trim()}
+              aria-label="Send message"
+              className="flex h-10 w-10 items-center justify-center rounded-lg text-[#0A1628] transition-opacity disabled:opacity-50"
+              style={{ backgroundColor: "#00C896" }}
+            >
+              <Send className="h-4 w-4" />
+            </button>
+          </form>
+        </div>
+      )}
+
+      <style>{`
+        @keyframes vtec-pulse {
+          0% { box-shadow: 0 0 0 0 rgba(0,200,150,0.6); }
+          70% { box-shadow: 0 0 0 16px rgba(0,200,150,0); }
+          100% { box-shadow: 0 0 0 0 rgba(0,200,150,0); }
+        }
+      `}</style>
+    </>
   );
 };
+
+export default ChatBot;
