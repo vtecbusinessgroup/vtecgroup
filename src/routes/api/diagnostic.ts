@@ -1,5 +1,7 @@
-import { json } from "@tanstack/react-start";
-import { createAPIFileRoute } from "@tanstack/react-start/api";
+import { createFileRoute } from "@tanstack/react-router";
+
+const json = (data: unknown, init?: ResponseInit) => Response.json(data, init);
+
 
 type Report = {
   healthScore: number;
@@ -16,30 +18,31 @@ const SYSTEM_INSTRUCTION =
   "actionable diagnosis with 3 to 5 tailored recommendations. Keep the tone professional but " +
   "accessible. Be specific to Kenya's economic context (NSE, SACCOs, M-Pesa, Nairobi market). " +
   "End with a call to action encouraging the user to explore InvestorMind Academy's e-books or courses.";
+export const Route = createFileRoute("/api/diagnostic")({
+  server: {
+    handlers: {
+      POST: async ({ request }) => {
+        try {
+          const body = (await request.json()) as Record<string, string>;
+          const {
+            stage = "",
+            industry = "",
+            challenge = "",
+            revenue = "",
+            team = "",
+            goal = "",
+            name = "",
+            email = "",
+            whatsapp = "",
+          } = body;
 
-export const Route = createAPIFileRoute("/api/diagnostic")({
-  POST: async ({ request }) => {
-    try {
-      const body = (await request.json()) as Record<string, string>;
-      const {
-        stage = "",
-        industry = "",
-        challenge = "",
-        revenue = "",
-        team = "",
-        goal = "",
-        name = "",
-        email = "",
-        whatsapp = "",
-      } = body;
+          const geminiKey = process.env.GEMINI_API_KEY;
+          if (!geminiKey) {
+            console.error("GEMINI_API_KEY missing");
+            return json({ error: "AI key not configured" }, { status: 500 });
+          }
 
-      const geminiKey = process.env.GEMINI_API_KEY;
-      if (!geminiKey) {
-        console.error("GEMINI_API_KEY missing");
-        return json({ error: "AI key not configured" }, { status: 500 });
-      }
-
-      const userPrompt = `Generate a personalised diagnostic report for the following Kenyan founder:
+          const userPrompt = `Generate a personalised diagnostic report for the following Kenyan founder:
 
 Name: ${name}
 Business Stage: ${stage}
@@ -63,64 +66,66 @@ Return ONLY a JSON object with exactly this shape:
   }
 }`;
 
-      const aiRes = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
-            contents: [{ role: "user", parts: [{ text: userPrompt }] }],
-            generationConfig: { responseMimeType: "application/json" },
-          }),
-        },
-      );
+          const aiRes = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
+                contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+                generationConfig: { responseMimeType: "application/json" },
+              }),
+            },
+          );
 
-      if (!aiRes.ok) {
-        const errText = await aiRes.text();
-        console.error("Gemini error", aiRes.status, errText);
-        return json({ error: "AI service error" }, { status: 502 });
-      }
+          if (!aiRes.ok) {
+            const errText = await aiRes.text();
+            console.error("Gemini error", aiRes.status, errText);
+            return json({ error: "AI service error" }, { status: 502 });
+          }
 
-      const aiData = await aiRes.json();
-      const text =
-        aiData?.candidates?.[0]?.content?.parts?.[0]?.text ??
-        aiData?.candidates?.[0]?.content?.parts?.map((p: { text?: string }) => p.text ?? "").join("") ??
-        "";
-      if (!text) {
-        console.error("Empty Gemini response", JSON.stringify(aiData).slice(0, 600));
-        return json({ error: "Empty AI response" }, { status: 502 });
-      }
+          const aiData = await aiRes.json();
+          const text =
+            aiData?.candidates?.[0]?.content?.parts?.[0]?.text ??
+            aiData?.candidates?.[0]?.content?.parts?.map((p: { text?: string }) => p.text ?? "").join("") ??
+            "";
+          if (!text) {
+            console.error("Empty Gemini response", JSON.stringify(aiData).slice(0, 600));
+            return json({ error: "Empty AI response" }, { status: 502 });
+          }
 
-      let report: Report;
-      try {
-        report = JSON.parse(text);
-      } catch (e) {
-        console.error("Failed to parse Gemini JSON", text.slice(0, 600));
-        return json({ error: "Invalid AI response format" }, { status: 502 });
-      }
+          let report: Report;
+          try {
+            report = JSON.parse(text);
+          } catch (e) {
+            console.error("Failed to parse Gemini JSON", text.slice(0, 600));
+            return json({ error: "Invalid AI response format" }, { status: 502 });
+          }
 
-      // Fire-and-forget emails — never block the report from reaching the user.
-      sendEmails({
-        report,
-        name,
-        email,
-        whatsapp,
-        stage,
-        industry,
-        challenge,
-        revenue,
-        team,
-        goal,
-      }).catch((err) => console.error("Email send failed", err));
+          sendEmails({
+            report,
+            name,
+            email,
+            whatsapp,
+            stage,
+            industry,
+            challenge,
+            revenue,
+            team,
+            goal,
+          }).catch((err) => console.error("Email send failed", err));
 
-      return json({ report });
-    } catch (err) {
-      console.error("Diagnostic route error", err);
-      return json({ error: "Failed to generate report" }, { status: 500 });
-    }
+          return json({ report });
+        } catch (err) {
+          console.error("Diagnostic route error", err);
+          return json({ error: "Failed to generate report" }, { status: 500 });
+        }
+      },
+    },
   },
 });
+
 
 /* ---------------- Email ---------------- */
 
