@@ -24,8 +24,6 @@ import {
   Map as MapIcon,
   Lightbulb,
 } from "lucide-react";
-import { useServerFn } from "@tanstack/react-start";
-import { generateDiagnostic } from "@/lib/diagnostic.functions";
 
 type LucideIcon = ComponentType<{ size?: number | string; color?: string; strokeWidth?: number }>;
 
@@ -207,8 +205,6 @@ function BusinessDiagnostic() {
     }
   }
 
-  const runDiagnostic = useServerFn(generateDiagnostic);
-
   async function submit() {
     setView("loading");
     try {
@@ -216,8 +212,10 @@ function BusinessDiagnostic() {
         answers.industry === "Other" && answers.industryOther.trim()
           ? answers.industryOther.trim()
           : answers.industry;
-      const result = await runDiagnostic({
-        data: {
+      const res = await fetch("/api/diagnostic", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           stage: answers.stage,
           industry: industryFinal,
           challenge: answers.challenge,
@@ -227,12 +225,13 @@ function BusinessDiagnostic() {
           name: answers.name,
           email: answers.email,
           whatsapp: answers.whatsapp,
-        },
+        }),
       });
-      if (!("report" in result) || !result.report) {
-        throw new Error(("error" in result && result.error) || "AI failed");
+      const data = (await res.json()) as { report?: Report; error?: string };
+      if (!res.ok || !data.report) {
+        throw new Error(data.error || "AI failed");
       }
-      setReport(result.report as Report);
+      setReport(data.report);
       setView("results");
     } catch (e) {
       console.error(e);
@@ -664,4 +663,597 @@ function FormSection(props: {
               <button
                 type="button"
                 disabled={!canAdvance}
-                onClick={onSu
+                onClick={onSubmit}
+                style={{
+                  ...primaryBtn,
+                  opacity: canAdvance ? 1 : 0.45,
+                  cursor: canAdvance ? "pointer" : "not-allowed",
+                }}
+              >
+                Generate My Report →
+              </button>
+            ) : (
+              <button
+                type="button"
+                disabled={!canAdvance}
+                onClick={next}
+                style={{
+                  ...primaryBtn,
+                  opacity: canAdvance ? 1 : 0.45,
+                  cursor: canAdvance ? "pointer" : "not-allowed",
+                }}
+              >
+                Next →
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+      <style>{`
+        @keyframes vtecFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+      `}</style>
+    </section>
+  );
+}
+
+function Question({
+  title,
+  subtitle,
+  children,
+}: {
+  title: string;
+  subtitle?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <h2
+        style={{
+          fontFamily: SERIF_STACK,
+          fontWeight: 700,
+          fontSize: "clamp(22px, 3.4vw, 30px)",
+          lineHeight: 1.2,
+          color: "#0A1628",
+          marginBottom: subtitle ? 8 : 22,
+        }}
+      >
+        {title}
+      </h2>
+      {subtitle && (
+        <p style={{ color: "#4B5563", marginBottom: 22, fontSize: 15 }}>{subtitle}</p>
+      )}
+      {children}
+    </div>
+  );
+}
+
+function RadioCards(props: {
+  value: string;
+  onChange: (v: string) => void;
+  options: { value: string; label: string; sub?: string; icon?: LucideIcon }[];
+  columns?: 1 | 2;
+}) {
+  const { value, onChange, options, columns = 1 } = props;
+  return (
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: columns === 2 ? "repeat(auto-fit, minmax(220px, 1fr))" : "1fr",
+        gap: 10,
+      }}
+    >
+      {options.map((o) => {
+        const selected = value === o.value;
+        const Icon = o.icon;
+        return (
+          <button
+            type="button"
+            key={o.value}
+            onClick={() => onChange(o.value)}
+            style={{
+              textAlign: "left",
+              background: selected ? "rgba(0,200,150,0.08)" : "#FFFFFF",
+              border: selected ? `2px solid ${TEAL}` : "2px solid #E5E7EB",
+              borderRadius: 12,
+              padding: "16px 16px",
+              cursor: "pointer",
+              display: "flex",
+              gap: 14,
+              alignItems: "flex-start",
+              transition: "all 180ms ease",
+              color: "#0A1628",
+            }}
+          >
+            {Icon && (
+              <span
+                style={{
+                  display: "grid",
+                  placeItems: "center",
+                  width: 36,
+                  height: 36,
+                  borderRadius: 8,
+                  background: selected ? TEAL : "rgba(0,200,150,0.10)",
+                  color: selected ? "#04221A" : GREEN_BRIGHT,
+                  flexShrink: 0,
+                }}
+              >
+                <Icon size={20} strokeWidth={2} />
+              </span>
+            )}
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 600, fontSize: 15 }}>{o.label}</div>
+              {o.sub && (
+                <div style={{ fontSize: 13, color: "#6B7280", marginTop: 3 }}>{o.sub}</div>
+              )}
+            </div>
+            <div
+              style={{
+                width: 20,
+                height: 20,
+                borderRadius: "50%",
+                border: `2px solid ${selected ? TEAL : "#D1D5DB"}`,
+                background: selected ? TEAL : "transparent",
+                marginTop: 2,
+                flexShrink: 0,
+                display: "grid",
+                placeItems: "center",
+              }}
+            >
+              {selected && (
+                <span
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: "50%",
+                    background: "#FFFFFF",
+                  }}
+                />
+              )}
+            </div>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ---------------- Loading ---------------- */
+
+function Loading() {
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    const id = window.setInterval(() => setI((n) => (n + 1) % LOADING_LINES.length), 1400);
+    return () => window.clearInterval(id);
+  }, []);
+  return (
+    <section style={{ padding: "120px 20px", textAlign: "center" }}>
+      <div
+        style={{
+          width: 84,
+          height: 84,
+          margin: "0 auto 28px",
+          borderRadius: 18,
+          background: NAVY_CARD,
+          border: `2px solid ${TEAL}`,
+          display: "grid",
+          placeItems: "center",
+          fontFamily: SERIF_STACK,
+          fontWeight: 900,
+          color: TEAL,
+          fontSize: 44,
+          animation: "vtecPulse 1.4s ease-in-out infinite",
+        }}
+      >
+        V
+      </div>
+      <div
+        style={{
+          width: 28,
+          height: 28,
+          border: `3px solid rgba(0,200,150,0.25)`,
+          borderTopColor: TEAL,
+          borderRadius: "50%",
+          margin: "0 auto 22px",
+          animation: "vtecSpin 0.9s linear infinite",
+        }}
+      />
+      <p style={{ color: MUTED, fontSize: 16 }}>{LOADING_LINES[i]}</p>
+      <style>{`
+        @keyframes vtecSpin { to { transform: rotate(360deg); } }
+        @keyframes vtecPulse { 0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0,200,150,0.6); } 50% { transform: scale(1.06); box-shadow: 0 0 0 14px rgba(0,200,150,0); } }
+      `}</style>
+    </section>
+  );
+}
+
+/* ---------------- Results ---------------- */
+
+function useCountUp(target: number, duration = 1400) {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    let raf = 0;
+    const start = performance.now();
+    const step = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setN(Math.round(target * eased));
+      if (t < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [target, duration]);
+  return n;
+}
+
+function Confetti() {
+  const pieces = useMemo(
+    () =>
+      Array.from({ length: 28 }).map((_, i) => ({
+        id: i,
+        left: Math.random() * 100,
+        delay: Math.random() * 0.6,
+        dur: 1.6 + Math.random() * 1.2,
+        rot: Math.random() * 360,
+        color: i % 3 === 0 ? TEAL : i % 3 === 1 ? GREEN_BRIGHT : "#A7F3D0",
+        size: 6 + Math.random() * 6,
+      })),
+    [],
+  );
+  return (
+    <div
+      aria-hidden
+      style={{ position: "absolute", inset: 0, pointerEvents: "none", overflow: "hidden" }}
+    >
+      {pieces.map((p) => (
+        <span
+          key={p.id}
+          style={{
+            position: "absolute",
+            left: `${p.left}%`,
+            top: "-10px",
+            width: p.size,
+            height: p.size * 0.4,
+            background: p.color,
+            borderRadius: 1,
+            transform: `rotate(${p.rot}deg)`,
+            animation: `vtecConfetti ${p.dur}s ${p.delay}s ease-out forwards`,
+            opacity: 0.9,
+          }}
+        />
+      ))}
+      <style>{`
+        @keyframes vtecConfetti {
+          to { transform: translateY(420px) rotate(720deg); opacity: 0; }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+function Results({ report, answers }: { report: Report; answers: Answers }) {
+  const score = useCountUp(Math.max(0, Math.min(100, Math.round(report.healthScore))));
+  const printRef = useRef<HTMLDivElement>(null);
+
+  const today = new Date().toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  const industryDisplay =
+    answers.industry === "Other" ? answers.industryOther : answers.industry;
+
+  function downloadPDF() {
+    window.print();
+  }
+  function shareWhatsApp() {
+    const text = encodeURIComponent(
+      `My VTEC Business Diagnostic score: ${report.healthScore}/100. Get yours free at https://vtecgroup.co.ke/business-diagnostic`,
+    );
+    window.open(`https://wa.me/?text=${text}`, "_blank");
+  }
+
+  return (
+    <section style={{ position: "relative", padding: "60px 20px 80px" }}>
+      <Confetti />
+      <div ref={printRef} style={{ maxWidth: 880, margin: "0 auto", position: "relative" }}>
+        {/* Header */}
+        <div style={{ textAlign: "center", marginBottom: 36 }}>
+          <h1
+            style={{
+              fontFamily: SERIF_STACK,
+              fontWeight: 900,
+              fontSize: "clamp(30px, 5vw, 46px)",
+              lineHeight: 1.1,
+              marginBottom: 12,
+            }}
+          >
+            Your VTEC Business Diagnostic Report
+          </h1>
+          <p style={{ color: MUTED, fontSize: 16 }}>
+            Built for {answers.name}'s {industryDisplay} business · {today}
+          </p>
+
+          <div
+            style={{
+              marginTop: 28,
+              display: "inline-flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 10,
+              padding: "22px 36px",
+              borderRadius: 20,
+              background: `linear-gradient(135deg, ${TEAL}, ${GREEN})`,
+              boxShadow: "0 18px 50px rgba(0,200,150,0.25)",
+            }}
+          >
+            <span style={{ fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", opacity: 0.9 }}>
+              Business Health Score
+            </span>
+            <span style={{ fontFamily: SERIF_STACK, fontWeight: 900, fontSize: 64, lineHeight: 1 }}>
+              {score}
+              <span style={{ fontSize: 22, opacity: 0.8 }}> / 100</span>
+            </span>
+          </div>
+        </div>
+
+        <ResultCard icon={ClipboardList} title="Your Business Profile Summary">
+          <p>{report.profileSummary}</p>
+        </ResultCard>
+
+        <ResultCard icon={AlertTriangle} title="Your Critical Gap">
+          <p>{report.criticalGap}</p>
+        </ResultCard>
+
+        <ResultCard icon={Target} title="3 Immediate Action Steps">
+          <ol style={{ paddingLeft: 22, display: "grid", gap: 12 }}>
+            {report.actionSteps.map((s, i) => (
+              <li key={i} style={{ lineHeight: 1.55 }}>
+                {s}
+              </li>
+            ))}
+          </ol>
+        </ResultCard>
+
+        <ResultCard icon={MapIcon} title="90 Day Priority Roadmap">
+          <div style={{ display: "grid", gap: 14 }}>
+            {(["month1", "month2", "month3"] as const).map((k, i) => (
+              <div
+                key={k}
+                style={{
+                  padding: "14px 16px",
+                  background: "rgba(0,200,150,0.06)",
+                  border: `1px solid ${BORDER}`,
+                  borderRadius: 10,
+                }}
+              >
+                <div style={{ color: TEAL, fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 6, fontWeight: 700 }}>
+                  Month {i + 1}
+                </div>
+                <div style={{ lineHeight: 1.55 }}>{report.roadmap[k]}</div>
+              </div>
+            ))}
+          </div>
+        </ResultCard>
+
+        <ResultCard icon={Lightbulb} title="VTEC Recommendation">
+          <div style={{ marginBottom: 10, fontWeight: 700, color: TEAL, fontSize: 18 }}>
+            {report.vtecRecommendation.service}
+          </div>
+          <p style={{ marginBottom: 18 }}>{report.vtecRecommendation.reason}</p>
+          <a
+            href="/#contact"
+            style={{ ...primaryBtn, display: "inline-block", textDecoration: "none" }}
+          >
+            {report.vtecRecommendation.ctaText} →
+          </a>
+        </ResultCard>
+
+        {/* CTA Row */}
+        <div
+          style={{
+            marginTop: 36,
+            display: "flex",
+            gap: 14,
+            flexWrap: "wrap",
+            justifyContent: "center",
+          }}
+        >
+          <a href="/#contact" style={{ ...primaryBtn, textDecoration: "none" }}>
+            Book a Free Strategy Call with VTEC →
+          </a>
+          <button type="button" onClick={downloadPDF} style={outlineBtn}>
+            Download Report as PDF
+          </button>
+        </div>
+        <p style={{ textAlign: "center", color: MUTED, marginTop: 18, fontSize: 14 }}>
+          Share your results:{" "}
+          <button
+            type="button"
+            onClick={shareWhatsApp}
+            style={{
+              background: "transparent",
+              border: "none",
+              color: TEAL,
+              cursor: "pointer",
+              fontSize: 14,
+              textDecoration: "underline",
+              padding: 0,
+            }}
+          >
+            WhatsApp
+          </button>
+        </p>
+      </div>
+      <style>{`
+        @media print {
+          nav, button { display: none !important; }
+          body { background: white !important; color: black !important; }
+        }
+      `}</style>
+    </section>
+  );
+}
+
+function ResultCard({
+  icon: Icon,
+  title,
+  children,
+}: {
+  icon: LucideIcon;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      style={{
+        background: NAVY_CARD,
+        borderRadius: 14,
+        padding: "24px 24px",
+        marginBottom: 18,
+        borderLeft: `4px solid ${TEAL}`,
+        boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
+        lineHeight: 1.6,
+      }}
+    >
+      <h3
+        style={{
+          fontSize: 18,
+          fontWeight: 700,
+          marginBottom: 14,
+          display: "flex",
+          gap: 10,
+          alignItems: "center",
+        }}
+      >
+        <span
+          style={{
+            display: "grid",
+            placeItems: "center",
+            width: 34,
+            height: 34,
+            borderRadius: 8,
+            background: "rgba(0,200,150,0.15)",
+            color: TEAL,
+          }}
+        >
+          <Icon size={18} strokeWidth={2} />
+        </span>
+        {title}
+      </h3>
+      <div style={{ color: "rgba(255,255,255,0.85)" }}>{children}</div>
+    </div>
+  );
+}
+
+/* ---------------- Error ---------------- */
+
+function ErrorBlock({ message, onRetry }: { message: string; onRetry: () => void }) {
+  return (
+    <section style={{ padding: "100px 20px", textAlign: "center" }}>
+      <div
+        style={{
+          maxWidth: 520,
+          margin: "0 auto",
+          background: NAVY_CARD,
+          border: `1px solid ${BORDER}`,
+          borderRadius: 16,
+          padding: 32,
+        }}
+      >
+        <div style={{ display: "grid", placeItems: "center", margin: "0 auto 16px", width: 56, height: 56, borderRadius: 14, background: "rgba(0,200,150,0.12)", color: TEAL }}><AlertTriangle size={28} /></div>
+        <p style={{ marginBottom: 22, lineHeight: 1.6 }}>{message}</p>
+        <button type="button" onClick={onRetry} style={primaryBtn}>
+          Try again
+        </button>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- Footer CTA ---------------- */
+
+function FooterCTA() {
+  return (
+    <section
+      style={{
+        background: NAVY_DEEP,
+        padding: "64px 20px",
+        textAlign: "center",
+        borderTop: `1px solid ${BORDER}`,
+      }}
+    >
+      <div style={{ maxWidth: 700, margin: "0 auto" }}>
+        <h2
+          style={{
+            fontFamily: SERIF_STACK,
+            fontWeight: 700,
+            fontSize: "clamp(26px, 4vw, 38px)",
+            marginBottom: 14,
+          }}
+        >
+          Prefer to talk to a real strategist?
+        </h2>
+        <p style={{ color: MUTED, marginBottom: 28, fontSize: 16, lineHeight: 1.6 }}>
+          VTEC Consultancy Services offers hands on strategy sessions for Kenyan businesses ready to grow.
+        </p>
+        <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
+          <a
+            href="https://wa.me/254116644204"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ ...primaryBtn, textDecoration: "none" }}
+          >
+            Book a Consultation →
+          </a>
+          <a
+            href="/ai-diagnostic-info"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ ...outlineBtn, textDecoration: "none" }}
+          >
+            Learn About Our Services
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- Shared button styles ---------------- */
+
+const primaryBtn: React.CSSProperties = {
+  background: `linear-gradient(135deg, ${TEAL}, ${GREEN_BRIGHT})`,
+  color: "#04221A",
+  border: "none",
+  padding: "14px 26px",
+  borderRadius: 12,
+  fontWeight: 700,
+  fontSize: 15,
+  cursor: "pointer",
+  letterSpacing: 0.3,
+  boxShadow: "0 10px 30px rgba(0,200,150,0.25)",
+};
+
+const outlineBtn: React.CSSProperties = {
+  background: "transparent",
+  color: TEXT,
+  border: `1.5px solid ${TEAL}`,
+  padding: "14px 26px",
+  borderRadius: 12,
+  fontWeight: 600,
+  fontSize: 15,
+  cursor: "pointer",
+};
+
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  padding: "14px 16px",
+  borderRadius: 10,
+  border: "2px solid #E5E7EB",
+  fontSize: 15,
+  color: "#0A1628",
+  background: "#FFFFFF",
+  outline: "none",
+  fontFamily: "inherit",
+};
