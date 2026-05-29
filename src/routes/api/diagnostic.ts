@@ -126,7 +126,6 @@ Return ONLY a JSON object with exactly this shape:
   },
 });
 
-});
 
 /* ---------------- Email ---------------- */
 
