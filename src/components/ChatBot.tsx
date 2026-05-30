@@ -90,12 +90,11 @@ export const ChatBot = () => {
 
   return (
     <>
-      {/* Floating chat button */}
+      {/* VTEC Chat Button - z-index: 30 */}
       <div
-        className="fixed bottom-5 right-5 z-50 flex flex-col items-center gap-3"
-        style={{ pointerEvents: "none" }}
+        className="fixed right-6 z-30 flex flex-col items-center"
+        style={{ bottom: "144px", pointerEvents: "none" }}
       >
-        {/* Floating AI chat button */}
         {!isOpen && (
           <button
             type="button"
@@ -114,10 +113,32 @@ export const ChatBot = () => {
         )}
       </div>
 
+      {/* WhatsApp Button - z-index: 31 */}
+      <a
+        href="https://wa.me/254116644204"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed right-6 z-31 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-2xl transition-transform hover:scale-105"
+        aria-label="Chat on WhatsApp"
+        style={{
+          bottom: "80px",
+          backgroundColor: "#25D366",
+        }}
+      >
+        <svg
+          className="h-6 w-6"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.755-1.653-2.052-.173-.297-.018-.458.13-.606.134-.133.298-.347.447-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a6.963 6.963 0 00-7.145 6.954c0 1.554.419 3.078 1.212 4.424L2.031 21.75l4.638-1.218c1.297.704 2.757 1.076 4.244 1.077h.004c3.876 0 7.03-3.154 7.03-7.03 0-1.876-.728-3.642-2.051-4.965a7.029 7.029 0 00-4.979-2.059z" />
+        </svg>
+      </a>
+
       {/* Chat panel */}
       {isOpen && (
         <div
-          className="fixed z-50 flex flex-col overflow-hidden shadow-2xl
+          className="fixed z-40 flex flex-col overflow-hidden shadow-2xl
             inset-x-0 bottom-0 top-0 w-full rounded-none
             sm:inset-auto sm:bottom-5 sm:right-5 sm:top-auto sm:h-[600px] sm:w-[380px] sm:rounded-2xl"
           style={{ backgroundColor: "#0A1628" }}
