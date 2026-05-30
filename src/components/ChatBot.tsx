@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, type FormEvent } from "react";
-import { Send, X, MessageCircle } from "lucide-react";
+import { Send, X, Sparkles, Brain } from "lucide-react";
 
 type Message = {
   id: string;
@@ -23,11 +23,13 @@ const GREETING: Message = {
 
 export const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
   const [messages, setMessages] = useState<Message[]>([GREETING]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const tooltipTimeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -88,17 +90,54 @@ export const ChatBot = () => {
     void send(input);
   };
 
+  const handleChatButtonClick = () => {
+    setShowTooltip(true);
+    if (tooltipTimeoutRef.current) {
+      clearTimeout(tooltipTimeoutRef.current);
+    }
+    tooltipTimeoutRef.current = setTimeout(() => {
+      setShowTooltip(false);
+      setIsOpen(true);
+    }, 1500);
+  };
+
   return (
     <>
-      {/* VTEC Chat Button - z-index: 30 */}
+      {/* AI Chat Button - z-index: 30 */}
       <div
-        className="fixed right-6 z-30 flex flex-col items-center"
-        style={{ bottom: "144px", pointerEvents: "none" }}
+        className="fixed right-6 z-30 flex items-center gap-3"
+        style={{ bottom: "80px", pointerEvents: "none" }}
       >
+        {/* "Need Help?" Tooltip */}
+        {showTooltip && !isOpen && (
+          <div
+            style={{
+              animation: "fadeInSlide 0.3s ease-out forwards",
+              pointerEvents: "none",
+            }}
+          >
+            <div
+              style={{
+                background: "rgba(0,200,150,0.95)",
+                color: "#0A1628",
+                padding: "8px 12px",
+                borderRadius: "6px",
+                fontSize: "13px",
+                fontWeight: "600",
+                whiteSpace: "nowrap",
+                boxShadow: "0 4px 12px rgba(0,200,150,0.3)",
+              }}
+            >
+              Need Help?
+            </div>
+          </div>
+        )}
+
+        {/* AI Chat Button */}
         {!isOpen && (
           <button
             type="button"
-            onClick={() => setIsOpen(true)}
+            onClick={handleChatButtonClick}
             aria-label="Open VTEC Assistant chat"
             className="flex h-14 w-14 items-center justify-center rounded-full text-white shadow-2xl transition-transform hover:scale-105"
             style={{
@@ -106,9 +145,10 @@ export const ChatBot = () => {
               boxShadow: "0 0 0 0 rgba(0,200,150,0.6)",
               animation: "vtec-pulse 2s infinite",
               pointerEvents: "auto",
+              cursor: "pointer",
             }}
           >
-            <MessageCircle className="h-6 w-6" />
+            <Sparkles className="h-6 w-6" />
           </button>
         )}
       </div>
@@ -121,7 +161,7 @@ export const ChatBot = () => {
         className="fixed right-6 z-31 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-2xl transition-transform hover:scale-105"
         aria-label="Chat on WhatsApp"
         style={{
-          bottom: "80px",
+          bottom: "20px",
           backgroundColor: "#25D366",
         }}
       >
@@ -291,6 +331,17 @@ export const ChatBot = () => {
           0% { box-shadow: 0 0 0 0 rgba(0,200,150,0.6); }
           70% { box-shadow: 0 0 0 16px rgba(0,200,150,0); }
           100% { box-shadow: 0 0 0 0 rgba(0,200,150,0); }
+        }
+        
+        @keyframes fadeInSlide {
+          from {
+            opacity: 0;
+            transform: translateX(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
         }
       `}</style>
     </>
