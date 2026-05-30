@@ -90,12 +90,12 @@ export const ChatBot = () => {
 
   return (
     <>
-      {/* Floating buttons container - stacked vertically */}
+      {/* Floating chat button */}
       <div
         className="fixed bottom-5 right-5 z-50 flex flex-col items-center gap-3"
         style={{ pointerEvents: "none" }}
       >
-        {/* Floating button */}
+        {/* Floating AI chat button */}
         {!isOpen && (
           <button
             type="button"
@@ -112,28 +112,6 @@ export const ChatBot = () => {
             <MessageCircle className="h-6 w-6" />
           </button>
         )}
-
-        {/* WhatsApp button - positioned below chat bubble */}
-        <a
-          href="https://wa.me/254116644204"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex h-14 w-14 items-center justify-center rounded-full text-white shadow-2xl transition-transform hover:scale-105"
-          aria-label="Chat on WhatsApp"
-          style={{
-            backgroundColor: "#25D366",
-            pointerEvents: "auto",
-          }}
-        >
-          <svg
-            className="h-6 w-6"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a9.87 9.87 0 00-9.746 9.798c0 2.719.738 5.379 2.139 7.592l-2.266 6.795 6.975-2.265a9.82 9.82 0 007.433 3.103h.005c5.395 0 9.813-4.417 9.813-9.813 0-2.625-.569-5.196-1.686-7.596-1.117-2.401-2.716-4.56-4.703-6.268-1.987-1.707-4.273-3.01-6.775-3.763-2.502-.754-5.161-1.028-7.793-.82z" />
-          </svg>
-        </a>
       </div>
 
       {/* Chat panel */}
