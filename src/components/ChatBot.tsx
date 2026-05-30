@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, type FormEvent } from "react";
-import { Send, X, Sparkles, Brain } from "lucide-react";
+import { Send, X, Sparkles } from "lucide-react";
 
 type Message = {
   id: string;
@@ -103,10 +103,10 @@ export const ChatBot = () => {
 
   return (
     <>
-      {/* AI Chat Button - z-index: 30 */}
+      {/* AI Chat Button - z-index: 30, bottom: 160px (above sticky banner at 80px) */}
       <div
         className="fixed right-6 z-30 flex items-center gap-3"
-        style={{ bottom: "80px", pointerEvents: "none" }}
+        style={{ bottom: "160px", pointerEvents: "none" }}
       >
         {/* "Need Help?" Tooltip */}
         {showTooltip && !isOpen && (
@@ -153,7 +153,7 @@ export const ChatBot = () => {
         )}
       </div>
 
-      {/* WhatsApp Button - z-index: 31 */}
+      {/* WhatsApp Button - z-index: 31, bottom: 100px */}
       <a
         href="https://wa.me/254116644204"
         target="_blank"
@@ -161,7 +161,7 @@ export const ChatBot = () => {
         className="fixed right-6 z-31 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-2xl transition-transform hover:scale-105"
         aria-label="Chat on WhatsApp"
         style={{
-          bottom: "20px",
+          bottom: "100px",
           backgroundColor: "#25D366",
         }}
       >
