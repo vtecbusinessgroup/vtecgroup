@@ -155,9 +155,10 @@ async function sendEmails(input: {
   if (input.email && /.+@.+\..+/.test(input.email)) {
     tasks.push(
       resendSend(resendKey, {
-        from: "InvestorMind Academy <onboarding@garujoroo.resend.app>",
+        from: "VTEC Business Group <report@vtecgroup.co.ke>",
+        reply_to: "hello@vtecgroup.co.ke",
         to: [input.email],
-        subject: "Your Free Financial Diagnosis – InvestorMind Academy",
+        subject: "Your VTEC Business Diagnostic Report is Ready",
         html: buildReportEmail(input.name, input.report),
       }).catch((err) => console.error("Failed to send user report email", err)),
     );
@@ -165,7 +166,8 @@ async function sendEmails(input: {
 
   tasks.push(
     resendSend(resendKey, {
-      from: "VTEC Diagnostic <onboarding@garujoroo.resend.app>",
+      from: "VTEC Diagnostic <report@vtecgroup.co.ke>",
+      reply_to: "hello@vtecgroup.co.ke",
       to: ["vtecgroup@outlook.com"],
       subject: `New diagnostic lead – ${input.name || "Unknown"}`,
       html: buildLeadEmail(input),
@@ -177,7 +179,7 @@ async function sendEmails(input: {
 
 async function resendSend(
   apiKey: string,
-  payload: { from: string; to: string[]; subject: string; html: string },
+  payload: { from: string; reply_to?: string; to: string[]; subject: string; html: string },
 ) {
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
