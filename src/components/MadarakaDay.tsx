@@ -2,60 +2,34 @@ import { useEffect, useState } from "react";
 
 export function MadarakaDay() {
   const [isVisible, setIsVisible] = useState(false);
-  const [isFadingOut, setIsFadingOut] = useState(false);
   const DISMISS_KEY = "vtec_madaraka_2026_dismissed";
 
   useEffect(() => {
-    // Check if already dismissed
     const isDismissed = localStorage.getItem(DISMISS_KEY) === "true";
     if (isDismissed) return;
-
-    // Check if today is June 1, 2026
     const now = new Date();
-    const isJune1 = now.getMonth() === 5 && now.getDate() === 1;
-    const is2026 = now.getFullYear() === 2026;
-
-    if (!isJune1 || !is2026) return;
-
+    const isJune1 = now.getMonth() === 5 && now.getDate() === 1 && now.getFullYear() === 2026;
+    if (!isJune1) return;
     setIsVisible(true);
-
     // Auto-dismiss after 5 seconds
-    const autoDismissTimer = setTimeout(() => {
-      setIsFadingOut(true);
-      setTimeout(() => {
-        setIsVisible(false);
-        setIsFadingOut(false);
-      }, 600); // Match fade-out animation duration
+    const autoTimer = setTimeout(() => {
+      setIsVisible(false);
     }, 5000);
-
-    // Calculate time until midnight EAT (UTC+3)
-    const nowEAT = new Date(now.getTime() + (3 - now.getTimezoneOffset() / 60) * 60 * 60 * 1000);
-    const midnight = new Date(nowEAT);
+    // Also dismiss at midnight
+    const midnight = new Date();
     midnight.setHours(24, 0, 0, 0);
-
-    const timeUntilMidnight = midnight.getTime() - nowEAT.getTime();
-
     const midnightTimer = setTimeout(() => {
-      setIsFadingOut(true);
-      setTimeout(() => {
-        setIsVisible(false);
-        setIsFadingOut(false);
-      }, 600);
-    }, timeUntilMidnight);
-
+      setIsVisible(false);
+    }, midnight.getTime() - now.getTime());
     return () => {
-      clearTimeout(autoDismissTimer);
+      clearTimeout(autoTimer);
       clearTimeout(midnightTimer);
     };
   }, []);
 
   const handleDismiss = () => {
     localStorage.setItem(DISMISS_KEY, "true");
-    setIsFadingOut(true);
-    setTimeout(() => {
-      setIsVisible(false);
-      setIsFadingOut(false);
-    }, 600);
+    setIsVisible(false);
   };
 
   if (!isVisible) return null;
@@ -79,12 +53,6 @@ export function MadarakaDay() {
           }
         }
 
-        @keyframes fade-out-overlay {
-          to {
-            opacity: 0;
-          }
-        }
-
         .confetti {
           position: fixed;
           width: 10px;
@@ -105,12 +73,6 @@ export function MadarakaDay() {
           justify-content: center;
           z-index: 9999;
           overflow: hidden;
-          opacity: 1;
-          transition: opacity 0.6s ease-out;
-        }
-
-        .madaraka-overlay.fading-out {
-          animation: fade-out-overlay 0.6s ease-out forwards;
         }
 
         .madaraka-content {
@@ -174,7 +136,7 @@ export function MadarakaDay() {
         }
       `}</style>
 
-      <div className={`madaraka-overlay ${isFadingOut ? "fading-out" : ""}`}>
+      <div className="madaraka-overlay">
         <div className="madaraka-content">
           <div className="madaraka-title">Happy Madaraka Day! 🇰🇪</div>
           <div className="madaraka-subtitle">Celebrating 62 Years of Self-Governance</div>
