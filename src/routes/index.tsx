@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -18,17 +19,46 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    fetch("/site.html")
+      .then((r) => r.text())
+      .then((html) => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+
+        // Inject styles
+        doc.querySelectorAll("style, link[rel='stylesheet']").forEach((el) => {
+          document.head.appendChild(el.cloneNode(true));
+        });
+
+        // Set body content
+        container.innerHTML = doc.body.innerHTML;
+
+        // Re-execute scripts
+        container.querySelectorAll("script").forEach((oldScript) => {
+          const newScript = document.createElement("script");
+          if (oldScript.src) {
+            newScript.src = oldScript.src;
+            newScript.async = false;
+          } else {
+            newScript.textContent = oldScript.textContent;
+          }
+          document.body.appendChild(newScript);
+          oldScript.remove();
+        });
+      })
+      .catch(console.error);
+  }, []);
+
   return (
-    <iframe
-      src="/site.html"
-      title="VTEC Business Group"
-      style={{
-        position: "fixed",
-        inset: 0,
-        width: "100%",
-        height: "100%",
-        border: "none",
-      }}
+    <div
+      ref={containerRef}
+      style={{ minHeight: "100vh", width: "100%" }}
     />
   );
 }
