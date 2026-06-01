@@ -103,7 +103,7 @@ Return ONLY a JSON object with exactly this shape:
             return json({ error: "Invalid AI response format" }, { status: 502 });
           }
 
-          sendEmails({
+      await sendEmails({
             report,
             name,
             email,
