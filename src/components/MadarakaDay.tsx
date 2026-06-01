@@ -1,299 +1,196 @@
-'use client';
+import { useEffect, useState } from "react";
 
-import { useEffect, useState } from 'react';
-
-export const MadarakaDay = () => {
+export function MadarakaDay() {
   const [isVisible, setIsVisible] = useState(false);
-  const [isClient, setIsClient] = useState(false);
+  const DISMISS_KEY = "vtec_madaraka_2026_dismissed";
 
   useEffect(() => {
-    setIsClient(true);
+    // Check if already dismissed
+    const isDismissed = localStorage.getItem(DISMISS_KEY) === "true";
+    if (isDismissed) return;
 
-    // Check if past midnight EAT (UTC+3)
+    // Check if today is June 1, 2026
     const now = new Date();
-    const eatTime = new Date(now.toLocaleString('en-US', { timeZone: 'Africa/Nairobi' }));
+    const isJune1 = now.getMonth() === 5 && now.getDate() === 1;
+    const is2026 = now.getFullYear() === 2026;
 
-    // Create midnight EAT timestamp for June 1, 2026
-    const midnightEAT = new Date('2026-06-02T00:00:00+03:00');
+    if (!isJune1 || !is2026) return;
 
-    // If past midnight, don't show
-    if (eatTime > midnightEAT) {
-      setIsVisible(false);
-      return;
-    }
-
-    // Check localStorage for dismissal
-    const isDismissed = localStorage.getItem('vtec_madaraka_2026_dismissed');
-    if (isDismissed) {
-      setIsVisible(false);
-      return;
-    }
-
-    // Show the overlay
     setIsVisible(true);
 
-    // Calculate time until midnight and auto-disappear
-    const timeUntilMidnight = midnightEAT.getTime() - eatTime.getTime();
-    const timeout = setTimeout(() => {
+    // Calculate time until midnight EAT (UTC+3)
+    const nowEAT = new Date(now.getTime() + (3 - now.getTimezoneOffset() / 60) * 60 * 60 * 1000);
+    const midnight = new Date(nowEAT);
+    midnight.setHours(24, 0, 0, 0);
+
+    const timeUntilMidnight = midnight.getTime() - nowEAT.getTime();
+
+    const timer = setTimeout(() => {
       setIsVisible(false);
     }, timeUntilMidnight);
 
-    return () => clearTimeout(timeout);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleDismiss = () => {
-    localStorage.setItem('vtec_madaraka_2026_dismissed', 'true');
+    localStorage.setItem(DISMISS_KEY, "true");
     setIsVisible(false);
   };
 
-  if (!isClient || !isVisible) return null;
+  if (!isVisible) return null;
 
   return (
     <>
       <style>{`
-        @keyframes confetti-fall {
-          0% {
-            transform: translateY(-10px) translateX(0);
-            opacity: 1;
-          }
-          100% {
-            transform: translateY(100vh) translateX(var(--tx));
+        @keyframes fall {
+          to {
+            transform: translateY(100vh) rotate(360deg);
             opacity: 0;
           }
         }
 
         @keyframes pulse-glow {
           0%, 100% {
-            filter: drop-shadow(0 0 8px rgba(0, 102, 0, 0.6));
+            transform: scale(1);
           }
           50% {
-            filter: drop-shadow(0 0 20px rgba(187, 0, 0, 0.8));
+            transform: scale(1.05);
           }
-        }
-
-        @keyframes fade-in-slide-up {
-          0% {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes fade-out {
-          0% {
-            opacity: 1;
-          }
-          100% {
-            opacity: 0;
-          }
-        }
-
-        .madaraka-overlay {
-          position: fixed;
-          inset: 0;
-          background: linear-gradient(135deg, #0A1628 0%, #0F1F35 100%);
-          z-index: 9999;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          padding: 20px;
-          animation: fade-in-slide-up 0.8s ease-out;
-        }
-
-        .madaraka-overlay.closing {
-          animation: fade-out 0.6s ease-out forwards;
         }
 
         .confetti {
           position: fixed;
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
+          width: 10px;
+          height: 10px;
           pointer-events: none;
-          z-index: 9998;
+          animation: fall linear forwards;
         }
 
-        .confetti-red {
-          background: #BB0000;
-          animation: confetti-fall linear forwards;
-        }
-
-        .confetti-green {
-          background: #006600;
-          animation: confetti-fall linear forwards;
-        }
-
-        .confetti-white {
-          background: #FFFFFF;
-          animation: confetti-fall linear forwards;
+        .madaraka-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(135deg, rgba(187, 0, 0, 0.95) 0%, rgba(0, 102, 0, 0.95) 50%, rgba(10, 22, 40, 0.95) 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 9999;
+          overflow: hidden;
         }
 
         .madaraka-content {
-          text-align: center;
-          max-width: 600px;
           position: relative;
-          z-index: 10000;
-          animation: fade-in-slide-up 1s ease-out 0.2s backwards;
-        }
-
-        .madaraka-emoji {
-          font-size: 80px;
-          margin: 20px 0;
+          z-index: 10;
+          text-align: center;
+          color: white;
+          max-width: 600px;
+          padding: 40px 20px;
           animation: pulse-glow 2s ease-in-out infinite;
-          display: inline-block;
         }
 
-        .madaraka-headline {
-          font-size: 48px;
-          font-weight: 800;
-          color: #FFFFFF;
-          margin: 20px 0 10px;
-          letter-spacing: -1px;
+        .madaraka-title {
+          font-size: 3rem;
+          font-weight: bold;
+          margin-bottom: 16px;
+          text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
         }
 
-        .madaraka-subheading {
-          font-size: 20px;
-          color: #BB0000;
+        .madaraka-subtitle {
+          font-size: 1.5rem;
+          margin-bottom: 24px;
           font-weight: 600;
-          margin-bottom: 30px;
+          text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
         }
 
         .madaraka-letter {
-          background: rgba(255, 255, 255, 0.05);
-          border-left: 4px solid #BB0000;
+          background: rgba(255, 255, 255, 0.1);
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          border-radius: 12px;
           padding: 24px;
-          margin: 30px 0;
-          border-radius: 4px;
+          margin: 24px 0;
+          font-size: 1rem;
+          line-height: 1.6;
           text-align: left;
-          font-size: 16px;
-          line-height: 1.8;
-          color: #E0E0E0;
-          font-weight: 300;
-        }
-
-        .madaraka-letter p {
-          margin: 12px 0;
-        }
-
-        .madaraka-signature {
-          font-weight: 600;
-          color: #006600;
-          margin-top: 16px;
+          backdrop-filter: blur(10px);
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .madaraka-button {
-          background: linear-gradient(135deg, #BB0000 0%, #880000 100%);
-          color: #FFFFFF;
+          background: white;
+          color: #BB0000;
           border: none;
           padding: 14px 32px;
-          font-size: 16px;
-          font-weight: 600;
-          border-radius: 6px;
+          font-size: 1.1rem;
+          font-weight: bold;
+          border-radius: 8px;
           cursor: pointer;
-          margin-top: 20px;
           transition: all 0.3s ease;
-          box-shadow: 0 4px 16px rgba(187, 0, 0, 0.3);
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+          margin-top: 24px;
         }
 
         .madaraka-button:hover {
-          background: linear-gradient(135deg, #DD0000 0%, #BB0000 100%);
-          box-shadow: 0 6px 24px rgba(187, 0, 0, 0.5);
-          transform: translateY(-2px);
+          transform: scale(1.05);
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
         }
 
         .madaraka-button:active {
-          transform: translateY(0);
-        }
-
-        .madaraka-countdown {
-          margin-top: 20px;
-          font-size: 14px;
-          color: #006600;
-          font-weight: 500;
-        }
-
-        @media (max-width: 768px) {
-          .madaraka-headline {
-            font-size: 36px;
-          }
-
-          .madaraka-subheading {
-            font-size: 16px;
-          }
-
-          .madaraka-emoji {
-            font-size: 60px;
-          }
-
-          .madaraka-letter {
-            font-size: 14px;
-            padding: 16px;
-          }
-
-          .madaraka-button {
-            padding: 12px 24px;
-            font-size: 14px;
-          }
+          transform: scale(0.98);
         }
       `}</style>
 
       <div className="madaraka-overlay">
-        {/* Confetti Generator */}
-        {[...Array(50)].map((_, i) => {
-          const colors = ['red', 'green', 'white'];
-          const color = colors[Math.floor(Math.random() * colors.length)];
-          const left = Math.random() * 100;
-          const delay = Math.random() * 0.5;
-          const duration = 3 + Math.random() * 2;
-          const tx = (Math.random() - 0.5) * 100;
-
-          return (
-            <div
-              key={i}
-              className={`confetti confetti-${color}`}
-              style={{
-                left: `${left}%`,
-                top: '-10px',
-                animation: `confetti-fall ${duration}s linear ${delay}s infinite`,
-                '--tx': `${tx}px`,
-              } as React.CSSProperties}
-            />
-          );
-        })}
-
-        {/* Content */}
         <div className="madaraka-content">
-          <div className="madaraka-emoji">🇰🇪</div>
-
-          <h1 className="madaraka-headline">Happy Madaraka Day! 🎉</h1>
-
-          <p className="madaraka-subheading">
-            June 1st — Celebrating 62 Years of Self-Governance
-          </p>
+          <div className="madaraka-title">Happy Madaraka Day! 🇰🇪</div>
+          <div className="madaraka-subtitle">Celebrating 62 Years of Self-Governance</div>
 
           <div className="madaraka-letter">
-            <p>Dear Valued Client,</p>
+            <p style={{ marginBottom: "12px", fontWeight: "600" }}>Dear Valued Partner,</p>
             <p>
-              On this Madaraka Day, we celebrate not just Kenya's freedom — but yours. The
-              freedom to build, to grow, and to take control of your financial future. At VTEC
-              Business Group, we are proud to walk this journey with you. Here's to building a
-              wealthier, freer Kenya — one venture at a time.
+              Today, we celebrate Madaraka Day—a momentous occasion marking Kenya's independence and self-governance. 
+              At VTEC Business Group, we are proud to be part of Kenya's entrepreneurial journey, empowering businesses 
+              to thrive and reach their full potential.
             </p>
-            <p>Happy Madaraka Day!</p>
-            <p className="madaraka-signature">— The VTEC Team</p>
+            <p style={{ marginTop: "12px" }}>
+              As we honor this day of freedom and progress, we commit to supporting Kenya's business community 
+              with innovative solutions and expert guidance.
+            </p>
+            <p style={{ marginTop: "12px", fontWeight: "600" }}>With pride and purpose,</p>
+            <p style={{ marginTop: "8px" }}>The VTEC Business Group Team 🇰🇪</p>
           </div>
 
-          <button onClick={handleDismiss} className="madaraka-button">
+          <button className="madaraka-button" onClick={handleDismiss}>
             Celebrate with Us →
           </button>
-
-          <div className="madaraka-countdown">⏰ This message disappears at midnight</div>
         </div>
       </div>
+
+      <ConfettiGenerator />
     </>
   );
-};
+}
+
+function ConfettiGenerator() {
+  useEffect(() => {
+    const colors = ["#BB0000", "#006600", "#0A1628"];
+
+    const createConfetti = () => {
+      const confetti = document.createElement("div");
+      confetti.className = "confetti";
+      confetti.style.left = Math.random() * 100 + "%";
+      confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      confetti.style.animationDuration = (Math.random() * 3 + 2) + "s";
+      confetti.style.animationDelay = Math.random() * 0.5 + "s";
+      document.body.appendChild(confetti);
+
+      setTimeout(() => confetti.remove(), 5000);
+    };
+
+    const interval = setInterval(createConfetti, 100);
+    return () => clearInterval(interval);
+  }, []);
+
+  return null;
+}
