@@ -10,6 +10,7 @@ import {
 
 import appCss from "../styles.css?url";
 import { ChatBot } from "@/components/ChatBot";
+import { MadarakaDay } from "@/components/MadarakaDay";
 
 function NotFoundComponent() {
   return (
@@ -104,6 +105,12 @@ function RootShell({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <meta httpEquiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-src 'self';" />
+        <meta httpEquiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains; preload" />
+        <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
+        <meta httpEquiv="X-Frame-Options" content="SAMEORIGIN" />
+        <meta httpEquiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+        <meta httpEquiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()" />
       </head>
       <body>
         {children}
@@ -118,6 +125,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <MadarakaDay />
       <Outlet />
       <ChatBot />
     </QueryClientProvider>
