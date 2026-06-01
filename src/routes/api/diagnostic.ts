@@ -17,27 +17,23 @@ const SYSTEM_INSTRUCTION =
   "actionable diagnosis with 3 to 5 tailored recommendations. Keep the tone professional but " +
   "accessible. Be specific to Kenya's economic context (NSE, SACCOs, M-Pesa, Nairobi market). " +
   "End with a call to action encouraging the user to explore InvestorMind Academy's e-books or courses.";
-
 export const Route = createFileRoute("/api/diagnostic")({
   server: {
     handlers: {
       POST: async ({ request }) => {
         try {
           const body = (await request.json()) as Record<string, string>;
-
-          // Sanitize and limit input lengths to prevent abuse
-          const sanitize = (val: string, max = 200) =>
-            String(val ?? "").slice(0, max).trim();
-
-          const stage = sanitize(body.stage);
-          const industry = sanitize(body.industry);
-          const challenge = sanitize(body.challenge, 500);
-          const revenue = sanitize(body.revenue);
-          const team = sanitize(body.team);
-          const goal = sanitize(body.goal, 500);
-          const name = sanitize(body.name);
-          const email = sanitize(body.email);
-          const whatsapp = sanitize(body.whatsapp, 20);
+          const {
+            stage = "",
+            industry = "",
+            challenge = "",
+            revenue = "",
+            team = "",
+            goal = "",
+            name = "",
+            email = "",
+            whatsapp = "",
+          } = body;
 
           const geminiKey = process.env.GEMINI_API_KEY;
           if (!geminiKey) {
@@ -91,11 +87,8 @@ Return ONLY a JSON object with exactly this shape:
           const aiData = await aiRes.json();
           const text =
             aiData?.candidates?.[0]?.content?.parts?.[0]?.text ??
-            aiData?.candidates?.[0]?.content?.parts
-              ?.map((p: { text?: string }) => p.text ?? "")
-              .join("") ??
+            aiData?.candidates?.[0]?.content?.parts?.map((p: { text?: string }) => p.text ?? "").join("") ??
             "";
-
           if (!text) {
             console.error("Empty Gemini response", JSON.stringify(aiData).slice(0, 600));
             return json({ error: "Empty AI response" }, { status: 502 });
@@ -109,8 +102,7 @@ Return ONLY a JSON object with exactly this shape:
             return json({ error: "Invalid AI response format" }, { status: 502 });
           }
 
-          // Fire and forget — don't block response waiting for emails
-          sendEmails({
+          await sendEmails({
             report,
             name,
             email,
@@ -132,6 +124,7 @@ Return ONLY a JSON object with exactly this shape:
     },
   },
 });
+
 
 /* ---------------- Email ---------------- */
 
@@ -185,13 +178,7 @@ async function sendEmails(input: {
 
 async function resendSend(
   apiKey: string,
-  payload: {
-    from: string;
-    reply_to?: string;
-    to: string[];
-    subject: string;
-    html: string;
-  },
+  payload: { from: string; reply_to?: string; to: string[]; subject: string; html: string },
 ) {
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -217,9 +204,7 @@ function esc(s: string): string {
 }
 
 function buildReportEmail(name: string, r: Report): string {
-  const steps = r.actionSteps
-    .map((s) => `<li style="margin:8px 0;">${esc(s)}</li>`)
-    .join("");
+  const steps = r.actionSteps.map((s, i) => `<li style="margin:8px 0;">${esc(s)}</li>`).join("");
   return `<!doctype html><html><body style="margin:0;padding:0;background:#f4f6fa;font-family:Arial,Helvetica,sans-serif;color:#0A1628;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f6fa;padding:24px 12px;">
     <tr><td align="center">
@@ -231,25 +216,32 @@ function buildReportEmail(name: string, r: Report): string {
         <tr><td style="padding:28px;">
           <p style="margin:0 0 14px;font-size:16px;">Hi ${esc(name) || "there"},</p>
           <p style="margin:0 0 22px;color:#4B5563;line-height:1.55;">Below is your personalised diagnosis from our advisor at InvestorMind Academy by VTEC Business Group.</p>
+
           <div style="background:${NAVY};color:#fff;padding:18px 22px;border-radius:12px;text-align:center;margin-bottom:22px;">
             <div style="font-size:12px;letter-spacing:1.5px;color:${TEAL};font-weight:700;">BUSINESS HEALTH SCORE</div>
             <div style="font-size:42px;font-weight:800;margin-top:4px;">${r.healthScore}<span style="font-size:18px;opacity:.75;"> / 100</span></div>
           </div>
+
           <h2 style="font-size:17px;margin:18px 0 8px;">Profile Summary</h2>
           <p style="margin:0 0 18px;color:#374151;line-height:1.6;">${esc(r.profileSummary)}</p>
+
           <h2 style="font-size:17px;margin:18px 0 8px;">Critical Gap</h2>
           <p style="margin:0 0 18px;color:#374151;line-height:1.6;">${esc(r.criticalGap)}</p>
+
           <h2 style="font-size:17px;margin:18px 0 8px;">3 Immediate Action Steps</h2>
           <ol style="margin:0 0 18px;padding-left:20px;color:#374151;line-height:1.55;">${steps}</ol>
+
           <h2 style="font-size:17px;margin:18px 0 8px;">90 Day Roadmap</h2>
           <div style="margin-bottom:18px;">
             <p style="margin:6px 0;color:#374151;"><strong style="color:${TEAL};">Month 1:</strong> ${esc(r.roadmap.month1)}</p>
             <p style="margin:6px 0;color:#374151;"><strong style="color:${TEAL};">Month 2:</strong> ${esc(r.roadmap.month2)}</p>
             <p style="margin:6px 0;color:#374151;"><strong style="color:${TEAL};">Month 3:</strong> ${esc(r.roadmap.month3)}</p>
           </div>
+
           <h2 style="font-size:17px;margin:18px 0 8px;">Our Recommendation</h2>
           <p style="margin:0 0 6px;color:${NAVY};font-weight:700;">${esc(r.vtecRecommendation.service)}</p>
           <p style="margin:0 0 22px;color:#374151;line-height:1.6;">${esc(r.vtecRecommendation.reason)}</p>
+
           <div style="text-align:center;margin:28px 0 8px;">
             <a href="https://vtecgroup.co.ke" style="display:inline-block;background:${TEAL};color:#04221A;text-decoration:none;font-weight:700;padding:14px 26px;border-radius:10px;">Explore InvestorMind Academy</a>
           </div>
