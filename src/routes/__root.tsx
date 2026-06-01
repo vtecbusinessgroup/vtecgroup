@@ -68,6 +68,8 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
+const OG_IMAGE = "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5a4a1678-22ea-45b4-841b-fb7e093f603a/id-preview-ffec7e30--eea3d331-2b93-4f5f-b70f-8802ca7b923d.lovable.app-1779745936491.png";
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
@@ -79,10 +81,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "VTEC Business Group" },
       { property: "og:description", content: "Publish Your Site uploads website files to a web server." },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: OG_IMAGE },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "VTEC Business Group" },
       { name: "twitter:description", content: "Publish Your Site uploads website files to a web server." },
+      { name: "twitter:image", content: OG_IMAGE },
     ],
     links: [
       {
