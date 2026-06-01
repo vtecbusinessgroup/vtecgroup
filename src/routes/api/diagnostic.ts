@@ -17,6 +17,7 @@ const SYSTEM_INSTRUCTION =
   "actionable diagnosis with 3 to 5 tailored recommendations. Keep the tone professional but " +
   "accessible. Be specific to Kenya's economic context (NSE, SACCOs, M-Pesa, Nairobi market). " +
   "End with a call to action encouraging the user to explore InvestorMind Academy's e-books or courses.";
+
 export const Route = createFileRoute("/api/diagnostic")({
   server: {
     handlers: {
@@ -89,6 +90,7 @@ Return ONLY a JSON object with exactly this shape:
             aiData?.candidates?.[0]?.content?.parts?.[0]?.text ??
             aiData?.candidates?.[0]?.content?.parts?.map((p: { text?: string }) => p.text ?? "").join("") ??
             "";
+
           if (!text) {
             console.error("Empty Gemini response", JSON.stringify(aiData).slice(0, 600));
             return json({ error: "Empty AI response" }, { status: 502 });
@@ -124,7 +126,6 @@ Return ONLY a JSON object with exactly this shape:
     },
   },
 });
-
 
 /* ---------------- Email ---------------- */
 
