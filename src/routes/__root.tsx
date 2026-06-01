@@ -10,7 +10,6 @@ import {
 
 import appCss from "../styles.css?url";
 import { ChatBot } from "@/components/ChatBot";
-import { MadarakaDay } from "@/components/MadarakaDay";
 
 function NotFoundComponent() {
   return (
@@ -84,8 +83,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "VTEC Business Group" },
       { name: "twitter:description", content: "Publish Your Site uploads website files to a web server." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5a4a1678-22ea-45b4-841b-fb7e093f603a/id-preview-ffec7e30--eea3d331-2b93-4f5f-b70f-8802ca7b923d.lovable.a[...]
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5a4a1678-22ea-45b4-841b-fb7e093f603a/id-preview-ffec7e30--eea3d331-2b93-4f5f-b70f-8802ca7b923d.lovable.[...]
     ],
     links: [
       {
@@ -105,7 +102,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
-        <meta httpEquiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font[...]
+        <meta httpEquiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-src 'self';" />
         <meta httpEquiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains; preload" />
         <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
         <meta httpEquiv="X-Frame-Options" content="SAMEORIGIN" />
@@ -125,7 +122,6 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <MadarakaDay />
       <Outlet />
       <ChatBot />
     </QueryClientProvider>
