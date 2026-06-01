@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 
 const json = (data: unknown, init?: ResponseInit) => Response.json(data, init);
 
-
 type Report = {
   healthScore: number;
   profileSummary: string;
@@ -67,7 +66,7 @@ Return ONLY a JSON object with exactly this shape:
 }`;
 
           const aiRes = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -103,7 +102,7 @@ Return ONLY a JSON object with exactly this shape:
             return json({ error: "Invalid AI response format" }, { status: 502 });
           }
 
-      await sendEmails({
+          await sendEmails({
             report,
             name,
             email,
