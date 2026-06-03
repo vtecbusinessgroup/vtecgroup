@@ -33,8 +33,8 @@ export const ChatBot = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const tooltipTimeoutRef = useRef<NodeJS.Timeout>();
 
-  // Hide ChatBot on the splash page (home route with iframe)
-  if (location.pathname === "/") {
+  // Show ChatBot only on the homepage (/)
+  if (location.pathname !== "/") {
     return null;
   }
 
