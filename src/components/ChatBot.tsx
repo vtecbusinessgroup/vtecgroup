@@ -27,7 +27,6 @@ export const ChatBot = () => {
   const [messages, setMessages] = useState<Message[]>([GREETING]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [splashDone, setSplashDone] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const tooltipTimeoutRef = useRef<NodeJS.Timeout>();
@@ -39,12 +38,6 @@ export const ChatBot = () => {
   useEffect(() => {
     if (isOpen) inputRef.current?.focus();
   }, [isOpen]);
-
-  // Delay showing buttons until splash screen has passed
-  useEffect(() => {
-    const timer = setTimeout(() => setSplashDone(true), 3000);
-    return () => clearTimeout(timer);
-  }, []);
 
   const send = async (text: string) => {
     const trimmed = text.trim();
@@ -108,14 +101,12 @@ export const ChatBot = () => {
     }, 1500);
   };
 
-  if (!splashDone) return null;
-
   return (
     <>
-      {/* AI Chat Button - z-index: 30, bottom: 90px (positioned at bottom) */}
+      {/* AI Chat Button - z-index: 30, bottom: 160px (above sticky banner at 80px) */}
       <div
         className="fixed right-6 z-30 flex items-center gap-3"
-        style={{ bottom: "90px", pointerEvents: "none" }}
+        style={{ bottom: "160px", pointerEvents: "none" }}
       >
         {/* "Need Help?" Tooltip */}
         {showTooltip && !isOpen && (
@@ -162,7 +153,7 @@ export const ChatBot = () => {
         )}
       </div>
 
-      {/* WhatsApp Button - z-index: 31, bottom: 24px */}
+      {/* WhatsApp Button - z-index: 31, bottom: 100px */}
       <a
         href="https://wa.me/254116644204"
         target="_blank"
@@ -170,7 +161,7 @@ export const ChatBot = () => {
         className="fixed right-6 z-31 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-2xl transition-transform hover:scale-105"
         aria-label="Chat on WhatsApp"
         style={{
-          bottom: "24px",
+          bottom: "100px",
           backgroundColor: "#25D366",
         }}
       >
