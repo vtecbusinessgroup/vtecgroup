@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, type FormEvent } from "react";
 import { Send, X, Sparkles } from "lucide-react";
+import { useLocation } from "@tanstack/react-router";
 
 type Message = {
   id: string;
@@ -22,6 +23,7 @@ const GREETING: Message = {
 };
 
 export const ChatBot = () => {
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [messages, setMessages] = useState<Message[]>([GREETING]);
@@ -30,6 +32,11 @@ export const ChatBot = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const tooltipTimeoutRef = useRef<NodeJS.Timeout>();
+
+  // Hide ChatBot on the splash page (home route with iframe)
+  if (location.pathname === "/") {
+    return null;
+  }
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
