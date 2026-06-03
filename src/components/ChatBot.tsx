@@ -27,6 +27,7 @@ export const ChatBot = () => {
   const [messages, setMessages] = useState<Message[]>([GREETING]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [splashDone, setSplashDone] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const tooltipTimeoutRef = useRef<NodeJS.Timeout>();
@@ -38,6 +39,12 @@ export const ChatBot = () => {
   useEffect(() => {
     if (isOpen) inputRef.current?.focus();
   }, [isOpen]);
+
+  // Delay showing buttons until splash screen has passed
+  useEffect(() => {
+    const timer = setTimeout(() => setSplashDone(true), 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const send = async (text: string) => {
     const trimmed = text.trim();
@@ -101,12 +108,14 @@ export const ChatBot = () => {
     }, 1500);
   };
 
+  if (!splashDone) return null;
+
   return (
     <>
-      {/* AI Chat Button - z-index: 30, bottom: 160px (above sticky banner at 80px) */}
+      {/* AI Chat Button - z-index: 30, bottom: 90px (positioned at bottom) */}
       <div
         className="fixed right-6 z-30 flex items-center gap-3"
-        style={{ bottom: "160px", pointerEvents: "none" }}
+        style={{ bottom: "90px", pointerEvents: "none" }}
       >
         {/* "Need Help?" Tooltip */}
         {showTooltip && !isOpen && (
@@ -153,7 +162,7 @@ export const ChatBot = () => {
         )}
       </div>
 
-      {/* WhatsApp Button - z-index: 31, bottom: 100px */}
+      {/* WhatsApp Button - z-index: 31, bottom: 24px */}
       <a
         href="https://wa.me/254116644204"
         target="_blank"
@@ -161,7 +170,7 @@ export const ChatBot = () => {
         className="fixed right-6 z-31 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-2xl transition-transform hover:scale-105"
         aria-label="Chat on WhatsApp"
         style={{
-          bottom: "100px",
+          bottom: "24px",
           backgroundColor: "#25D366",
         }}
       >
@@ -171,7 +180,7 @@ export const ChatBot = () => {
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.755-1.653-2.052-.173-.297-.018-.458.13-.606.134-.133.298-.347.447-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a6.963 6.963 0 00-7.145 6.954c0 1.554.419 3.078 1.212 4.424L2.031 21.75l4.638-1.218c1.297.704 2.757 1.076 4.244 1.077h.004c3.876 0 7.03-3.154 7.03-7.03 0-1.876-.728-3.642-2.051-4.965a7.029 7.029 0 00-4.979-2.059z" />
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.779-1.653-2.076-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.694.626.712.228 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a9.87 9.87 0 00-5.031 1.378l-.361-.176c-1.745-.848-2.951-.833-4.105-.017-1.154.816-1.86 2.12-1.86 3.654 0 2.858 2.006 5.644 5.271 7.257.822.395 1.585.685 2.255.884l.671.041c1.165 0 2.295-.315 3.205-.924 1.42-.959 2.14-2.379 2.14-3.961 0-1.583-.72-3.002-2.14-3.96-.91-.609-2.04-.924-3.205-.924z" />
         </svg>
       </a>
 
