@@ -4,10 +4,27 @@ const json = (data: unknown, init?: ResponseInit) => Response.json(data, init);
 
 type Report = {
   healthScore: number;
+  categoryScores: {
+    financial: number;
+    operations: number;
+    marketing: number;
+    team: number;
+    strategy: number;
+  };
   profileSummary: string;
   criticalGap: string;
-  actionSteps: string[];
-  roadmap: { month1: string; month2: string; month3: string };
+  strengths: string[];
+  weaknesses: string[];
+  opportunities: string[];
+  actionSteps: { step: string; priority: "high" | "medium" | "low"; timeframe: "week" | "month" | "quarter" }[];
+  roadmap: {
+    month1: { focus: string; milestones: string[]; kpi: string };
+    month2: { focus: string; milestones: string[]; kpi: string };
+    month3: { focus: string; milestones: string[]; kpi: string };
+  };
+  revenueProjection: { current: number; month3: number; month6: number; month12: number };
+  industryBenchmark: number;
+  riskLevel: "low" | "medium" | "high";
   vtecRecommendation: { service: string; reason: string; ctaText: string };
 };
 
