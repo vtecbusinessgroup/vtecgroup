@@ -1420,6 +1420,58 @@ function ResultCard({
 
 /* ---------------- Error ---------------- */
 
+function ComparisonBar({ label, value, color }: { label: string; value: number; color: string }) {
+  return (
+    <div style={{ marginBottom: 8 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: MUTED, marginBottom: 4 }}>
+        <span>{label}</span>
+        <span style={{ color: TEXT, fontWeight: 700 }}>{value}</span>
+      </div>
+      <div style={{ width: "100%", height: 8, background: NAVY_DEEP, borderRadius: 999, overflow: "hidden" }}>
+        <div style={{ width: `${value}%`, height: "100%", background: color, transition: "width 600ms ease" }} />
+      </div>
+    </div>
+  );
+}
+
+function SwotBox({
+  emoji,
+  title,
+  color,
+  items,
+  text,
+}: {
+  emoji: string;
+  title: string;
+  color: string;
+  items?: string[];
+  text?: string;
+}) {
+  return (
+    <div
+      style={{
+        background: NAVY_DEEP,
+        borderRadius: 10,
+        padding: "14px 16px",
+        borderLeft: `4px solid ${color}`,
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, color, fontWeight: 800, fontSize: 14, letterSpacing: 0.5, textTransform: "uppercase" }}>
+        <span style={{ fontSize: 18 }}>{emoji}</span> {title}
+      </div>
+      {items ? (
+        <ul style={{ paddingLeft: 18, margin: 0, lineHeight: 1.5, color: "rgba(255,255,255,0.85)", fontSize: 14 }}>
+          {items.map((it, i) => (
+            <li key={i} style={{ marginBottom: 4 }}>{it}</li>
+          ))}
+        </ul>
+      ) : (
+        <p style={{ margin: 0, lineHeight: 1.55, color: "rgba(255,255,255,0.85)", fontSize: 14 }}>{text}</p>
+      )}
+    </div>
+  );
+}
+
 function ErrorBlock({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
     <section style={{ padding: "100px 20px", textAlign: "center" }}>
