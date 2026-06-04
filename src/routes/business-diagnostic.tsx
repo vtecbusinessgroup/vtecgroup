@@ -63,12 +63,33 @@ type Answers = {
   optIn: boolean;
 };
 
+type ActionStep = {
+  step: string;
+  priority: "high" | "medium" | "low";
+  timeframe: "week" | "month" | "quarter";
+};
+
+type RoadmapMonth = { focus: string; milestones: string[]; kpi: string };
+
 type Report = {
   healthScore: number;
+  categoryScores: {
+    financial: number;
+    operations: number;
+    marketing: number;
+    team: number;
+    strategy: number;
+  };
   profileSummary: string;
   criticalGap: string;
-  actionSteps: string[];
-  roadmap: { month1: string; month2: string; month3: string };
+  strengths: string[];
+  weaknesses: string[];
+  opportunities: string[];
+  actionSteps: ActionStep[];
+  roadmap: { month1: RoadmapMonth; month2: RoadmapMonth; month3: RoadmapMonth };
+  revenueProjection: { current: number; month3: number; month6: number; month12: number };
+  industryBenchmark: number;
+  riskLevel: "low" | "medium" | "high";
   vtecRecommendation: { service: string; reason: string; ctaText: string };
 };
 
