@@ -18,12 +18,23 @@ import {
   Users,
   Banknote,
   HelpCircle,
-  ClipboardList,
   AlertTriangle,
-  Target,
-  Map as MapIcon,
   Lightbulb,
+  Clock,
+  ShieldAlert,
 } from "lucide-react";
+import {
+  RadarChart,
+  Radar,
+  PolarGrid,
+  PolarAngleAxis,
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+} from "recharts";
 
 type LucideIcon = ComponentType<{ size?: number | string; color?: string; strokeWidth?: number }>;
 
@@ -63,12 +74,33 @@ type Answers = {
   optIn: boolean;
 };
 
+type ActionStep = {
+  step: string;
+  priority: "high" | "medium" | "low";
+  timeframe: "week" | "month" | "quarter";
+};
+
+type RoadmapMonth = { focus: string; milestones: string[]; kpi: string };
+
 type Report = {
   healthScore: number;
+  categoryScores: {
+    financial: number;
+    operations: number;
+    marketing: number;
+    team: number;
+    strategy: number;
+  };
   profileSummary: string;
   criticalGap: string;
-  actionSteps: string[];
-  roadmap: { month1: string; month2: string; month3: string };
+  strengths: string[];
+  weaknesses: string[];
+  opportunities: string[];
+  actionSteps: ActionStep[];
+  roadmap: { month1: RoadmapMonth; month2: RoadmapMonth; month3: RoadmapMonth };
+  revenueProjection: { current: number; month3: number; month6: number; month12: number };
+  industryBenchmark: number;
+  riskLevel: "low" | "medium" | "high";
   vtecRecommendation: { service: string; reason: string; ctaText: string };
 };
 
@@ -953,6 +985,36 @@ function Results({ report, answers }: { report: Report; answers: Answers }) {
     window.open(`https://wa.me/?text=${text}`, "_blank");
   }
 
+  const finalScore = Math.max(0, Math.min(100, Math.round(report.healthScore)));
+  const ringColor =
+    finalScore < 40 ? "#ef4444" : finalScore < 70 ? "#f59e0b" : TEAL;
+  const benchmark = Math.max(0, Math.min(100, Math.round(report.industryBenchmark || 0)));
+
+  const riskColor =
+    report.riskLevel === "high"
+      ? "#ef4444"
+      : report.riskLevel === "medium"
+        ? "#f59e0b"
+        : GREEN_BRIGHT;
+
+  const radarData = [
+    { category: "Financial", score: report.categoryScores.financial },
+    { category: "Operations", score: report.categoryScores.operations },
+    { category: "Marketing", score: report.categoryScores.marketing },
+    { category: "Team", score: report.categoryScores.team },
+    { category: "Strategy", score: report.categoryScores.strategy },
+  ];
+
+  const projectionData = [
+    { month: "Now", revenue: report.revenueProjection.current },
+    { month: "3 Mo", revenue: report.revenueProjection.month3 },
+    { month: "6 Mo", revenue: report.revenueProjection.month6 },
+    { month: "12 Mo", revenue: report.revenueProjection.month12 },
+  ];
+
+  const priorityColor = (p: ActionStep["priority"]) =>
+    p === "high" ? "#ef4444" : p === "medium" ? "#f59e0b" : TEAL;
+
   return (
     <section style={{ position: "relative", padding: "60px 20px 80px" }}>
       <Confetti />
@@ -973,69 +1035,278 @@ function Results({ report, answers }: { report: Report; answers: Answers }) {
           <p style={{ color: MUTED, fontSize: 16 }}>
             Built for {answers.name}'s {industryDisplay} business · {today}
           </p>
+        </div>
+
+        {/* SECTION 1 — Hero Score Card */}
+        <div
+          style={{
+            background: NAVY_CARD,
+            borderRadius: 14,
+            padding: "28px 24px",
+            marginBottom: 18,
+            borderLeft: `4px solid ${TEAL}`,
+            boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
+            textAlign: "center",
+          }}
+        >
+          <div
+            style={{
+              width: 180,
+              height: 180,
+              margin: "0 auto 18px",
+              borderRadius: "50%",
+              background: `conic-gradient(${ringColor} ${finalScore * 3.6}deg, rgba(255,255,255,0.08) 0deg)`,
+              display: "grid",
+              placeItems: "center",
+            }}
+          >
+            <div
+              style={{
+                width: 150,
+                height: 150,
+                borderRadius: "50%",
+                background: NAVY_CARD,
+                display: "grid",
+                placeItems: "center",
+                flexDirection: "column",
+              }}
+            >
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 11, letterSpacing: 1.5, color: MUTED, textTransform: "uppercase" }}>
+                  Health Score
+                </div>
+                <div style={{ fontFamily: SERIF_STACK, fontWeight: 900, fontSize: 52, color: ringColor, lineHeight: 1 }}>
+                  {score}
+                </div>
+                <div style={{ fontSize: 12, color: MUTED }}>out of 100</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Comparison bars */}
+          <div style={{ maxWidth: 420, margin: "0 auto 18px", textAlign: "left" }}>
+            <ComparisonBar label="Your Score" value={finalScore} color={ringColor} />
+            <ComparisonBar label="Industry Avg" value={benchmark} color="rgba(255,255,255,0.45)" />
+          </div>
 
           <div
             style={{
-              marginTop: 28,
               display: "inline-flex",
-              flexDirection: "column",
               alignItems: "center",
-              gap: 10,
-              padding: "22px 36px",
-              borderRadius: 20,
-              background: `linear-gradient(135deg, ${TEAL}, ${GREEN})`,
-              boxShadow: "0 18px 50px rgba(0,200,150,0.25)",
+              gap: 8,
+              padding: "6px 14px",
+              borderRadius: 999,
+              background: `${riskColor}22`,
+              border: `1px solid ${riskColor}`,
+              color: riskColor,
+              fontSize: 12,
+              fontWeight: 800,
+              letterSpacing: 1.5,
+              textTransform: "uppercase",
             }}
           >
-            <span style={{ fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", opacity: 0.9 }}>
-              Business Health Score
-            </span>
-            <span style={{ fontFamily: SERIF_STACK, fontWeight: 900, fontSize: 64, lineHeight: 1 }}>
-              {score}
-              <span style={{ fontSize: 22, opacity: 0.8 }}> / 100</span>
-            </span>
+            <ShieldAlert size={14} /> {report.riskLevel} Risk
           </div>
         </div>
 
-        <ResultCard icon={ClipboardList} title="Your Business Profile Summary">
-          <p>{report.profileSummary}</p>
-        </ResultCard>
-
-        <ResultCard icon={AlertTriangle} title="Your Critical Gap">
-          <p>{report.criticalGap}</p>
-        </ResultCard>
-
-        <ResultCard icon={Target} title="3 Immediate Action Steps">
-          <ol style={{ paddingLeft: 22, display: "grid", gap: 12 }}>
-            {report.actionSteps.map((s, i) => (
-              <li key={i} style={{ lineHeight: 1.55 }}>
-                {s}
-              </li>
-            ))}
-          </ol>
-        </ResultCard>
-
-        <ResultCard icon={MapIcon} title="90 Day Priority Roadmap">
-          <div style={{ display: "grid", gap: 14 }}>
-            {(["month1", "month2", "month3"] as const).map((k, i) => (
-              <div
-                key={k}
-                style={{
-                  padding: "14px 16px",
-                  background: "rgba(0,200,150,0.06)",
-                  border: `1px solid ${BORDER}`,
-                  borderRadius: 10,
-                }}
-              >
-                <div style={{ color: TEAL, fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 6, fontWeight: 700 }}>
-                  Month {i + 1}
+        {/* SECTION 2 — Category Radar */}
+        <ResultCard icon={TrendingUp} title="Category Breakdown">
+          <div style={{ width: "100%", height: 280 }}>
+            <ResponsiveContainer width="100%" height={280}>
+              <RadarChart data={radarData}>
+                <PolarGrid stroke="rgba(255,255,255,0.15)" />
+                <PolarAngleAxis dataKey="category" tick={{ fill: "rgba(255,255,255,0.75)", fontSize: 12 }} />
+                <Radar
+                  name="Score"
+                  dataKey="score"
+                  stroke={TEAL}
+                  fill="rgba(0,200,150,0.25)"
+                  strokeWidth={2}
+                />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ display: "grid", gap: 10, marginTop: 16 }}>
+            {radarData.map((d) => (
+              <div key={d.category} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ width: 92, fontSize: 13, color: "rgba(255,255,255,0.8)" }}>{d.category}</div>
+                <div style={{ flex: 1, height: 8, background: NAVY_DEEP, borderRadius: 999, overflow: "hidden" }}>
+                  <div style={{ width: `${d.score}%`, height: "100%", background: TEAL }} />
                 </div>
-                <div style={{ lineHeight: 1.55 }}>{report.roadmap[k]}</div>
+                <div style={{ width: 42, textAlign: "right", fontWeight: 700, color: TEAL, fontSize: 13 }}>
+                  {d.score}
+                </div>
               </div>
             ))}
           </div>
         </ResultCard>
 
+        {/* SECTION 3 — SWOT */}
+        <ResultCard icon={AlertTriangle} title="SWOT Analysis">
+          <div
+            style={{
+              display: "grid",
+              gap: 12,
+              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            }}
+          >
+            <SwotBox emoji="💪" title="Strengths" color={GREEN_BRIGHT} items={report.strengths} />
+            <SwotBox emoji="⚠️" title="Weaknesses" color="#ef4444" items={report.weaknesses} />
+            <SwotBox emoji="🚀" title="Opportunities" color="#3b82f6" items={report.opportunities} />
+            <SwotBox emoji="🛡️" title="Critical Gap" color="#f59e0b" text={report.criticalGap} />
+          </div>
+        </ResultCard>
+
+        {/* Profile Summary */}
+        <ResultCard icon={Lightbulb} title="Your Business Profile">
+          <p>{report.profileSummary}</p>
+        </ResultCard>
+
+        {/* SECTION 4 — Revenue Projection */}
+        <ResultCard icon={TrendingUp} title="Projected Revenue Trajectory">
+          <div style={{ width: "100%", height: 260 }}>
+            <ResponsiveContainer width="100%" height={260}>
+              <AreaChart data={projectionData} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
+                <defs>
+                  <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={TEAL} stopOpacity={0.7} />
+                    <stop offset="100%" stopColor={TEAL} stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="month" tick={{ fill: "rgba(255,255,255,0.7)", fontSize: 12 }} stroke="rgba(255,255,255,0.2)" />
+                <YAxis
+                  tick={{ fill: "rgba(255,255,255,0.7)", fontSize: 11 }}
+                  stroke="rgba(255,255,255,0.2)"
+                  label={{ value: "KES (000s)", angle: -90, position: "insideLeft", fill: "rgba(255,255,255,0.6)", fontSize: 11 }}
+                />
+                <Tooltip
+                  formatter={(v: number) => [`KES ${Number(v).toLocaleString()}K`, "Revenue"]}
+                  contentStyle={{ background: NAVY_DEEP, border: `1px solid ${TEAL}`, borderRadius: 8, color: TEXT }}
+                />
+                <Area type="monotone" dataKey="revenue" stroke={TEAL} strokeWidth={2} fill="url(#revGrad)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </ResultCard>
+
+        {/* SECTION 5 — Action Steps */}
+        <ResultCard icon={Lightbulb} title="Immediate Action Steps">
+          <div style={{ display: "grid", gap: 12 }}>
+            {report.actionSteps.map((a, i) => {
+              const c = priorityColor(a.priority);
+              return (
+                <div
+                  key={i}
+                  style={{
+                    background: NAVY_DEEP,
+                    borderRadius: 10,
+                    padding: "14px 16px",
+                    borderLeft: `4px solid ${c}`,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 8,
+                  }}
+                >
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+                    <span
+                      style={{
+                        background: c,
+                        color: "#0A1628",
+                        padding: "3px 10px",
+                        borderRadius: 999,
+                        fontSize: 10,
+                        fontWeight: 800,
+                        letterSpacing: 1.5,
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {a.priority}
+                    </span>
+                    <span
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 4,
+                        background: "rgba(255,255,255,0.06)",
+                        color: "rgba(255,255,255,0.8)",
+                        padding: "3px 10px",
+                        borderRadius: 999,
+                        fontSize: 11,
+                        fontWeight: 700,
+                        letterSpacing: 1,
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      <Clock size={11} /> {a.timeframe}
+                    </span>
+                  </div>
+                  <div style={{ lineHeight: 1.55 }}>{a.step}</div>
+                </div>
+              );
+            })}
+          </div>
+        </ResultCard>
+
+        {/* SECTION 6 — Roadmap Timeline */}
+        <ResultCard icon={TrendingUp} title="90 Day Priority Roadmap">
+          <div style={{ position: "relative", paddingLeft: 8 }}>
+            {(["month1", "month2", "month3"] as const).map((k, i) => {
+              const m = report.roadmap[k];
+              const isLast = i === 2;
+              return (
+                <div key={k} style={{ display: "flex", gap: 16, position: "relative", paddingBottom: isLast ? 0 : 22 }}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <div
+                      style={{
+                        width: 36,
+                        height: 36,
+                        borderRadius: "50%",
+                        background: TEAL,
+                        color: "#04221A",
+                        display: "grid",
+                        placeItems: "center",
+                        fontWeight: 900,
+                        fontSize: 16,
+                        flexShrink: 0,
+                      }}
+                    >
+                      {i + 1}
+                    </div>
+                    {!isLast && (
+                      <div style={{ width: 2, flex: 1, background: BORDER, marginTop: 4, minHeight: 30 }} />
+                    )}
+                  </div>
+                  <div style={{ flex: 1, paddingBottom: 6 }}>
+                    <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 8 }}>
+                      Month {i + 1} · {m.focus}
+                    </div>
+                    <ul style={{ paddingLeft: 20, margin: "0 0 10px", lineHeight: 1.55, color: "rgba(255,255,255,0.85)" }}>
+                      {m.milestones.map((ms, j) => (
+                        <li key={j}>{ms}</li>
+                      ))}
+                    </ul>
+                    <span
+                      style={{
+                        display: "inline-block",
+                        background: "rgba(0,200,150,0.12)",
+                        border: `1px solid ${BORDER}`,
+                        color: TEAL,
+                        padding: "5px 12px",
+                        borderRadius: 999,
+                        fontSize: 12,
+                        fontWeight: 700,
+                      }}
+                    >
+                      📊 Track: {m.kpi}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </ResultCard>
+
+        {/* SECTION 7 — VTEC Recommendation (unchanged) */}
         <ResultCard icon={Lightbulb} title="VTEC Recommendation">
           <div style={{ marginBottom: 10, fontWeight: 700, color: TEAL, fontSize: 18 }}>
             {report.vtecRecommendation.service}
@@ -1048,6 +1319,7 @@ function Results({ report, answers }: { report: Report; answers: Answers }) {
             {report.vtecRecommendation.ctaText} →
           </a>
         </ResultCard>
+
 
         {/* CTA Row */}
         <div
@@ -1147,6 +1419,58 @@ function ResultCard({
 }
 
 /* ---------------- Error ---------------- */
+
+function ComparisonBar({ label, value, color }: { label: string; value: number; color: string }) {
+  return (
+    <div style={{ marginBottom: 8 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: MUTED, marginBottom: 4 }}>
+        <span>{label}</span>
+        <span style={{ color: TEXT, fontWeight: 700 }}>{value}</span>
+      </div>
+      <div style={{ width: "100%", height: 8, background: NAVY_DEEP, borderRadius: 999, overflow: "hidden" }}>
+        <div style={{ width: `${value}%`, height: "100%", background: color, transition: "width 600ms ease" }} />
+      </div>
+    </div>
+  );
+}
+
+function SwotBox({
+  emoji,
+  title,
+  color,
+  items,
+  text,
+}: {
+  emoji: string;
+  title: string;
+  color: string;
+  items?: string[];
+  text?: string;
+}) {
+  return (
+    <div
+      style={{
+        background: NAVY_DEEP,
+        borderRadius: 10,
+        padding: "14px 16px",
+        borderLeft: `4px solid ${color}`,
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, color, fontWeight: 800, fontSize: 14, letterSpacing: 0.5, textTransform: "uppercase" }}>
+        <span style={{ fontSize: 18 }}>{emoji}</span> {title}
+      </div>
+      {items ? (
+        <ul style={{ paddingLeft: 18, margin: 0, lineHeight: 1.5, color: "rgba(255,255,255,0.85)", fontSize: 14 }}>
+          {items.map((it, i) => (
+            <li key={i} style={{ marginBottom: 4 }}>{it}</li>
+          ))}
+        </ul>
+      ) : (
+        <p style={{ margin: 0, lineHeight: 1.55, color: "rgba(255,255,255,0.85)", fontSize: 14 }}>{text}</p>
+      )}
+    </div>
+  );
+}
 
 function ErrorBlock({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (

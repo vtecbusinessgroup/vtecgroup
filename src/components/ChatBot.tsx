@@ -31,7 +31,7 @@ export const ChatBot = () => {
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const tooltipTimeoutRef = useRef<NodeJS.Timeout>();
+  const tooltipTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // Show ChatBot only on the homepage (/)
   if (location.pathname !== "/") {
