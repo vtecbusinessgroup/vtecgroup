@@ -18,12 +18,23 @@ import {
   Users,
   Banknote,
   HelpCircle,
-  ClipboardList,
   AlertTriangle,
-  Target,
-  Map as MapIcon,
   Lightbulb,
+  Clock,
+  ShieldAlert,
 } from "lucide-react";
+import {
+  RadarChart,
+  Radar,
+  PolarGrid,
+  PolarAngleAxis,
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+} from "recharts";
 
 type LucideIcon = ComponentType<{ size?: number | string; color?: string; strokeWidth?: number }>;
 
