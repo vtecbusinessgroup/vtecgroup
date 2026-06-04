@@ -68,13 +68,37 @@ Monthly Revenue: ${revenue}
 Team Size: ${team}
 12 month Goal: ${goal}
 
-Return ONLY a JSON object with exactly this shape:
+Return ONLY a JSON object with exactly this shape (no comments, all numbers are plain integers):
 {
-  "healthScore": number 0-100,
+  "healthScore": 0-100,
+  "categoryScores": {
+    "financial": 0-100,
+    "operations": 0-100,
+    "marketing": 0-100,
+    "team": 0-100,
+    "strategy": 0-100
+  },
   "profileSummary": "2-3 sentence paragraph",
   "criticalGap": "1 paragraph, specific and honest",
-  "actionSteps": ["step 1", "step 2", "step 3"],
-  "roadmap": { "month1": "...", "month2": "...", "month3": "..." },
+  "strengths": ["strength 1", "strength 2", "strength 3"],
+  "weaknesses": ["weakness 1", "weakness 2", "weakness 3"],
+  "opportunities": ["opportunity 1", "opportunity 2"],
+  "actionSteps": [
+    { "step": "text", "priority": "high|medium|low", "timeframe": "week|month|quarter" }
+  ],
+  "roadmap": {
+    "month1": { "focus": "text", "milestones": ["m1", "m2"], "kpi": "metric to track" },
+    "month2": { "focus": "text", "milestones": ["m1", "m2"], "kpi": "metric to track" },
+    "month3": { "focus": "text", "milestones": ["m1", "m2"], "kpi": "metric to track" }
+  },
+  "revenueProjection": {
+    "current": <KES thousands estimate based on revenue bracket>,
+    "month3": <number>,
+    "month6": <number>,
+    "month12": <number>
+  },
+  "industryBenchmark": 0-100,
+  "riskLevel": "low|medium|high",
   "vtecRecommendation": {
     "service": "InvestorMind Academy | VTEC Consultancy | Both",
     "reason": "1-2 sentences explaining why this fits them",
