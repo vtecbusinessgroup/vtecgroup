@@ -245,7 +245,29 @@ function esc(s: string): string {
 }
 
 function buildReportEmail(name: string, r: Report): string {
-  const steps = r.actionSteps.map((s, i) => `<li style="margin:8px 0;">${esc(s)}</li>`).join("");
+  const steps = r.actionSteps
+    .map(
+      (s) =>
+        `<li style="margin:8px 0;"><strong style="text-transform:uppercase;color:${TEAL};font-size:11px;letter-spacing:1px;">[${esc(s.priority)} · ${esc(s.timeframe)}]</strong> ${esc(s.step)}</li>`,
+    )
+    .join("");
+  const strengths = (r.strengths || [])
+    .map((s) => `<li style="margin:4px 0;">${esc(s)}</li>`)
+    .join("");
+  const catRows = (
+    [
+      ["Financial", r.categoryScores.financial],
+      ["Operations", r.categoryScores.operations],
+      ["Marketing", r.categoryScores.marketing],
+      ["Team", r.categoryScores.team],
+      ["Strategy", r.categoryScores.strategy],
+    ] as [string, number][]
+  )
+    .map(
+      ([label, val]) =>
+        `<tr><td style="padding:6px 10px;border-bottom:1px solid #eef0f4;">${esc(label)}</td><td style="padding:6px 10px;border-bottom:1px solid #eef0f4;text-align:right;font-weight:700;color:${NAVY};">${val}/100</td></tr>`,
+    )
+    .join("");
   return `<!doctype html><html><body style="margin:0;padding:0;background:#f4f6fa;font-family:Arial,Helvetica,sans-serif;color:#0A1628;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f6fa;padding:24px 12px;">
     <tr><td align="center">
@@ -263,21 +285,33 @@ function buildReportEmail(name: string, r: Report): string {
             <div style="font-size:42px;font-weight:800;margin-top:4px;">${r.healthScore}<span style="font-size:18px;opacity:.75;"> / 100</span></div>
           </div>
 
+          <h2 style="font-size:17px;margin:18px 0 8px;">Category Scores</h2>
+          <table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;margin-bottom:18px;font-size:14px;color:#374151;">${catRows}</table>
+
           <h2 style="font-size:17px;margin:18px 0 8px;">Profile Summary</h2>
           <p style="margin:0 0 18px;color:#374151;line-height:1.6;">${esc(r.profileSummary)}</p>
 
           <h2 style="font-size:17px;margin:18px 0 8px;">Critical Gap</h2>
           <p style="margin:0 0 18px;color:#374151;line-height:1.6;">${esc(r.criticalGap)}</p>
 
-          <h2 style="font-size:17px;margin:18px 0 8px;">3 Immediate Action Steps</h2>
+          <h2 style="font-size:17px;margin:18px 0 8px;">Your Strengths</h2>
+          <ul style="margin:0 0 18px;padding-left:20px;color:#374151;line-height:1.55;">${strengths}</ul>
+
+          <div style="background:rgba(0,200,150,0.08);border:1px solid ${TEAL};border-radius:10px;padding:16px;text-align:center;margin-bottom:22px;">
+            <div style="font-size:12px;letter-spacing:1.5px;color:${TEAL};font-weight:700;">PROJECTED 12-MONTH REVENUE</div>
+            <div style="font-size:28px;font-weight:800;margin-top:4px;color:${NAVY};">KES ${Number(r.revenueProjection.month12).toLocaleString()}K</div>
+          </div>
+
+          <h2 style="font-size:17px;margin:18px 0 8px;">Immediate Action Steps</h2>
           <ol style="margin:0 0 18px;padding-left:20px;color:#374151;line-height:1.55;">${steps}</ol>
 
           <h2 style="font-size:17px;margin:18px 0 8px;">90 Day Roadmap</h2>
           <div style="margin-bottom:18px;">
-            <p style="margin:6px 0;color:#374151;"><strong style="color:${TEAL};">Month 1:</strong> ${esc(r.roadmap.month1)}</p>
-            <p style="margin:6px 0;color:#374151;"><strong style="color:${TEAL};">Month 2:</strong> ${esc(r.roadmap.month2)}</p>
-            <p style="margin:6px 0;color:#374151;"><strong style="color:${TEAL};">Month 3:</strong> ${esc(r.roadmap.month3)}</p>
+            <p style="margin:6px 0;color:#374151;"><strong style="color:${TEAL};">Month 1 — ${esc(r.roadmap.month1.focus)}:</strong> ${esc(r.roadmap.month1.milestones.join("; "))} · <em>KPI: ${esc(r.roadmap.month1.kpi)}</em></p>
+            <p style="margin:6px 0;color:#374151;"><strong style="color:${TEAL};">Month 2 — ${esc(r.roadmap.month2.focus)}:</strong> ${esc(r.roadmap.month2.milestones.join("; "))} · <em>KPI: ${esc(r.roadmap.month2.kpi)}</em></p>
+            <p style="margin:6px 0;color:#374151;"><strong style="color:${TEAL};">Month 3 — ${esc(r.roadmap.month3.focus)}:</strong> ${esc(r.roadmap.month3.milestones.join("; "))} · <em>KPI: ${esc(r.roadmap.month3.kpi)}</em></p>
           </div>
+
 
           <h2 style="font-size:17px;margin:18px 0 8px;">Our Recommendation</h2>
           <p style="margin:0 0 6px;color:${NAVY};font-weight:700;">${esc(r.vtecRecommendation.service)}</p>
