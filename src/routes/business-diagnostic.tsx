@@ -403,161 +403,173 @@ function Hero({ onStart }: { onStart: () => void }) {
     };
     window.addEventListener("resize", handleResize);
 
-    const NODE_COUNT = 60;
-    const nodes = Array.from({ length: NODE_COUNT }, () => ({
+    type Orb = { x: number; y: number; r: number; vx: number; vy: number; phase: number };
+    const orbs: Orb[] = Array.from({ length: 8 }, (_, i) => ({
       x: Math.random() * width,
-      y: Math.random() * height,
-      z: Math.random() * 400 + 100,
-      vx: (Math.random() - 0.5) * 0.4,
-      vy: (Math.random() - 0.5) * 0.4,
-      vz: (Math.random() - 0.5) * 0.8,
-      r: Math.random() * 2 + 1,
-      pulse: Math.random() * Math.PI * 2,
-    }));
-
-    const PACKET_COUNT = 12;
-    const packets = Array.from({ length: PACKET_COUNT }, () => ({
-      nodeFrom: Math.floor(Math.random() * NODE_COUNT),
-      nodeTo: Math.floor(Math.random() * NODE_COUNT),
-      progress: Math.random(),
-      speed: Math.random() * 0.004 + 0.002,
+      y: Math.random() * height * 0.7,
+      r: 40 + Math.random() * 60,
+      vx: (Math.random() - 0.5) * 0.15,
+      vy: (Math.random() - 0.5) * 0.1,
+      phase: (i / 8) * Math.PI * 2,
     }));
 
     let tick = 0;
 
-    const project = (x: number, y: number, z: number) => {
-      const fov = 400;
-      const scale = fov / (fov + z);
-      const offsetX = mouseRef.current.x * 30;
-      const offsetY = mouseRef.current.y * 20;
-      return {
-        sx: (x + offsetX - width / 2) * scale + width / 2,
-        sy: (y + offsetY - height / 2) * scale + height / 2,
-        scale,
-      };
+    const drawGrid = (ctx: CanvasRenderingContext2D, width: number, height: number, tick: number) => {
+      const VP = { x: width / 2, y: height * 0.42 };
+      const GRID_LINES = 16;
+      const HORIZON_Y = height * 0.42;
+      const BOTTOM_Y = height * 1.1;
+
+      for (let i = 0; i <= GRID_LINES; i++) {
+        const t = i / GRID_LINES;
+        const bottomX = width * t;
+        const alpha = 0.06 + 0.04 * Math.sin(tick * 0.01 + t * Math.PI);
+        ctx.beginPath();
+        ctx.moveTo(VP.x, HORIZON_Y);
+        ctx.lineTo(bottomX, BOTTOM_Y);
+        ctx.strokeStyle = `rgba(0, 200, 150, ${alpha})`;
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      }
+
+      const HORIZ_COUNT = 12;
+      for (let i = 0; i < HORIZ_COUNT; i++) {
+        const perspT = Math.pow((i + 1) / HORIZ_COUNT, 1.8);
+        const y = HORIZON_Y + (BOTTOM_Y - HORIZON_Y) * perspT;
+        const scrollOffset = ((tick * 0.4) % ((BOTTOM_Y - HORIZON_Y) / HORIZ_COUNT));
+        const yScrolled = y + scrollOffset * perspT;
+        if (yScrolled > BOTTOM_Y) continue;
+        const depthT = (yScrolled - HORIZON_Y) / (BOTTOM_Y - HORIZON_Y);
+        const lineAlpha = 0.04 + depthT * 0.1;
+        const xLeft = VP.x - VP.x * depthT;
+        const xRight = VP.x + (width - VP.x) * depthT;
+        ctx.beginPath();
+        ctx.moveTo(xLeft, yScrolled);
+        ctx.lineTo(xRight, yScrolled);
+        ctx.strokeStyle = `rgba(0, 200, 150, ${lineAlpha})`;
+        ctx.lineWidth = 0.6;
+        ctx.stroke();
+      }
+    };
+
+    const drawDataBars = (ctx: CanvasRenderingContext2D, width: number, height: number, tick: number) => {
+      const BAR_COUNT = 7;
+      const barAreaY = height * 0.72;
+      const barAreaH = height * 0.22;
+      const barSpacing = width / (BAR_COUNT + 1);
+
+      for (let i = 0; i < BAR_COUNT; i++) {
+        const x = barSpacing * (i + 1);
+        const phase = (i / BAR_COUNT) * Math.PI * 2;
+        const heightT = 0.3 + 0.5 * Math.abs(Math.sin(tick * 0.008 + phase));
+        const barH = barAreaH * heightT;
+        const barW = Math.max(2, width * 0.008);
+        const alpha = 0.15 + 0.1 * heightT;
+
+        const grad = ctx.createLinearGradient(x, barAreaY - barH, x, barAreaY);
+        grad.addColorStop(0, `rgba(0, 200, 150, ${alpha + 0.2})`);
+        grad.addColorStop(0.6, `rgba(0, 200, 150, ${alpha})`);
+        grad.addColorStop(1, "rgba(0, 200, 150, 0)");
+        ctx.fillStyle = grad;
+        ctx.fillRect(x - barW / 2, barAreaY - barH, barW, barH);
+
+        ctx.fillStyle = `rgba(180, 255, 220, ${0.6 * heightT})`;
+        ctx.fillRect(x - barW / 2, barAreaY - barH - 1, barW, 2);
+      }
+    };
+
+    const drawOrbs = (ctx: CanvasRenderingContext2D, width: number, height: number, _tick: number) => {
+      orbs.forEach((orb) => {
+        orb.x += orb.vx;
+        orb.y += orb.vy;
+        orb.phase += 0.005;
+        if (orb.x < -orb.r) orb.x = width + orb.r;
+        if (orb.x > width + orb.r) orb.x = -orb.r;
+        if (orb.y < -orb.r) orb.y = height * 0.7 + orb.r;
+        if (orb.y > height * 0.7 + orb.r) orb.y = -orb.r;
+
+        const pulse = 0.03 + 0.015 * Math.sin(orb.phase);
+        const grad = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, orb.r);
+        grad.addColorStop(0, `rgba(0, 200, 150, ${pulse})`);
+        grad.addColorStop(0.5, `rgba(0, 150, 110, ${pulse * 0.4})`);
+        grad.addColorStop(1, "rgba(0, 200, 150, 0)");
+        ctx.beginPath();
+        ctx.arc(orb.x, orb.y, orb.r, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+      });
+    };
+
+    const drawBrandText = (ctx: CanvasRenderingContext2D, width: number, height: number, tick: number) => {
+      const cx = width / 2;
+      const ty = height * 0.18;
+      const fontSize = Math.min(width * 0.038, 18);
+      const text = "VTEC  INTELLIGENCE";
+      const spacing = fontSize * 1.05;
+      const totalW = text.length * spacing;
+      const startX = cx - totalW / 2;
+
+      ctx.font = `600 ${fontSize}px 'Inter', 'SF Pro Display', sans-serif`;
+      ctx.textBaseline = "middle";
+      ctx.textAlign = "start";
+
+      text.split("").forEach((char, i) => {
+        const charX = startX + i * spacing;
+        const shimmerPos = ((tick * 0.8) % (text.length + 20)) - 10;
+        const distFromShimmer = Math.abs(i - shimmerPos);
+        const shimmerAlpha = Math.max(0, 1 - distFromShimmer / 4) * 0.5;
+        const baseAlpha = 0.55;
+        const alpha = Math.min(1, baseAlpha + shimmerAlpha);
+        ctx.fillStyle = `rgba(0, 200, 150, ${alpha})`;
+        ctx.fillText(char, charX, ty);
+      });
+
+      const lineAlpha = 0.2 + 0.1 * Math.sin(tick * 0.02);
+      ctx.beginPath();
+      ctx.moveTo(cx - 90, ty + fontSize);
+      ctx.lineTo(cx + 90, ty + fontSize);
+      ctx.strokeStyle = `rgba(0, 200, 150, ${lineAlpha})`;
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+
+      const bracketAlpha = 0.3;
+      ctx.strokeStyle = `rgba(0, 200, 150, ${bracketAlpha})`;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(cx - 106, ty - fontSize * 0.8);
+      ctx.lineTo(cx - 114, ty - fontSize * 0.8);
+      ctx.lineTo(cx - 114, ty + fontSize * 0.8);
+      ctx.lineTo(cx - 106, ty + fontSize * 0.8);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx + 106, ty - fontSize * 0.8);
+      ctx.lineTo(cx + 114, ty - fontSize * 0.8);
+      ctx.lineTo(cx + 114, ty + fontSize * 0.8);
+      ctx.lineTo(cx + 106, ty + fontSize * 0.8);
+      ctx.stroke();
     };
 
     const draw = () => {
       tick++;
-      ctx.clearRect(0, 0, width, height);
 
-      const bg = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width * 0.8);
-      bg.addColorStop(0, "rgba(0, 40, 30, 0.95)");
-      bg.addColorStop(0.5, "rgba(10, 22, 40, 0.98)");
-      bg.addColorStop(1, "rgba(5, 10, 20, 1)");
-      ctx.fillStyle = bg;
+      ctx.fillStyle = "#070f1a";
       ctx.fillRect(0, 0, width, height);
 
-      nodes.forEach((n) => {
-        n.x += n.vx;
-        n.y += n.vy;
-        n.z += n.vz;
-        n.pulse += 0.03;
-        if (n.x < 0 || n.x > width) n.vx *= -1;
-        if (n.y < 0 || n.y > height) n.vy *= -1;
-        if (n.z < 50 || n.z > 500) n.vz *= -1;
-      });
+      const cg = ctx.createRadialGradient(width / 2, height * 0.45, 0, width / 2, height * 0.45, width * 0.5);
+      cg.addColorStop(0, "rgba(0, 35, 25, 0.45)");
+      cg.addColorStop(1, "rgba(7, 15, 26, 0)");
+      ctx.fillStyle = cg;
+      ctx.fillRect(0, 0, width, height);
 
-      for (let i = 0; i < NODE_COUNT; i++) {
-        for (let j = i + 1; j < NODE_COUNT; j++) {
-          const a = nodes[i];
-          const b = nodes[j];
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 160) {
-            const pa = project(a.x, a.y, a.z);
-            const pb = project(b.x, b.y, b.z);
-            const alpha = (1 - dist / 160) * 0.25 * ((pa.scale + pb.scale) / 2);
-            ctx.beginPath();
-            ctx.moveTo(pa.sx, pa.sy);
-            ctx.lineTo(pb.sx, pb.sy);
-            ctx.strokeStyle = `rgba(0, 200, 150, ${alpha})`;
-            ctx.lineWidth = 0.6;
-            ctx.stroke();
-          }
-        }
-      }
+      drawOrbs(ctx, width, height, tick);
+      drawGrid(ctx, width, height, tick);
+      drawDataBars(ctx, width, height, tick);
+      drawBrandText(ctx, width, height, tick);
 
-      nodes.forEach((n) => {
-        const p = project(n.x, n.y, n.z);
-        const pulseR = n.r * p.scale * (1 + 0.3 * Math.sin(n.pulse));
-        const glow = ctx.createRadialGradient(p.sx, p.sy, 0, p.sx, p.sy, pulseR * 6);
-        glow.addColorStop(0, `rgba(0, 200, 150, ${0.4 * p.scale})`);
-        glow.addColorStop(1, "rgba(0, 200, 150, 0)");
-        ctx.beginPath();
-        ctx.arc(p.sx, p.sy, pulseR * 6, 0, Math.PI * 2);
-        ctx.fillStyle = glow;
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(p.sx, p.sy, pulseR, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(0, 200, 150, ${0.9 * p.scale})`;
-        ctx.fill();
-      });
-
-      packets.forEach((pk) => {
-        pk.progress += pk.speed;
-        if (pk.progress > 1) {
-          pk.progress = 0;
-          pk.nodeFrom = pk.nodeTo;
-          pk.nodeTo = Math.floor(Math.random() * NODE_COUNT);
-        }
-        const from = nodes[pk.nodeFrom];
-        const to = nodes[pk.nodeTo];
-        const px = from.x + (to.x - from.x) * pk.progress;
-        const py = from.y + (to.y - from.y) * pk.progress;
-        const pz = from.z + (to.z - from.z) * pk.progress;
-        const pp = project(px, py, pz);
-
-        const pkGlow = ctx.createRadialGradient(pp.sx, pp.sy, 0, pp.sx, pp.sy, 8 * pp.scale);
-        pkGlow.addColorStop(0, "rgba(180, 255, 220, 0.9)");
-        pkGlow.addColorStop(1, "rgba(0, 200, 150, 0)");
-        ctx.beginPath();
-        ctx.arc(pp.sx, pp.sy, 8 * pp.scale, 0, Math.PI * 2);
-        ctx.fillStyle = pkGlow;
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(pp.sx, pp.sy, 2.5 * pp.scale, 0, Math.PI * 2);
-        ctx.fillStyle = "#ffffff";
-        ctx.fill();
-      });
-
-      const textY = height * 0.15;
-      const fontSize = Math.min(width * 0.055, 28);
-
-      for (let i = 6; i > 0; i--) {
-        ctx.font = `700 ${fontSize}px 'Inter', sans-serif`;
-        ctx.fillStyle = `rgba(0, 100, 70, ${0.15 - i * 0.02})`;
-        ctx.textAlign = "center";
-        ctx.fillText("VTEC INTELLIGENCE", width / 2 + i * 1.2, textY + i * 1.2);
-      }
-
-      const shimmerX = ((tick * 1.5) % (width + 200)) - 100;
-      const shimmer = ctx.createLinearGradient(shimmerX - 60, 0, shimmerX + 60, 0);
-      shimmer.addColorStop(0, "rgba(0,200,150,0)");
-      shimmer.addColorStop(0.5, "rgba(0,200,150,0.35)");
-      shimmer.addColorStop(1, "rgba(0,200,150,0)");
-
-      ctx.font = `700 ${fontSize}px 'Inter', sans-serif`;
-      ctx.fillStyle = "rgba(0, 200, 150, 0.9)";
-      ctx.textAlign = "center";
-      ctx.fillText("VTEC INTELLIGENCE", width / 2, textY);
-
-      ctx.save();
-      ctx.globalCompositeOperation = "source-atop";
-      ctx.fillStyle = shimmer;
-      ctx.fillText("VTEC INTELLIGENCE", width / 2, textY);
-      ctx.restore();
-
-      const scanY = ((tick * 0.8) % (height + 40)) - 20;
-      const scanGrad = ctx.createLinearGradient(0, scanY - 2, 0, scanY + 2);
-      scanGrad.addColorStop(0, "rgba(0,200,150,0)");
-      scanGrad.addColorStop(0.5, "rgba(0,200,150,0.08)");
-      scanGrad.addColorStop(1, "rgba(0,200,150,0)");
-      ctx.fillStyle = scanGrad;
-      ctx.fillRect(0, scanY - 2, width, 4);
+      const scanY = (tick * 0.5) % height;
+      ctx.fillStyle = "rgba(0, 200, 150, 0.025)";
+      ctx.fillRect(0, scanY, width, 1);
 
       animFrameId = requestAnimationFrame(draw);
     };
@@ -570,14 +582,16 @@ function Hero({ onStart }: { onStart: () => void }) {
     };
   }, []);
 
+  const isNarrow = typeof window !== "undefined" && window.innerWidth < 420;
   const badgeBase: React.CSSProperties = {
     position: "absolute",
-    background: "rgba(0,200,150,0.12)",
-    border: "1px solid rgba(0,200,150,0.3)",
+    background: "rgba(0,200,150,0.10)",
+    border: "1px solid rgba(0,200,150,0.25)",
     borderRadius: 10,
-    padding: "8px 14px",
+    padding: "6px 12px",
     backdropFilter: "blur(8px)",
     zIndex: 2,
+    opacity: 0.85,
   };
 
   return (
@@ -593,7 +607,7 @@ function Hero({ onStart }: { onStart: () => void }) {
         position: "relative",
         minHeight: "100vh",
         overflow: "hidden",
-        background: "#0A1628",
+        background: "#070f1a",
         textAlign: "center",
         padding: "96px 20px 80px",
       }}
@@ -602,10 +616,6 @@ function Hero({ onStart }: { onStart: () => void }) {
         @keyframes floatBadge {
           0%, 100% { transform: translateY(0px); }
           50% { transform: translateY(-10px); }
-        }
-        @keyframes vtec-pulse {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.5; transform: scale(1.3); }
         }
       `}</style>
 
@@ -626,67 +636,26 @@ function Hero({ onStart }: { onStart: () => void }) {
         style={{
           position: "absolute",
           inset: 0,
-          background: "linear-gradient(to bottom, rgba(10,22,40,0.3) 0%, rgba(10,22,40,0.6) 100%)",
+          background: "linear-gradient(to bottom, rgba(7,15,26,0.2) 0%, rgba(7,15,26,0.55) 100%)",
           zIndex: 1,
           pointerEvents: "none",
         }}
       />
 
-      <div style={{ ...badgeBase, top: "18%", left: "5%", animation: "floatBadge 3s ease-in-out infinite" }}>
-        <div style={{ color: "#00C896", fontSize: 11, fontWeight: 700, letterSpacing: 1 }}>AI ANALYSIS</div>
-        <div style={{ color: "rgba(255,255,255,0.7)", fontSize: 13, marginTop: 2 }}>1,200+ businesses</div>
+      <div style={{ ...badgeBase, top: "12%", left: "4%", display: isNarrow ? "none" : "flex", flexDirection: "column", animation: "floatBadge 3s ease-in-out infinite" }}>
+        <div style={{ color: "#00C896", fontSize: 10, fontWeight: 700, letterSpacing: 1 }}>AI ANALYSIS</div>
+        <div style={{ color: "rgba(255,255,255,0.7)", fontSize: 12, marginTop: 2 }}>1,200+ businesses</div>
       </div>
-      <div style={{ ...badgeBase, top: "28%", right: "5%", animation: "floatBadge 3.5s ease-in-out infinite 0.8s" }}>
-        <div style={{ color: "#00C896", fontSize: 11, fontWeight: 700, letterSpacing: 1 }}>ACCURACY</div>
-        <div style={{ color: "rgba(255,255,255,0.7)", fontSize: 13, marginTop: 2 }}>94.7% match rate</div>
+      <div style={{ ...badgeBase, top: "22%", right: "4%", display: isNarrow ? "none" : "flex", flexDirection: "column", animation: "floatBadge 3.5s ease-in-out infinite 0.8s" }}>
+        <div style={{ color: "#00C896", fontSize: 10, fontWeight: 700, letterSpacing: 1 }}>ACCURACY</div>
+        <div style={{ color: "rgba(255,255,255,0.7)", fontSize: 12, marginTop: 2 }}>94.7% match rate</div>
       </div>
-      <div style={{ ...badgeBase, bottom: "18%", left: "8%", animation: "floatBadge 4s ease-in-out infinite 1.5s" }}>
-        <div style={{ color: "#00C896", fontSize: 11, fontWeight: 700, letterSpacing: 1 }}>KENYA MARKET</div>
-        <div style={{ color: "rgba(255,255,255,0.7)", fontSize: 13, marginTop: 2 }}>NSE · M-Pesa · SACCOs</div>
+      <div style={{ ...badgeBase, bottom: "12%", left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", animation: "floatBadge 4s ease-in-out infinite 1.5s" }}>
+        <div style={{ color: "#00C896", fontSize: 10, fontWeight: 700, letterSpacing: 1 }}>KENYA MARKET</div>
+        <div style={{ color: "rgba(255,255,255,0.7)", fontSize: 12, marginTop: 2 }}>NSE · M-Pesa · SACCOs</div>
       </div>
 
-      <div style={{ position: "relative", maxWidth: 820, margin: "0 auto", zIndex: 2 }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 8,
-            marginBottom: 16,
-          }}
-        >
-          <div
-            style={{
-              width: 6,
-              height: 6,
-              borderRadius: "50%",
-              background: "#00C896",
-              boxShadow: "0 0 8px #00C896",
-              animation: "vtec-pulse 2s infinite",
-            }}
-          />
-          <span
-            style={{
-              fontSize: 11,
-              letterSpacing: 3,
-              color: "rgba(0,200,150,0.8)",
-              fontWeight: 700,
-              textTransform: "uppercase",
-            }}
-          >
-            VTEC Intelligence
-          </span>
-          <div
-            style={{
-              width: 6,
-              height: 6,
-              borderRadius: "50%",
-              background: "#00C896",
-              boxShadow: "0 0 8px #00C896",
-              animation: "vtec-pulse 2s infinite 1s",
-            }}
-          />
-        </div>
+      <div style={{ position: "relative", maxWidth: 820, margin: "0 auto", zIndex: 2, paddingTop: "clamp(100px, 22vh, 160px)" }}>
         <span
           style={{
             display: "inline-block",
