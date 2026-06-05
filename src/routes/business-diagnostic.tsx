@@ -384,26 +384,309 @@ function NavBar() {
 /* ---------------- Hero ---------------- */
 
 function Hero({ onStart }: { onStart: () => void }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const mouseRef = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let animFrameId: number;
+    let width = (canvas.width = canvas.offsetWidth);
+    let height = (canvas.height = canvas.offsetHeight);
+
+    const handleResize = () => {
+      width = canvas.width = canvas.offsetWidth;
+      height = canvas.height = canvas.offsetHeight;
+    };
+    window.addEventListener("resize", handleResize);
+
+    const NODE_COUNT = 60;
+    const nodes = Array.from({ length: NODE_COUNT }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      z: Math.random() * 400 + 100,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      vz: (Math.random() - 0.5) * 0.8,
+      r: Math.random() * 2 + 1,
+      pulse: Math.random() * Math.PI * 2,
+    }));
+
+    const PACKET_COUNT = 12;
+    const packets = Array.from({ length: PACKET_COUNT }, () => ({
+      nodeFrom: Math.floor(Math.random() * NODE_COUNT),
+      nodeTo: Math.floor(Math.random() * NODE_COUNT),
+      progress: Math.random(),
+      speed: Math.random() * 0.004 + 0.002,
+    }));
+
+    let tick = 0;
+
+    const project = (x: number, y: number, z: number) => {
+      const fov = 400;
+      const scale = fov / (fov + z);
+      const offsetX = mouseRef.current.x * 30;
+      const offsetY = mouseRef.current.y * 20;
+      return {
+        sx: (x + offsetX - width / 2) * scale + width / 2,
+        sy: (y + offsetY - height / 2) * scale + height / 2,
+        scale,
+      };
+    };
+
+    const draw = () => {
+      tick++;
+      ctx.clearRect(0, 0, width, height);
+
+      const bg = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width * 0.8);
+      bg.addColorStop(0, "rgba(0, 40, 30, 0.95)");
+      bg.addColorStop(0.5, "rgba(10, 22, 40, 0.98)");
+      bg.addColorStop(1, "rgba(5, 10, 20, 1)");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, width, height);
+
+      nodes.forEach((n) => {
+        n.x += n.vx;
+        n.y += n.vy;
+        n.z += n.vz;
+        n.pulse += 0.03;
+        if (n.x < 0 || n.x > width) n.vx *= -1;
+        if (n.y < 0 || n.y > height) n.vy *= -1;
+        if (n.z < 50 || n.z > 500) n.vz *= -1;
+      });
+
+      for (let i = 0; i < NODE_COUNT; i++) {
+        for (let j = i + 1; j < NODE_COUNT; j++) {
+          const a = nodes[i];
+          const b = nodes[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 160) {
+            const pa = project(a.x, a.y, a.z);
+            const pb = project(b.x, b.y, b.z);
+            const alpha = (1 - dist / 160) * 0.25 * ((pa.scale + pb.scale) / 2);
+            ctx.beginPath();
+            ctx.moveTo(pa.sx, pa.sy);
+            ctx.lineTo(pb.sx, pb.sy);
+            ctx.strokeStyle = `rgba(0, 200, 150, ${alpha})`;
+            ctx.lineWidth = 0.6;
+            ctx.stroke();
+          }
+        }
+      }
+
+      nodes.forEach((n) => {
+        const p = project(n.x, n.y, n.z);
+        const pulseR = n.r * p.scale * (1 + 0.3 * Math.sin(n.pulse));
+        const glow = ctx.createRadialGradient(p.sx, p.sy, 0, p.sx, p.sy, pulseR * 6);
+        glow.addColorStop(0, `rgba(0, 200, 150, ${0.4 * p.scale})`);
+        glow.addColorStop(1, "rgba(0, 200, 150, 0)");
+        ctx.beginPath();
+        ctx.arc(p.sx, p.sy, pulseR * 6, 0, Math.PI * 2);
+        ctx.fillStyle = glow;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(p.sx, p.sy, pulseR, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0, 200, 150, ${0.9 * p.scale})`;
+        ctx.fill();
+      });
+
+      packets.forEach((pk) => {
+        pk.progress += pk.speed;
+        if (pk.progress > 1) {
+          pk.progress = 0;
+          pk.nodeFrom = pk.nodeTo;
+          pk.nodeTo = Math.floor(Math.random() * NODE_COUNT);
+        }
+        const from = nodes[pk.nodeFrom];
+        const to = nodes[pk.nodeTo];
+        const px = from.x + (to.x - from.x) * pk.progress;
+        const py = from.y + (to.y - from.y) * pk.progress;
+        const pz = from.z + (to.z - from.z) * pk.progress;
+        const pp = project(px, py, pz);
+
+        const pkGlow = ctx.createRadialGradient(pp.sx, pp.sy, 0, pp.sx, pp.sy, 8 * pp.scale);
+        pkGlow.addColorStop(0, "rgba(180, 255, 220, 0.9)");
+        pkGlow.addColorStop(1, "rgba(0, 200, 150, 0)");
+        ctx.beginPath();
+        ctx.arc(pp.sx, pp.sy, 8 * pp.scale, 0, Math.PI * 2);
+        ctx.fillStyle = pkGlow;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(pp.sx, pp.sy, 2.5 * pp.scale, 0, Math.PI * 2);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+      });
+
+      const textY = height * 0.15;
+      const fontSize = Math.min(width * 0.055, 28);
+
+      for (let i = 6; i > 0; i--) {
+        ctx.font = `700 ${fontSize}px 'Inter', sans-serif`;
+        ctx.fillStyle = `rgba(0, 100, 70, ${0.15 - i * 0.02})`;
+        ctx.textAlign = "center";
+        ctx.fillText("VTEC INTELLIGENCE", width / 2 + i * 1.2, textY + i * 1.2);
+      }
+
+      const shimmerX = ((tick * 1.5) % (width + 200)) - 100;
+      const shimmer = ctx.createLinearGradient(shimmerX - 60, 0, shimmerX + 60, 0);
+      shimmer.addColorStop(0, "rgba(0,200,150,0)");
+      shimmer.addColorStop(0.5, "rgba(0,200,150,0.35)");
+      shimmer.addColorStop(1, "rgba(0,200,150,0)");
+
+      ctx.font = `700 ${fontSize}px 'Inter', sans-serif`;
+      ctx.fillStyle = "rgba(0, 200, 150, 0.9)";
+      ctx.textAlign = "center";
+      ctx.fillText("VTEC INTELLIGENCE", width / 2, textY);
+
+      ctx.save();
+      ctx.globalCompositeOperation = "source-atop";
+      ctx.fillStyle = shimmer;
+      ctx.fillText("VTEC INTELLIGENCE", width / 2, textY);
+      ctx.restore();
+
+      const scanY = ((tick * 0.8) % (height + 40)) - 20;
+      const scanGrad = ctx.createLinearGradient(0, scanY - 2, 0, scanY + 2);
+      scanGrad.addColorStop(0, "rgba(0,200,150,0)");
+      scanGrad.addColorStop(0.5, "rgba(0,200,150,0.08)");
+      scanGrad.addColorStop(1, "rgba(0,200,150,0)");
+      ctx.fillStyle = scanGrad;
+      ctx.fillRect(0, scanY - 2, width, 4);
+
+      animFrameId = requestAnimationFrame(draw);
+    };
+
+    draw();
+
+    return () => {
+      cancelAnimationFrame(animFrameId);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const badgeBase: React.CSSProperties = {
+    position: "absolute",
+    background: "rgba(0,200,150,0.12)",
+    border: "1px solid rgba(0,200,150,0.3)",
+    borderRadius: 10,
+    padding: "8px 14px",
+    backdropFilter: "blur(8px)",
+    zIndex: 2,
+  };
+
   return (
     <section
+      onMouseMove={(e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        mouseRef.current = {
+          x: (e.clientX - rect.left - rect.width / 2) / rect.width,
+          y: (e.clientY - rect.top - rect.height / 2) / rect.height,
+        };
+      }}
       style={{
         position: "relative",
-        padding: "96px 20px 80px",
+        minHeight: "100vh",
         overflow: "hidden",
+        background: "#0A1628",
         textAlign: "center",
+        padding: "96px 20px 80px",
       }}
     >
-      <div
-        aria-hidden
+      <style>{`
+        @keyframes floatBadge {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
+        @keyframes vtec-pulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(1.3); }
+        }
+      `}</style>
+
+      <canvas
+        ref={canvasRef}
         style={{
           position: "absolute",
           inset: 0,
-          background:
-            "radial-gradient(60% 50% at 50% 30%, rgba(0,200,150,0.20), transparent 70%), radial-gradient(40% 40% at 50% 60%, rgba(27,94,32,0.25), transparent 70%)",
+          width: "100%",
+          height: "100%",
+          display: "block",
+          zIndex: 0,
           pointerEvents: "none",
         }}
       />
-      <div style={{ position: "relative", maxWidth: 820, margin: "0 auto" }}>
+
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: "linear-gradient(to bottom, rgba(10,22,40,0.3) 0%, rgba(10,22,40,0.6) 100%)",
+          zIndex: 1,
+          pointerEvents: "none",
+        }}
+      />
+
+      <div style={{ ...badgeBase, top: "18%", left: "5%", animation: "floatBadge 3s ease-in-out infinite" }}>
+        <div style={{ color: "#00C896", fontSize: 11, fontWeight: 700, letterSpacing: 1 }}>AI ANALYSIS</div>
+        <div style={{ color: "rgba(255,255,255,0.7)", fontSize: 13, marginTop: 2 }}>1,200+ businesses</div>
+      </div>
+      <div style={{ ...badgeBase, top: "28%", right: "5%", animation: "floatBadge 3.5s ease-in-out infinite 0.8s" }}>
+        <div style={{ color: "#00C896", fontSize: 11, fontWeight: 700, letterSpacing: 1 }}>ACCURACY</div>
+        <div style={{ color: "rgba(255,255,255,0.7)", fontSize: 13, marginTop: 2 }}>94.7% match rate</div>
+      </div>
+      <div style={{ ...badgeBase, bottom: "18%", left: "8%", animation: "floatBadge 4s ease-in-out infinite 1.5s" }}>
+        <div style={{ color: "#00C896", fontSize: 11, fontWeight: 700, letterSpacing: 1 }}>KENYA MARKET</div>
+        <div style={{ color: "rgba(255,255,255,0.7)", fontSize: 13, marginTop: 2 }}>NSE · M-Pesa · SACCOs</div>
+      </div>
+
+      <div style={{ position: "relative", maxWidth: 820, margin: "0 auto", zIndex: 2 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+            marginBottom: 16,
+          }}
+        >
+          <div
+            style={{
+              width: 6,
+              height: 6,
+              borderRadius: "50%",
+              background: "#00C896",
+              boxShadow: "0 0 8px #00C896",
+              animation: "vtec-pulse 2s infinite",
+            }}
+          />
+          <span
+            style={{
+              fontSize: 11,
+              letterSpacing: 3,
+              color: "rgba(0,200,150,0.8)",
+              fontWeight: 700,
+              textTransform: "uppercase",
+            }}
+          >
+            VTEC Intelligence
+          </span>
+          <div
+            style={{
+              width: 6,
+              height: 6,
+              borderRadius: "50%",
+              background: "#00C896",
+              boxShadow: "0 0 8px #00C896",
+              animation: "vtec-pulse 2s infinite 1s",
+            }}
+          />
+        </div>
         <span
           style={{
             display: "inline-block",
