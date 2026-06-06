@@ -283,13 +283,23 @@
   .btn-outline:hover { border-color: white; background: rgba(255,255,255,0.08); }
 
   .hero-stats {
-    display: flex; gap: 28px; margin-top: 56px;
+    display: flex; gap: 28px; margin-top: 48px;
     flex-wrap: wrap; justify-content: center;
     animation: fadeUp 0.9s 0.5s ease both;
     position: relative; z-index: 1;
+    border-top: 1px solid rgba(13,148,136,0.3);
+    padding-top: 28px;
   }
 
-  .hero-stat { text-align: center; }
+  .hero-stat { text-align: center; position: relative; }
+  .hero-stat:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: -14px; top: 50%;
+    transform: translateY(-50%);
+    width: 1px; height: 32px;
+    background: rgba(255,255,255,0.15);
+  }
   .hero-stat .num {
     font-family: 'Playfair Display', serif;
     font-size: clamp(1.6rem, 5vw, 2.2rem);
@@ -297,7 +307,7 @@
   }
   .hero-stat .num span { color: var(--green-bright); }
   .hero-stat p {
-    color: rgba(255,255,255,0.45); font-size: 11px;
+    color: rgba(255,255,255,0.7); font-size: 11px;
     letter-spacing: 1px; margin-top: 5px; text-transform: uppercase;
   }
 
