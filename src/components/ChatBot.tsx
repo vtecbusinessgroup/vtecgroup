@@ -112,7 +112,7 @@ export const ChatBot = () => {
     <>
       {/* AI Chat Button - z-index: 30, bottom: 160px (above sticky banner at 80px) */}
       <div
-        className="fixed right-6 z-30 flex items-center gap-3"
+        className="fixed right-6 z-30 flex items-center gap-3 vtec-chat-float"
         style={{ bottom: "160px", pointerEvents: "none" }}
       >
         {/* "Need Help?" Tooltip */}
@@ -326,6 +326,13 @@ export const ChatBot = () => {
           to {
             opacity: 1;
             transform: translateX(0);
+          }
+        }
+
+        @media (max-width: 768px) {
+          .vtec-chat-float {
+            bottom: 90px !important;
+            right: 16px !important;
           }
         }
       `}</style>
