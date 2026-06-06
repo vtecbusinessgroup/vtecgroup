@@ -328,6 +328,13 @@ export const ChatBot = () => {
             transform: translateX(0);
           }
         }
+
+        @media (max-width: 768px) {
+          .vtec-chat-float {
+            bottom: 90px !important;
+            right: 16px !important;
+          }
+        }
       `}</style>
     </>
   );
