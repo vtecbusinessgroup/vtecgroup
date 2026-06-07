@@ -351,8 +351,13 @@
     .hero-arms { grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
   }
 
+  .hero-arms {
+    content-visibility: auto;
+    contain-intrinsic-size: 200px;
+  }
+
   .hero-arm-card {
-    background: rgba(255,255,255,0.05);
+    background: rgba(13, 59, 56, 0.6);
     border: 1px solid #0D9488;
     border-radius: 12px;
     padding: 14px 12px;
@@ -360,9 +365,13 @@
     display: flex;
     align-items: flex-start;
     gap: 10px;
+    will-change: auto;
     transition: background 0.2s, border-color 0.2s;
   }
-  .hero-arm-card:hover { background: rgba(255,255,255,0.08); border-color: rgba(13,148,136,0.7); }
+  .hero-arm-card:hover { background: rgba(13, 59, 56, 0.75); border-color: rgba(13,148,136,0.9); }
+
+  .hero, .hero > * { }
+  .hero > *:not(.hero-overlay):not(.hero-grid):not(.hero-particles) { position: relative; z-index: 2; }
 
   .hero-arm-icon {
     width: 28px; height: 28px;
