@@ -7,7 +7,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Kenya's dynamic holding entity powering financial education, strategic consultancy, and commerce. Empowering Kenya. One Venture at a Time.",
+          "Kenya's dynamic holding entity powering Financial Education, Strategic Consultancy, and Commerce. Empowering Kenya. One Venture at a Time.",
       },
       { property: "og:title", content: "VTEC Business Group" },
       { property: "og:description", content: "Empowering Kenya. One Venture at a Time." },
