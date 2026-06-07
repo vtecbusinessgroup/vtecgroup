@@ -188,7 +188,7 @@
   .hero-overlay {
     position: absolute; inset: 0;
     background-color: #0A1628;
-    opacity: 0.65;
+    opacity: 0.45;
     z-index: 1;
     pointer-events: none;
   }
@@ -294,12 +294,12 @@
   .btn-outline:hover { border-color: white; background: rgba(255,255,255,0.08); }
 
   .hero-stats {
-    display: flex; gap: 28px; margin-top: 48px;
+    display: flex; gap: 28px; margin-top: 22px; margin-bottom: 22px;
     flex-wrap: wrap; justify-content: center;
     animation: fadeUp 0.9s 0.5s ease both;
     position: relative; z-index: 1;
-    border-top: 1px solid rgba(13,148,136,0.3);
-    padding-top: 28px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    padding-bottom: 22px;
   }
 
   .hero-stat { text-align: center; position: relative; }
@@ -313,12 +313,12 @@
   }
   .hero-stat .num {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    font-size: 28px;
     font-weight: 900; color: white; line-height: 1;
   }
   .hero-stat .num span { color: var(--green-bright); }
   .hero-stat p {
-    color: rgba(255,255,255,0.7); font-size: 11px;
+    color: rgba(255,255,255,0.7); font-size: 10px;
     letter-spacing: 1px; margin-top: 5px; text-transform: uppercase;
   }
 
