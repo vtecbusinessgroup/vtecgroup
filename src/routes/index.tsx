@@ -19,15 +19,14 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <iframe
-      src="/site.html"
-      title="VTEC Business Group"
+    <div
       style={{
         position: "fixed",
         inset: 0,
-        width: "100%",
-        height: "100%",
-        border: "none",
+        backgroundImage: "url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1400&q=80')",
+        backgroundSize: "cover",
+        backgroundPosition: "center top",
+        backgroundRepeat: "no-repeat",
       }}
     />
   );
