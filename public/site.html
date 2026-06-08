@@ -181,14 +181,13 @@
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     text-align: center;
-    padding: 100px 20px 60px;
+    padding: 80px 20px 40px;
     position: relative; overflow: hidden;
   }
 
   .hero-overlay {
     position: absolute; inset: 0;
-    background-color: #0A1628;
-    opacity: 0.45;
+    background: rgba(10, 22, 40, 0.55);
     z-index: 1;
     pointer-events: none;
   }
@@ -233,7 +232,7 @@
 
   .hero h1 {
     font-family: 'DM Serif Display', 'Playfair Display', serif;
-    font-size: clamp(2rem, 9vw, 5.5rem);
+    font-size: clamp(2rem, 8vw, 3.5rem);
     font-weight: 900; color: white;
     line-height: 1.1; margin-bottom: 12px;
     animation: fadeUp 0.9s 0.1s ease both;
@@ -256,7 +255,7 @@
 
   .hero-desc {
     max-width: 560px; width: 100%;
-    font-size: clamp(0.9rem, 2.3vw, 1.08rem);
+    font-size: 0.9rem;
     color: rgba(255,255,255,0.72);
     line-height: 1.8; margin-bottom: 36px;
     animation: fadeUp 0.9s 0.3s ease both;
@@ -340,7 +339,7 @@
   .hero-arms {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 8px;
     max-width: 560px;
     width: 100%;
     margin-bottom: 24px;
@@ -360,7 +359,7 @@
     background: rgba(13, 59, 56, 0.6);
     border: 1px solid #0D9488;
     border-radius: 12px;
-    padding: 14px 12px;
+    padding: 10px;
     text-align: left;
     display: flex;
     align-items: flex-start;
@@ -1797,6 +1796,20 @@
   <div class="hero-grid"></div>
   <div class="hero-particles" id="heroParticles"></div>
   <div class="hero-badge">Est. October 2025 — Nairobi, Kenya</div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="num"><span class="count" data-from="0" data-to="4">0</span><span>+</span></div>
+      <p>Business Arms</p>
+    </div>
+    <div class="hero-stat">
+      <div class="num scale-in"><span>#</span>1</div>
+      <p>Holding Vision</p>
+    </div>
+    <div class="hero-stat">
+      <div class="num"><span class="count" data-from="2000" data-to="2035">2000</span></div>
+      <p>Empire Target</p>
+    </div>
+  </div>
   <h1>Empowering Kenya.<br/><span class="highlight">One Venture</span><br/>At A Time.</h1>
   <p class="hero-desc">A premier multi-service brand driving sustainable growth across Kenya through integrated financial literacy, strategic corporate consultancy, and innovative commerce. We are powered by vision and executed with excellence.</p>
   <div class="hero-arms">
@@ -1841,21 +1854,6 @@
   <div class="hero-btns">
     <a href="#services" class="btn-primary">Explore Our Services</a>
     <a href="#/our-story" class="btn-outline">Our Story</a>
-  </div>
-
-  <div class="hero-stats">
-    <div class="hero-stat">
-      <div class="num"><span class="count" data-from="0" data-to="4">0</span><span>+</span></div>
-      <p>Business Arms</p>
-    </div>
-    <div class="hero-stat">
-      <div class="num scale-in"><span>#</span>1</div>
-      <p>Holding Vision</p>
-    </div>
-    <div class="hero-stat">
-      <div class="num"><span class="count" data-from="2000" data-to="2035">2000</span></div>
-      <p>Empire Target</p>
-    </div>
   </div>
 </section>
 
