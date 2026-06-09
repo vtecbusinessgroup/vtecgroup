@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ServicesRouteImport } from './routes/services'
+import { Route as MilikiRouteImport } from './routes/miliki'
 import { Route as BusinessDiagnosticRouteImport } from './routes/business-diagnostic'
 import { Route as AiDiagnosticInfoRouteImport } from './routes/ai-diagnostic-info'
 import { Route as AcademyRouteImport } from './routes/academy'
@@ -21,6 +22,11 @@ import { Route as ApiChatRouteImport } from './routes/api/chat'
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
   path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MilikiRoute = MilikiRouteImport.update({
+  id: '/miliki',
+  path: '/miliki',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BusinessDiagnosticRoute = BusinessDiagnosticRouteImport.update({
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/academy': typeof AcademyRoute
   '/ai-diagnostic-info': typeof AiDiagnosticInfoRoute
   '/business-diagnostic': typeof BusinessDiagnosticRoute
+  '/miliki': typeof MilikiRoute
   '/services': typeof ServicesRoute
   '/api/chat': typeof ApiChatRoute
   '/api/diagnostic': typeof ApiDiagnosticRoute
@@ -75,6 +82,7 @@ export interface FileRoutesByTo {
   '/academy': typeof AcademyRoute
   '/ai-diagnostic-info': typeof AiDiagnosticInfoRoute
   '/business-diagnostic': typeof BusinessDiagnosticRoute
+  '/miliki': typeof MilikiRoute
   '/services': typeof ServicesRoute
   '/api/chat': typeof ApiChatRoute
   '/api/diagnostic': typeof ApiDiagnosticRoute
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/academy': typeof AcademyRoute
   '/ai-diagnostic-info': typeof AiDiagnosticInfoRoute
   '/business-diagnostic': typeof BusinessDiagnosticRoute
+  '/miliki': typeof MilikiRoute
   '/services': typeof ServicesRoute
   '/api/chat': typeof ApiChatRoute
   '/api/diagnostic': typeof ApiDiagnosticRoute
@@ -98,6 +107,7 @@ export interface FileRouteTypes {
     | '/academy'
     | '/ai-diagnostic-info'
     | '/business-diagnostic'
+    | '/miliki'
     | '/services'
     | '/api/chat'
     | '/api/diagnostic'
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/academy'
     | '/ai-diagnostic-info'
     | '/business-diagnostic'
+    | '/miliki'
     | '/services'
     | '/api/chat'
     | '/api/diagnostic'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/academy'
     | '/ai-diagnostic-info'
     | '/business-diagnostic'
+    | '/miliki'
     | '/services'
     | '/api/chat'
     | '/api/diagnostic'
@@ -129,6 +141,7 @@ export interface RootRouteChildren {
   AcademyRoute: typeof AcademyRoute
   AiDiagnosticInfoRoute: typeof AiDiagnosticInfoRoute
   BusinessDiagnosticRoute: typeof BusinessDiagnosticRoute
+  MilikiRoute: typeof MilikiRoute
   ServicesRoute: typeof ServicesRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiDiagnosticRoute: typeof ApiDiagnosticRoute
@@ -141,6 +154,13 @@ declare module '@tanstack/react-router' {
       path: '/services'
       fullPath: '/services'
       preLoaderRoute: typeof ServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/miliki': {
+      id: '/miliki'
+      path: '/miliki'
+      fullPath: '/miliki'
+      preLoaderRoute: typeof MilikiRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/business-diagnostic': {
@@ -201,6 +221,7 @@ const rootRouteChildren: RootRouteChildren = {
   AcademyRoute: AcademyRoute,
   AiDiagnosticInfoRoute: AiDiagnosticInfoRoute,
   BusinessDiagnosticRoute: BusinessDiagnosticRoute,
+  MilikiRoute: MilikiRoute,
   ServicesRoute: ServicesRoute,
   ApiChatRoute: ApiChatRoute,
   ApiDiagnosticRoute: ApiDiagnosticRoute,
