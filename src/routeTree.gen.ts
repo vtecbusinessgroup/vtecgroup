@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ServicesRouteImport } from './routes/services'
 import { Route as BusinessDiagnosticRouteImport } from './routes/business-diagnostic'
 import { Route as AiDiagnosticInfoRouteImport } from './routes/ai-diagnostic-info'
 import { Route as AboutRouteImport } from './routes/about'
@@ -16,6 +17,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiDiagnosticRouteImport } from './routes/api/diagnostic'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 
+const ServicesRoute = ServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BusinessDiagnosticRoute = BusinessDiagnosticRouteImport.update({
   id: '/business-diagnostic',
   path: '/business-diagnostic',
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/ai-diagnostic-info': typeof AiDiagnosticInfoRoute
   '/business-diagnostic': typeof BusinessDiagnosticRoute
+  '/services': typeof ServicesRoute
   '/api/chat': typeof ApiChatRoute
   '/api/diagnostic': typeof ApiDiagnosticRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/ai-diagnostic-info': typeof AiDiagnosticInfoRoute
   '/business-diagnostic': typeof BusinessDiagnosticRoute
+  '/services': typeof ServicesRoute
   '/api/chat': typeof ApiChatRoute
   '/api/diagnostic': typeof ApiDiagnosticRoute
 }
@@ -69,6 +77,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/ai-diagnostic-info': typeof AiDiagnosticInfoRoute
   '/business-diagnostic': typeof BusinessDiagnosticRoute
+  '/services': typeof ServicesRoute
   '/api/chat': typeof ApiChatRoute
   '/api/diagnostic': typeof ApiDiagnosticRoute
 }
@@ -79,6 +88,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/ai-diagnostic-info'
     | '/business-diagnostic'
+    | '/services'
     | '/api/chat'
     | '/api/diagnostic'
   fileRoutesByTo: FileRoutesByTo
@@ -87,6 +97,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/ai-diagnostic-info'
     | '/business-diagnostic'
+    | '/services'
     | '/api/chat'
     | '/api/diagnostic'
   id:
@@ -95,6 +106,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/ai-diagnostic-info'
     | '/business-diagnostic'
+    | '/services'
     | '/api/chat'
     | '/api/diagnostic'
   fileRoutesById: FileRoutesById
@@ -104,12 +116,20 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AiDiagnosticInfoRoute: typeof AiDiagnosticInfoRoute
   BusinessDiagnosticRoute: typeof BusinessDiagnosticRoute
+  ServicesRoute: typeof ServicesRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiDiagnosticRoute: typeof ApiDiagnosticRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/services': {
+      id: '/services'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof ServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/business-diagnostic': {
       id: '/business-diagnostic'
       path: '/business-diagnostic'
@@ -160,6 +180,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AiDiagnosticInfoRoute: AiDiagnosticInfoRoute,
   BusinessDiagnosticRoute: BusinessDiagnosticRoute,
+  ServicesRoute: ServicesRoute,
   ApiChatRoute: ApiChatRoute,
   ApiDiagnosticRoute: ApiDiagnosticRoute,
 }
