@@ -17,13 +17,25 @@ type Props = {
  */
 export function SiteShell({ children, htmlSections = [] }: Props) {
   useEffect(() => {
-    // Avoid loading twice on client-side navigations.
-    if (document.getElementById("vtec-site-scripts")) {
-      // Re-run reveal observers on route change if helper exists.
-      // @ts-expect-error - global helper from site-scripts.js
-      if (typeof window.__vtecInit === "function") window.__vtecInit();
-      return;
-    }
+    // Rewrite legacy in-page anchor links to real route URLs so the navbar
+    // works on every standalone route.
+    const map: Record<string, string> = {
+      "#about": "/about",
+      "#services": "/services",
+      "#ecosystem": "/services",
+      "#leadership": "/leadership",
+      "#vision": "/vision",
+      "#contact": "/contact",
+      "#why": "/about",
+    };
+    document
+      .querySelectorAll<HTMLAnchorElement>("nav a[href^='#'], .mobile-menu a[href^='#']")
+      .forEach((a) => {
+        const href = a.getAttribute("href") || "";
+        if (map[href]) a.setAttribute("href", map[href]);
+      });
+
+    if (document.getElementById("vtec-site-scripts")) return;
     const s = document.createElement("script");
     s.id = "vtec-site-scripts";
     s.src = "/site-scripts.js";
