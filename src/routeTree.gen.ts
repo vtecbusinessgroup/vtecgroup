@@ -9,12 +9,44 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VisionRouteImport } from './routes/vision'
+import { Route as ServicesRouteImport } from './routes/services'
+import { Route as MilikiRouteImport } from './routes/miliki'
+import { Route as LeadershipRouteImport } from './routes/leadership'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BusinessDiagnosticRouteImport } from './routes/business-diagnostic'
 import { Route as AiDiagnosticInfoRouteImport } from './routes/ai-diagnostic-info'
+import { Route as AcademyRouteImport } from './routes/academy'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiDiagnosticRouteImport } from './routes/api/diagnostic'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 
+const VisionRoute = VisionRouteImport.update({
+  id: '/vision',
+  path: '/vision',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesRoute = ServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MilikiRoute = MilikiRouteImport.update({
+  id: '/miliki',
+  path: '/miliki',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LeadershipRoute = LeadershipRouteImport.update({
+  id: '/leadership',
+  path: '/leadership',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BusinessDiagnosticRoute = BusinessDiagnosticRouteImport.update({
   id: '/business-diagnostic',
   path: '/business-diagnostic',
@@ -23,6 +55,16 @@ const BusinessDiagnosticRoute = BusinessDiagnosticRouteImport.update({
 const AiDiagnosticInfoRoute = AiDiagnosticInfoRouteImport.update({
   id: '/ai-diagnostic-info',
   path: '/ai-diagnostic-info',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AcademyRoute = AcademyRouteImport.update({
+  id: '/academy',
+  path: '/academy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -43,23 +85,44 @@ const ApiChatRoute = ApiChatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/academy': typeof AcademyRoute
   '/ai-diagnostic-info': typeof AiDiagnosticInfoRoute
   '/business-diagnostic': typeof BusinessDiagnosticRoute
+  '/contact': typeof ContactRoute
+  '/leadership': typeof LeadershipRoute
+  '/miliki': typeof MilikiRoute
+  '/services': typeof ServicesRoute
+  '/vision': typeof VisionRoute
   '/api/chat': typeof ApiChatRoute
   '/api/diagnostic': typeof ApiDiagnosticRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/academy': typeof AcademyRoute
   '/ai-diagnostic-info': typeof AiDiagnosticInfoRoute
   '/business-diagnostic': typeof BusinessDiagnosticRoute
+  '/contact': typeof ContactRoute
+  '/leadership': typeof LeadershipRoute
+  '/miliki': typeof MilikiRoute
+  '/services': typeof ServicesRoute
+  '/vision': typeof VisionRoute
   '/api/chat': typeof ApiChatRoute
   '/api/diagnostic': typeof ApiDiagnosticRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/academy': typeof AcademyRoute
   '/ai-diagnostic-info': typeof AiDiagnosticInfoRoute
   '/business-diagnostic': typeof BusinessDiagnosticRoute
+  '/contact': typeof ContactRoute
+  '/leadership': typeof LeadershipRoute
+  '/miliki': typeof MilikiRoute
+  '/services': typeof ServicesRoute
+  '/vision': typeof VisionRoute
   '/api/chat': typeof ApiChatRoute
   '/api/diagnostic': typeof ApiDiagnosticRoute
 }
@@ -67,36 +130,99 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
+    | '/academy'
     | '/ai-diagnostic-info'
     | '/business-diagnostic'
+    | '/contact'
+    | '/leadership'
+    | '/miliki'
+    | '/services'
+    | '/vision'
     | '/api/chat'
     | '/api/diagnostic'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
+    | '/academy'
     | '/ai-diagnostic-info'
     | '/business-diagnostic'
+    | '/contact'
+    | '/leadership'
+    | '/miliki'
+    | '/services'
+    | '/vision'
     | '/api/chat'
     | '/api/diagnostic'
   id:
     | '__root__'
     | '/'
+    | '/about'
+    | '/academy'
     | '/ai-diagnostic-info'
     | '/business-diagnostic'
+    | '/contact'
+    | '/leadership'
+    | '/miliki'
+    | '/services'
+    | '/vision'
     | '/api/chat'
     | '/api/diagnostic'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  AcademyRoute: typeof AcademyRoute
   AiDiagnosticInfoRoute: typeof AiDiagnosticInfoRoute
   BusinessDiagnosticRoute: typeof BusinessDiagnosticRoute
+  ContactRoute: typeof ContactRoute
+  LeadershipRoute: typeof LeadershipRoute
+  MilikiRoute: typeof MilikiRoute
+  ServicesRoute: typeof ServicesRoute
+  VisionRoute: typeof VisionRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiDiagnosticRoute: typeof ApiDiagnosticRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/vision': {
+      id: '/vision'
+      path: '/vision'
+      fullPath: '/vision'
+      preLoaderRoute: typeof VisionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services': {
+      id: '/services'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof ServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/miliki': {
+      id: '/miliki'
+      path: '/miliki'
+      fullPath: '/miliki'
+      preLoaderRoute: typeof MilikiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/leadership': {
+      id: '/leadership'
+      path: '/leadership'
+      fullPath: '/leadership'
+      preLoaderRoute: typeof LeadershipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/business-diagnostic': {
       id: '/business-diagnostic'
       path: '/business-diagnostic'
@@ -109,6 +235,20 @@ declare module '@tanstack/react-router' {
       path: '/ai-diagnostic-info'
       fullPath: '/ai-diagnostic-info'
       preLoaderRoute: typeof AiDiagnosticInfoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/academy': {
+      id: '/academy'
+      path: '/academy'
+      fullPath: '/academy'
+      preLoaderRoute: typeof AcademyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -137,21 +277,18 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  AcademyRoute: AcademyRoute,
   AiDiagnosticInfoRoute: AiDiagnosticInfoRoute,
   BusinessDiagnosticRoute: BusinessDiagnosticRoute,
+  ContactRoute: ContactRoute,
+  LeadershipRoute: LeadershipRoute,
+  MilikiRoute: MilikiRoute,
+  ServicesRoute: ServicesRoute,
+  VisionRoute: VisionRoute,
   ApiChatRoute: ApiChatRoute,
   ApiDiagnosticRoute: ApiDiagnosticRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
