@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as BusinessDiagnosticRouteImport } from './routes/business-diagnostic'
 import { Route as AiDiagnosticInfoRouteImport } from './routes/ai-diagnostic-info'
+import { Route as AcademyRouteImport } from './routes/academy'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiDiagnosticRouteImport } from './routes/api/diagnostic'
@@ -30,6 +31,11 @@ const BusinessDiagnosticRoute = BusinessDiagnosticRouteImport.update({
 const AiDiagnosticInfoRoute = AiDiagnosticInfoRouteImport.update({
   id: '/ai-diagnostic-info',
   path: '/ai-diagnostic-info',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AcademyRoute = AcademyRouteImport.update({
+  id: '/academy',
+  path: '/academy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -56,6 +62,7 @@ const ApiChatRoute = ApiChatRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/academy': typeof AcademyRoute
   '/ai-diagnostic-info': typeof AiDiagnosticInfoRoute
   '/business-diagnostic': typeof BusinessDiagnosticRoute
   '/services': typeof ServicesRoute
@@ -65,6 +72,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/academy': typeof AcademyRoute
   '/ai-diagnostic-info': typeof AiDiagnosticInfoRoute
   '/business-diagnostic': typeof BusinessDiagnosticRoute
   '/services': typeof ServicesRoute
@@ -75,6 +83,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/academy': typeof AcademyRoute
   '/ai-diagnostic-info': typeof AiDiagnosticInfoRoute
   '/business-diagnostic': typeof BusinessDiagnosticRoute
   '/services': typeof ServicesRoute
@@ -86,6 +95,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/academy'
     | '/ai-diagnostic-info'
     | '/business-diagnostic'
     | '/services'
@@ -95,6 +105,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/academy'
     | '/ai-diagnostic-info'
     | '/business-diagnostic'
     | '/services'
@@ -104,6 +115,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/academy'
     | '/ai-diagnostic-info'
     | '/business-diagnostic'
     | '/services'
@@ -114,6 +126,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AcademyRoute: typeof AcademyRoute
   AiDiagnosticInfoRoute: typeof AiDiagnosticInfoRoute
   BusinessDiagnosticRoute: typeof BusinessDiagnosticRoute
   ServicesRoute: typeof ServicesRoute
@@ -142,6 +155,13 @@ declare module '@tanstack/react-router' {
       path: '/ai-diagnostic-info'
       fullPath: '/ai-diagnostic-info'
       preLoaderRoute: typeof AiDiagnosticInfoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/academy': {
+      id: '/academy'
+      path: '/academy'
+      fullPath: '/academy'
+      preLoaderRoute: typeof AcademyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -178,6 +198,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AcademyRoute: AcademyRoute,
   AiDiagnosticInfoRoute: AiDiagnosticInfoRoute,
   BusinessDiagnosticRoute: BusinessDiagnosticRoute,
   ServicesRoute: ServicesRoute,
