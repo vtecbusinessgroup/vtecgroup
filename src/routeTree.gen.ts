@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VisionRouteImport } from './routes/vision'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as MilikiRouteImport } from './routes/miliki'
 import { Route as BusinessDiagnosticRouteImport } from './routes/business-diagnostic'
@@ -19,6 +20,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiDiagnosticRouteImport } from './routes/api/diagnostic'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 
+const VisionRoute = VisionRouteImport.update({
+  id: '/vision',
+  path: '/vision',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
   path: '/services',
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/business-diagnostic': typeof BusinessDiagnosticRoute
   '/miliki': typeof MilikiRoute
   '/services': typeof ServicesRoute
+  '/vision': typeof VisionRoute
   '/api/chat': typeof ApiChatRoute
   '/api/diagnostic': typeof ApiDiagnosticRoute
 }
@@ -84,6 +91,7 @@ export interface FileRoutesByTo {
   '/business-diagnostic': typeof BusinessDiagnosticRoute
   '/miliki': typeof MilikiRoute
   '/services': typeof ServicesRoute
+  '/vision': typeof VisionRoute
   '/api/chat': typeof ApiChatRoute
   '/api/diagnostic': typeof ApiDiagnosticRoute
 }
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   '/business-diagnostic': typeof BusinessDiagnosticRoute
   '/miliki': typeof MilikiRoute
   '/services': typeof ServicesRoute
+  '/vision': typeof VisionRoute
   '/api/chat': typeof ApiChatRoute
   '/api/diagnostic': typeof ApiDiagnosticRoute
 }
@@ -109,6 +118,7 @@ export interface FileRouteTypes {
     | '/business-diagnostic'
     | '/miliki'
     | '/services'
+    | '/vision'
     | '/api/chat'
     | '/api/diagnostic'
   fileRoutesByTo: FileRoutesByTo
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/business-diagnostic'
     | '/miliki'
     | '/services'
+    | '/vision'
     | '/api/chat'
     | '/api/diagnostic'
   id:
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
     | '/business-diagnostic'
     | '/miliki'
     | '/services'
+    | '/vision'
     | '/api/chat'
     | '/api/diagnostic'
   fileRoutesById: FileRoutesById
@@ -143,12 +155,20 @@ export interface RootRouteChildren {
   BusinessDiagnosticRoute: typeof BusinessDiagnosticRoute
   MilikiRoute: typeof MilikiRoute
   ServicesRoute: typeof ServicesRoute
+  VisionRoute: typeof VisionRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiDiagnosticRoute: typeof ApiDiagnosticRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/vision': {
+      id: '/vision'
+      path: '/vision'
+      fullPath: '/vision'
+      preLoaderRoute: typeof VisionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/services': {
       id: '/services'
       path: '/services'
@@ -223,6 +243,7 @@ const rootRouteChildren: RootRouteChildren = {
   BusinessDiagnosticRoute: BusinessDiagnosticRoute,
   MilikiRoute: MilikiRoute,
   ServicesRoute: ServicesRoute,
+  VisionRoute: VisionRoute,
   ApiChatRoute: ApiChatRoute,
   ApiDiagnosticRoute: ApiDiagnosticRoute,
 }
