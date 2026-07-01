@@ -1,4 +1,4 @@
-<footer>
+export const footerHtml = `<footer>
   <div class="footer-grid">
     <div class="footer-brand">
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
@@ -55,3 +55,4 @@
     <a href="#home" class="top-link">↑ Back to Top</a>
   </div>
 </footer>
+`;
