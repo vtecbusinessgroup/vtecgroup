@@ -1,1 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VTEC Business Group | Visionary Trade, Empowerment & Consultancy</title>
+<meta name="description" content="Kenya's dynamic multi-service brand powering financial education, strategic consultancy, and commerce. Empowering Kenya. One Venture at a Time."/>
 
+<meta property="og:title" content="VTEC Business Group | Visionary Trade, Empowerment & Consultancy"/>
+<meta property="og:description" content="Kenya's dynamic multi-service brand powering financial education, strategic consultancy, and commerce. Empowering Kenya. One Venture at a Time."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://vtecgroup.co.ke/"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="VTEC Business Group"/>
+<meta name="twitter:description" content="Empowering Kenya. One Venture at a Time."/>
+
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%230D2149'/><text x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,serif' font-weight='900' font-size='44' fill='%231f8c3b'>V</text></svg>"/>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/site.css" />
+</head>
+<body>
+
+<div id="preloader">
+  <canvas id="plParticles"></canvas>
+  <div class="pl-inner">
+    <div class="pl-welcome">Welcome To:</div>
+    <div class="pl-logo">VTEC</div>
+    <div class="pl-sub">Business Group</div>
+    <div class="pl-slogan">Your Growth. Our Mission.</div>
+  </div>
+</div>
+
+<div id="scrollProgress"></div>
+
+<div class="fab-stack">
+  <button class="fab fab-top" id="backToTop" aria-label="Back to top">
+    <svg viewBox="0 0 24 24"><polyline points="6 14 12 8 18 14"/></svg>
+  </button>
+  <a class="fab fab-wa" href="https://wa.me/254116644204" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+    <svg viewBox="0 0 32 32"><path d="M16 1.1c-8.2 0-14.9 6.7-14.9 14.9 0 2.6.7 5.2 2 7.5L1.1 30.9l7.6-2c2.3 1.3 4.9 2 7.4 2 8.2 0 14.9-6.7 14.9-14.9S24.2 1.1 16 1.1z" fill="#25D366"/><path d="M12.5 9.5c-.3-.8-.7-.8-1-.8h-.8c-.3 0-.8.1-1.2.6-.4.4-1.5 1.5-1.5 3.6s1.6 4.2 1.8 4.4c.2.3 3 4.6 7.3 6.4 1 .4 1.8.7 2.5.9.9.3 1.8.3 2.5.1.7-.1 2.4-1 2.8-1.9.3-.9.3-1.7.2-1.9-.1-.2-.4-.3-.8-.5s-2.4-1.2-2.7-1.3c-.3-.1-.5-.2-.7.2-.2.4-1 1.3-1.2 1.5-.2.2-.4.3-.8.1-.4-.2-1.7-.6-3.2-1.9-1.2-1.1-2-2.4-2.2-2.8-.2-.4 0-.6.2-.8.2-.2.4-.4.6-.7.2-.2.3-.4.4-.7s.1-.5 0-.8c-.1-.3-.7-1.7-1-2.3z" fill="#FFF"/></svg>
+    <span class="fab-tip">Chat with us on WhatsApp</span>
+  </a>
+</div>
+
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">
+      <img src="/vtec-icon-renewed.png" alt="VTEC Business Group Logo" style="width:100%; height:100%; object-fit:contain; object-position:center; background:white;" />
+    </div>
+    <div class="nav-logo-text">
+      <strong>VTEC</strong>
+      <span>Business Group</span>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="/business-diagnostic" target="_parent" class="nav-diagnostic" data-diagnostic-link><span class="nav-dot"></span>Free Diagnostic</a></li>
+    <li><a href="#ecosystem">Ecosystem</a></li>
+    <li><a href="#leadership">Leadership</a></li>
+    <li><a href="#vision">Vision 2035</a></li>
+    <li><a href="#contact" class="nav-cta">Contact Us</a></li>
+  </ul>
+  <div class="hamburger" onclick="toggleMenu()" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" onclick="toggleMenu()">About</a>
+  <a href="/business-diagnostic" target="_parent" class="nav-diagnostic" data-diagnostic-link><span class="nav-dot"></span>Free Diagnostic</a>
+  <a href="#ecosystem" onclick="toggleMenu()">Ecosystem</a>
+  <a href="#leadership" onclick="toggleMenu()">Leadership</a>
+  <a href="#vision" onclick="toggleMenu()">Vision 2035</a>
+  <a href="#contact" class="mob-cta" onclick="toggleMenu()">Contact Us</a>
+</div>
+
+<section class="hero" id="home">
+  <div class="hero-overlay"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-particles" id="heroParticles"></div>
+  <div class="hero-badge">Est. October 2025 – Nairobi, Kenya</div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="num"><span class="count" data-from="0" data-to="4">4</span><span>+</span></div><p>Business Arms</p></div>
+    <div class="hero-stat"><div class="num scale-in"><span>#</span>1</div><p>Brand Vision</p></div>
+    <div class="hero-stat"><div class="num"><span class="count" data-from="2000" data-to="2035">2035</span></div><p>Empire Target</p></div>
+  </div>
+  <h1>Empowering Kenya.<br/><span class="highlight">One Venture</span><br/>At A Time.</h1>
+  <p class="hero-desc">A premier multi-service brand driving sustainable growth across Kenya through integrated financial literacy, strategic corporate consultancy, and innovative commerce. We are powered by vision and executed with excellence.</p>
+  
+  <div class="hero-arms">
+    <div class="hero-arm-card">
+      <div class="hero-arm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5a10 10 0 0 0 12 0v-5"/></svg></div>
+      <div class="hero-arm-text"><strong>InvestorMind Academy</strong><span>Financial Literacy & Investing</span></div>
+    </div>
+    <div class="hero-arm-card">
+      <div class="hero-arm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+      <div class="hero-arm-text"><strong>VTEC Consultancy Services</strong><span>Strategy & Business Growth</span></div>
+    </div>
+    <div class="hero-arm-card">
+      <div class="hero-arm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
+      <div class="hero-arm-text"><strong>VTEC Retail Services</strong><span>Quality. Style. Value.</span></div>
+    </div>
+    <div class="hero-arm-card">
+      <div class="hero-arm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+      <div class="hero-arm-text"><strong>MILIKI App</strong><span>Your Wealth Co-Pilot</span><span class="hero-arm-badge">Coming Soon</span></div>
+    </div>
+  </div>
+  <div class="hero-btns">
+    <a href="#services" class="btn-primary">Explore Our Services</a>
+    <a href="#/our-story" class="btn-outline">Our Story</a>
+  </div>
+</section>
+
+<section id="about">
+  <div class="container">
+    <div class="section-label">Who We Are</div>
+    <h2 class="section-title">Built on Vision.<br/>Driven by Purpose.</h2>
+    <p class="section-desc">VTEC Business Group is a modern, multi-service brand founded in October 2025 with the vision of building a dynamic platform that connects education, trade, empowerment, and professional consultancy within Kenya's growing economy.</p>
+    <div class="about-grid">
+      <div class="about-card reveal">
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--navy);margin-bottom:20px;">What Does <span style="color:var(--green)">VTEC</span> Stand For?</h3>
+        <div class="about-vtec-meaning">
+          <div class="meaning-row"><div class="meaning-letter">V</div><div class="meaning-text"><strong>Visionary</strong><span>Forward-thinking strategy built for where Kenya's economy is heading.</span></div></div>
+          <div class="meaning-row"><div class="meaning-letter">T</div><div class="meaning-text"><strong>Trade</strong><span>The commercial backbone — movement of goods, services, and ideas.</span></div></div>
+          <div class="meaning-row"><div class="meaning-letter">E</div><div class="meaning-text"><strong>Empowerment</strong><span>Raising people before profits — through knowledge and opportunity.</span></div></div>
+          <div class="meaning-row"><div class="meaning-letter">C</div><div class="meaning-text"><strong>Consultancy</strong><span>The intellectual engine guiding strategic decisions that shape futures.</span></div></div>
+        </div>
+      </div>
+      <div class="about-right reveal">
+        <div class="about-stat-card"><div class="about-stat-icon icon-navy"><svg class="lc-ico" viewBox="0 0 24 24"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/></svg></div><div><h4>Multi-Service Brand Structure</h4><p>Four diversified sub-brands under one powerful parent group, sharing resources, vision, and network.</p></div></div>
+        <div class="about-stat-card"><div class="about-stat-icon icon-green"><svg class="lc-ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></div><div><h4>Rooted in Kenya</h4><p>Operating within Kenya's urban economic landscape, designed for the Kenyan market, with continental ambitions.</p></div></div>
+        <div class="about-stat-card"><div class="about-stat-icon icon-gold"><svg class="lc-ico" viewBox="0 0 24 24"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09zM12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2zM9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></div><div><h4>2035 Empire Vision</h4><p>A clear 10 year roadmap to building a recognized, impactful, and profitable business empire.</p></div></div>
+        <div class="about-stat-card"><div class="about-stat-icon icon-navy"><svg class="lc-ico" viewBox="0 0 24 24"><path d="M17 11l1-1a4 4 0 0 0-5.66-5.66l-1 1M7 13l-1 1a4 4 0 0 0 5.66 5.66l1-1"/><path d="M14 7l-7 7"/></svg></div><div><h4>Collaborative Leadership</h4><p>Three complementary Business Partners bringing vision, operations, and growth expertise together.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="services">
+  <div class="container">
+    <div class="section-label">What We Do</div>
+    <h2 class="section-title">Our Business Arms</h2>
+    <p class="section-desc">Four strategically positioned sub-brands, each serving a distinct market need — yet all unified under the VTEC Business Group umbrella.</p>
+    <div class="services-grid">
+
+      <div class="service-card reveal">
+        <div class="service-header sc-navy" style="padding-top:20px;">
+          <div style="display:flex; justify-content:center; margin-bottom:14px;">
+            <div style="width:90px; height:90px; border-radius:50%; overflow:hidden; border:2px solid rgba(201,162,39,0.35); background:white; flex-shrink:0;">
+              <img src="/academy-logo.png" alt="InvestorMind Academy Logo" style="width:100%;height:100%;object-fit:cover;object-position:center 15%;" />
+            </div>
+          </div>
+          <span class="service-badge">Education</span>
+          <span class="service-icon lc-ico"><svg viewBox="0 0 24 24" style="width:30px;height:30px"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span>
+          <h3>InvestorMind Academy</h3>
+        </div>
+        <div class="service-body">
+          <p>Kenya's dedicated financial literacy and investment education platform. We bridge the knowledge gap between everyday Kenyans and the wealth-building tools available to them.</p>
+          <div class="service-tags">
+            <span class="tag">NSE Stock Market</span><span class="tag">Money Market Funds</span><span class="tag">SACCOs</span><span class="tag">Financial Literacy</span><span class="tag">Investment Strategy</span>
+          </div>
+          <a href="#contact" class="svc-cta navy">Explore Academy &rarr;</a>
+        </div>
+      </div>
+
+      <div class="service-card reveal">
+        <div class="service-header sc-green">
+          <span class="service-badge">Consultancy</span>
+          <span class="service-icon lc-ico"><svg viewBox="0 0 24 24" style="width:30px;height:30px"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>
+          <h3>VTEC Consultancy Services</h3>
+        </div>
+        <div class="service-body">
+          <p>Strategic professional services tailored for Kenya's business landscape. We guide entrepreneurs, SMEs, and brands to make smarter decisions and build stronger market presence.</p>
+          <div class="service-tags">
+            <span class="tag">Financial Consulting</span><span class="tag">Brand Consulting</span><span class="tag">Content Marketing</span><span class="tag">Business Strategy</span>
+          </div>
+          <a href="#contact" class="svc-cta green">Request Consultation &rarr;</a>
+        </div>
+      </div>
+
+      <div class="service-card reveal" style="position:relative;overflow:hidden;">
+        <div class="coming-soon-ribbon">Coming Soon</div>
+        <div class="service-header sc-gold">
+          <span class="service-badge">Retail</span>
+          <span class="service-icon lc-ico"><svg viewBox="0 0 24 24" style="width:30px;height:30px"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg></span>
+          <h3>VTEC Retail Services</h3>
+        </div>
+        <div class="service-body">
+          <p>A premium clothing and apparel retail venture currently in its pre-launch phase. Designed to bring quality, style, and accessibility to Kenya's urban fashion market.</p>
+          <div class="service-tags">
+            <span class="tag">Apparel</span><span class="tag">Urban Fashion</span><span class="tag">Kenyan Market</span><span class="tag">Coming 2026</span>
+          </div>
+          <a href="#contact" class="svc-cta gold">Notify Me at Launch &rarr;</a>
+        </div>
+      </div>
+
+      <div class="service-card reveal" style="position:relative;overflow:hidden;cursor:pointer;" onclick="if(!event.target.closest('a')) openEco('miliki')">
+        <div class="gold-ribbon">In Development</div>
+        <div class="service-header sc-miliki" style="padding-top:20px;">
+          <div style="display:flex; justify-content:center; margin-bottom:14px;">
+            <div style="width:90px; height:90px; border-radius:50%; overflow:hidden; border:2px solid #c9a227; box-shadow:0 0 20px rgba(201,162,39,0.4); background:#000; flex-shrink:0;">
+              <img id="milikiLogoCard" alt="MILIKI App logo" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;" src="/miliki-logo.png" />
+            </div>
+          </div>
+          <span class="service-badge">Digital Arm</span>
+          <span class="service-icon lc-ico"><svg viewBox="0 0 24 24" style="width:30px;height:30px"><path d="M12 2 4 5v6c0 5 3.5 9.5 8 11 4.5-1.5 8-6 8-11V5l-8-3z"/></svg></span>
+          <h3>MILIKI App</h3>
+        </div>
+        <div class="service-body">
+          <p>The flagship digital solution within the VTEC ecosystem — built to redefine asset ownership and wealth management for the modern Kenyan investor. Drawn from the Swahili word <em>miliki</em>, meaning "to own," MILIKI will bring every asset class including NSE equities, Money Market Funds, and bonds under one transparent, user-friendly dashboard.</p>
+          <div class="service-tags">
+            <span class="tag">NSE Equities</span><span class="tag">Money Market Funds</span><span class="tag">Wealth Tracking</span><span class="tag">Asset Ownership</span><span class="tag">Financial Dashboard</span>
+          </div>
+          <a href="#contact" class="svc-cta gold" onclick="event.stopPropagation();openEco('miliki');return false;">Join the Waitlist &rarr;</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="ecosystem">
+  <div class="container">
+    <div class="section-label">The Ecosystem</div>
+    <h2 class="section-title">One Group. Four Pillars.</h2>
+    <p class="section-desc">A connected ecosystem of brands and digital tools — each engineered to educate, empower, and equip the modern Kenyan investor. Tap any card to learn more.</p>
+
+    <div class="ecosystem-grid">
+      <div class="eco-card reveal" onclick="openEco('vtec')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openEco('vtec')}">
+        <span class="eco-badge">● Parent Group</span>
+        <h3>VTEC Business Group</h3>
+        <p>The visionary multi-service brand uniting education, consultancy, retail, and digital innovation under one Kenyan-grown umbrella.</p>
+        <span class="eco-cta">Read more</span>
+      </div>
+
+      <div class="eco-card reveal" onclick="openEco('academy')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openEco('academy')}">
+        <span class="eco-badge">● Education Arm</span>
+        <h3>InvestorMind Academy</h3>
+        <p>The educational backbone of VTEC — building financial literacy, investor discipline, and the Alpha mindset for wealth creation.</p>
+        <span class="eco-cta">Read more</span>
+      </div>
+
+      <div class="eco-card reveal" onclick="openEco('consultancy')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openEco('consultancy')}">
+        <span class="eco-badge">● Advisory Arm</span>
+        <h3>VTEC Consultancy Services</h3>
+        <p>Strategic advisory for businesses, founders, and institutions — bridging vision and execution with sharp, on-the-ground expertise.</p>
+        <span class="eco-cta">Read more</span>
+      </div>
+
+      <div class="eco-card eco-miliki reveal" onclick="openEco('miliki')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openEco('miliki')}">
+        <span class="eco-badge">● In Development</span> <span class="eco-badge" style="color:var(--green-bright);">● Coming Soon</span>
+        <h3>MILIKI App</h3>
+        <p>The upcoming flagship digital engine of VTEC — currently in active development, designed to turn financial knowledge into tangible asset ownership for the modern Kenyan investor.</p>
+        <span class="eco-cta">Read more</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="eco-modal" id="ecoModal" onclick="if(event.target===this)closeEco()" aria-hidden="true">
+  <div class="eco-modal-card" id="ecoModalCard" role="dialog" aria-modal="true" aria-labelledby="ecoTitle">
+    <button class="eco-modal-close" onclick="closeEco()" aria-label="Close">×</button>
+    <img id="ecoModalLogo" alt="" hidden />
+    <span class="eco-badge" id="ecoBadge" hidden></span>
+    <h3 id="ecoTitle"></h3>
+    <div class="eco-body" id="ecoBody"></div>
+    <div id="ecoModalFooter" style="text-align:center;" hidden>
+      <button class="miliki-modal-close-btn" onclick="closeEco()">Close</button>
+    </div>
+  </div>
+</div>
+
+<section id="partners" style="background: linear-gradient(180deg, #071A2B 0%, #0a1628 100%); text-align:center; padding: 80px 20px;">
+  <div class="container">
+    <span class="partners-badge" style="display:inline-block; padding: 8px 18px; border-radius:999px; background:rgba(39,174,96,0.12); border:1px solid rgba(39,174,96,0.35); color:var(--green-bright); font-size:12px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:16px;">In Partnership</span>
+    <h2 class="section-title" style="color:white;">Strategic Partnerships</h2>
+    <p class="section-desc" style="color:rgba(255,255,255,0.7); margin-bottom:40px;">Working hand in hand with trusted partners who share our vision for impact and growth.</p>
+    
+    <div class="partners-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; max-width: 900px; margin: 0 auto;">
+      
+      <div class="partner-card reveal" style="background: linear-gradient(160deg, #0F2240 0%, #0B1A33 100%); border:1px solid rgba(255,255,255,0.06); border-radius:20px; padding:32px 28px; text-align:center; box-shadow: 0 10px 30px rgba(0,0,0,0.4);">
+        <div class="partner-logo-wrap" style="width:140px; height:140px; margin:0 auto 22px; border-radius:18px; background:#fff; display:flex; align-items:center; justify-content:center; overflow:hidden; padding:10px;">
+          <img src="/partner-dukedom.png" alt="Dukedom Media Logo" style="width:100%; height:100%; object-fit:contain;" />
+        </div>
+        <div class="partner-name" style="font-family:'Playfair Display',serif; font-size:24px; font-weight:700; color:#fff; margin-bottom:6px;">Dukedom Media</div>
+        <div class="partner-founder-label" style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--green-bright); margin-bottom:4px; font-weight:600;">Founder</div>
+        <div class="partner-founder-name" style="font-size:16px; color:#fff; font-weight:500; margin-bottom:14px;">Mr. Dukedom Makori</div>
+        <p class="partner-desc" style="color:rgba(255,255,255,0.7); font-size:14.5px; line-height:1.65; text-align:left; margin-bottom:20px;">Dukedom Media is a dynamic online media channel delivering compelling content in Sports and News. With a growing community of over 1,000 followers and 5,200+ posts, Dukedom Media is committed to bold storytelling and keeping audiences informed and engaged across multiple digital platforms.</p>
+      </div>
+
+      <div class="partner-card reveal" style="background: linear-gradient(160deg, #0F2240 0%, #0B1A33 100%); border:1px solid rgba(255,255,255,0.06); border-radius:20px; padding:32px 28px; text-align:center; box-shadow: 0 10px 30px rgba(0,0,0,0.4);">
+        <div class="partner-logo-placeholder" style="width:140px; height:140px; margin:0 auto 22px; border-radius:18px; background:rgba(255,255,255,0.04); border:2px dashed rgba(255,255,255,0.18); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.5); font-size:12px; font-weight:600; letter-spacing:1px; text-align:center; padding:12px;">Logo Coming Soon</div>
+        <div class="partner-name" style="font-family:'Playfair Display',serif; font-size:24px; font-weight:700; color:#fff; margin-bottom:6px;">The Grace Foundation</div>
+        <div class="partner-founder-label" style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--green-bright); margin-bottom:4px; font-weight:600;">Founder</div>
+        <div class="partner-founder-name" style="font-size:16px; color:#fff; font-weight:500; margin-bottom:14px;">Maurine Mbuthia</div>
+        <p class="partner-desc" style="color:rgba(255,255,255,0.7); font-size:14.5px; line-height:1.65; text-align:left; margin-bottom:20px;">The Grace Foundation is a Nairobi-based community foundation founded by Trauma Therapist Mbuthia Maurine. The foundation specializes in supporting individuals dealing with Post Abortion Trauma and those navigating pregnancy journeys, providing compassionate care, healing, and dignity to those who need it most.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="testimonials" style="background:white; padding-top:80px; padding-bottom:80px;">
+  <div class="container">
+    <div class="section-label">Testimonials</div>
+    <h2 class="section-title">What People Say</h2>
+    <p class="section-desc">Real voices from students, entrepreneurs, and professionals across Kenya.</p>
+    <div class="reveal" style="margin-top:8px;">
+      <span class="reviews-badge"><span class="stars">★★★★★</span> Rated 4.9 by our community</span>
+    </div>
+    
+    <div class="testi-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 40px;">
+      <div class="testi-card reveal" style="background:white; border:1px solid #e6e8f3; border-left:4px solid var(--green); border-radius:20px; padding:28px 24px; box-shadow:0 6px 22px rgba(13,33,73,0.05);">
+        <div class="testi-avatar" style="width:56px; height:56px; border-radius:50%; background:linear-gradient(135deg, var(--navy), var(--green)); color:white; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display', serif; font-size:20px; font-weight:800; margin-bottom:14px;">JM</div>
+        <div class="testi-quote" style="color:var(--green); font-size:2rem; line-height:1; margin-bottom:8px; font-family:Georgia, serif;">"</div>
+        <p class="testi-text" style="font-style:italic; color:#4a5568; font-size:15px; line-height:1.75; margin-bottom:16px;">InvestorMind Academy opened my eyes to the NSE. I made my first stock investment within a week of the course.</p>
+        <div class="testi-stars" style="color:var(--gold); letter-spacing:2px; margin-bottom:14px; font-size:14px;">★★★★★</div>
+        <div class="testi-name" style="color:var(--navy); font-weight:700; font-size:14px;">James M.</div>
+        <div class="testi-role" style="color:var(--gray); font-size:12px;">University Student, Nairobi</div>
+      </div>
+      
+      <div class="testi-card reveal" style="background:white; border:1px solid #e6e8f3; border-left:4px solid var(--green); border-radius:20px; padding:28px 24px; box-shadow:0 6px 22px rgba(13,33,73,0.05);">
+        <div class="testi-avatar" style="width:56px; height:56px; border-radius:50%; background:linear-gradient(135deg, var(--gold), var(--green)); color:white; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display', serif; font-size:20px; font-weight:800; margin-bottom:14px;">SK</div>
+        <div class="testi-quote" style="color:var(--green); font-size:2rem; line-height:1; margin-bottom:8px; font-family:Georgia, serif;">"</div>
+        <p class="testi-text" style="font-style:italic; color:#4a5568; font-size:15px; line-height:1.75; margin-bottom:16px;">VTEC Consultancy helped us rebrand completely. Our client inquiries doubled within two months.</p>
+        <div class="testi-stars" style="color:var(--gold); letter-spacing:2px; margin-bottom:14px; font-size:14px;">★★★★★</div>
+        <div class="testi-name" style="color:var(--navy); font-weight:700; font-size:14px;">Sarah K.</div>
+        <div class="testi-role" style="color:var(--gray); font-size:12px;">SME Owner, Westlands</div>
+      </div>
+      
+      <div class="testi-card reveal" style="background:white; border:1px solid #e6e8f3; border-left:4px solid var(--green); border-radius:20px; padding:28px 24px; box-shadow:0 6px 22px rgba(13,33,73,0.05);">
+        <div class="testi-avatar" style="width:56px; height:56px; border-radius:50%; background:linear-gradient(135deg, #002149, var(--gold)); color:white; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display', serif; font-size:20px; font-weight:800; margin-bottom:14px;">BO</div>
+        <div class="testi-quote" style="color:var(--green); font-size:2rem; line-height:1; margin-bottom:8px; font-family:Georgia, serif;">"</div>
+        <p class="testi-text" style="font-style:italic; color:#4a5568; font-size:15px; line-height:1.75; margin-bottom:16px;">The financial literacy sessions are practical, simple, and made for Kenyans. Nothing like it exists at this level.</p>
+        <div class="testi-stars" style="color:var(--gold); letter-spacing:2px; margin-bottom:14px; font-size:14px;">★★★★★</div>
+        <div class="testi-name" style="color:var(--navy); font-weight:700; font-size:14px;">Brian O.</div>
+        <div class="testi-role" style="color:var(--gray); font-size:12px;">Young Professional, Kiambu</div>
+      </div>
+    </div>
+  </div>
+  </section>
