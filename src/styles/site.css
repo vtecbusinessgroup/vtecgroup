@@ -664,7 +664,6 @@
     object-position: 33% 28%;
     display: block; border-radius: 50%;
   }
-...
   .leader-card h3 { color: white; font-size: 20px; font-weight: 700; margin-bottom: 4px; }
   .leader-role {
     color: var(--green-bright); font-size: 11px;
