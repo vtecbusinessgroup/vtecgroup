@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SiteShell } from "@/SiteShell"; // Pulling in your shared layout
-import { homeHtml } from "@/html/home"; // Pulling in the clean code above
+import { SiteShell } from "@/components/SiteShell"; // Fixed import path!
+import { homeHtml } from "@/html/home"; 
 
 export const Route = createFileRoute("/")({
   head: () => ({
