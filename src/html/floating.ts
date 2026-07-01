@@ -1,6 +1,6 @@
+export const floatingHtml = `
 <div id="scrollProgress"></div>
 
-<!-- FLOATING ACTIONS -->
 <div class="fab-stack">
   <button class="fab fab-top" id="backToTop" aria-label="Back to top">
     <svg viewBox="0 0 24 24"><polyline points="6 14 12 8 18 14"/></svg>
@@ -10,3 +10,4 @@
     <span class="fab-tip">Chat with us on WhatsApp</span>
   </a>
 </div>
+`;
