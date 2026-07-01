@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { SiteShell } from "@/SiteShell"; // Pulling in your shared layout
+import { homeHtml } from "@/html/home"; // Pulling in the clean code above
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -24,16 +26,6 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <iframe
-      src="/site.html"
-      title="VTEC Business Group"
-      style={{
-        position: "fixed",
-        inset: 0,
-        width: "100%",
-        height: "100%",
-        border: "none",
-      }}
-    />
+    <SiteShell htmlSections={[homeHtml]} />
   );
 }
