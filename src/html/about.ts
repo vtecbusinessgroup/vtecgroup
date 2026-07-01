@@ -3,7 +3,7 @@ export const aboutHtml = `
   <div class="container">
     <div class="section-label">Who We Are</div>
     <h2 class="section-title">Built on Vision.<br/>Driven by Purpose.</h2>
-    <p class="section-desc">VTEC Business Group is a modern, multi-service holding entity founded in October 2025 with the vision of building a dynamic platform that connects education, trade, empowerment, and professional consultancy within Kenya's growing economy.</p>
+    <p class="section-desc">VTEC Business Group is a modern, multi-service brand founded in October 2025 with the vision of building a dynamic platform that connects education, trade, empowerment, and professional consultancy within Kenya's growing economy.</p>
     <div class="about-grid">
       <div class="about-card reveal">
         <h3 style="font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--navy);margin-bottom:20px;">What Does <span style="color:var(--green)">VTEC</span> Stand For?</h3>
@@ -42,7 +42,7 @@ export const aboutHtml = `
         <div class="about-stat-card">
           <div class="about-stat-icon icon-navy"><svg class="lc-ico" viewBox="0 0 24 24"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/></svg></div>
           <div>
-            <h4>Holding Entity Structure</h4>
+            <h4>Multi-Service Brand Structure</h4>
             <p>Three diversified sub-brands under one powerful parent group, sharing resources, vision, and network.</p>
           </div>
         </div>
@@ -63,13 +63,12 @@ export const aboutHtml = `
         <div class="about-stat-card">
           <div class="about-stat-icon icon-navy"><svg class="lc-ico" viewBox="0 0 24 24"><path d="M17 11l1-1a4 4 0 0 0-5.66-5.66l-1 1M7 13l-1 1a4 4 0 0 0 5.66 5.66l1-1"/><path d="M14 7l-7 7"/></svg></div>
           <div>
-            <h4>Co Founded Leadership</h4>
-            <p>Three complementary co founders bringing vision, operations, and growth expertise together.</p>
+            <h4>Collaborative Leadership</h4>
+            <p>A team of dedicated Business Partners bringing vision, operations, and growth expertise together.</p>
           </div>
         </div>
       </div>
     </div>
   </div>
 </section>
-
 `;
