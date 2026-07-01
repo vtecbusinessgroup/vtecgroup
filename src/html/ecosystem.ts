@@ -51,5 +51,4 @@ export const ecosystemHtml = `
     </div>
   </div>
 </div>
-
 `;
