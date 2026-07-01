@@ -1,4 +1,4 @@
-<!-- NAV -->
+export const navHtml = `<!-- NAV -->
 <nav>
   <a href="#" class="nav-logo">
     <div class="nav-logo-icon">
@@ -35,3 +35,4 @@
 </div>
 
 <!-- HERO -->
+`;
