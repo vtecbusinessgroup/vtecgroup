@@ -1,8 +1,8 @@
 export const navHtml = `
 <nav>
   <a href="/" class="nav-logo" style="text-decoration:none;">
-    <div class="nav-logo-icon" style="width:38px; height:38px; border-radius:10px; background:var(--navy-card); border:1px solid var(--teal); display:grid; place-items:center; font-family:'Playfair Display', serif; font-weight:900; color:var(--teal); font-size:22px; overflow:hidden;">
-      <img src="/vtec-logo.png" alt="VTEC Business Group Logo" style="width:100%; height:100%; object-fit:cover; object-position:center;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+    <div class="nav-logo-icon" style="width:38px; height:38px; border-radius:10px; background:white; border:1px solid var(--teal); display:grid; place-items:center; font-family:'Playfair Display', serif; font-weight:900; color:var(--teal); font-size:22px; overflow:hidden;">
+      <img src="/vtec-icon-renewed.png" alt="VTEC Business Group Logo" style="width:100%; height:100%; object-fit:contain; object-position:center;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
       <span style="display:none;">V</span>
     </div>
     <div class="nav-logo-text">
