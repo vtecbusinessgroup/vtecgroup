@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteShell } from "@/components/SiteShell";
-import leadershipHtml from "@/html/leadership.html?raw";
-import aboutHtml from "@/html/about.html?raw";
-import visionHtml from "@/html/vision.html?raw";
+
+// Updated imports pointing to the new TypeScript files
+import { leadershipHtml } from "@/html/leadership";
+import { aboutHtml } from "@/html/about";
+import { visionHtml } from "@/html/vision";
 
 export const Route = createFileRoute("/leadership")({
   head: () => ({
@@ -18,9 +20,9 @@ export const Route = createFileRoute("/leadership")({
         property: "og:description",
         content: "Built by visionaries. Led by purpose.",
       },
-      { property: "og:url", content: "https://vtecgroup.lovable.app/leadership" },
+      { property: "og:url", content: "https://vtecgroup.co.ke/leadership" },
     ],
-    links: [{ rel: "canonical", href: "https://vtecgroup.lovable.app/leadership" }],
+    links: [{ rel: "canonical", href: "https://vtecgroup.co.ke/leadership" }],
   }),
   component: LeadershipPage,
 });
