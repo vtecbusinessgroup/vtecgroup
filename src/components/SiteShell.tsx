@@ -19,9 +19,10 @@ type Props = {
  */
 export function SiteShell({ children, htmlSections = [] }: Props) {
   useEffect(() => {
-    // Rewrite legacy in-page anchor links to real route URLs so the navbar
-    // works on every standalone route.
+    // Rewrite legacy in-page anchor links to real route URLs so the navbar AND footer
+    // work seamlessly on every standalone route.
     const map: Record<string, string> = {
+      "#home": "/",
       "#about": "/about",
       "#services": "/services",
       "#ecosystem": "/services",
@@ -29,9 +30,14 @@ export function SiteShell({ children, htmlSections = [] }: Props) {
       "#vision": "/vision",
       "#contact": "/contact",
       "#why": "/about",
+      "#privacy": "/privacy-policy", // Mapped for footer
+      "#terms": "/terms-of-service", // Mapped for footer
+      "#cookies": "/cookie-policy"   // Mapped for footer
     };
+    
+    // Added footer anchor tags to the selector
     document
-      .querySelectorAll<HTMLAnchorElement>("nav a[href^='#'], .mobile-menu a[href^='#']")
+      .querySelectorAll<HTMLAnchorElement>("nav a[href^='#'], .mobile-menu a[href^='#'], footer a[href^='#']")
       .forEach((a) => {
         const href = a.getAttribute("href") || "";
         if (map[href]) a.setAttribute("href", map[href]);
