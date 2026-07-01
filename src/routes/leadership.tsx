@@ -1,32 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SiteShell } from "@/components/SiteShell";
-
-// Updated imports pointing to the new TypeScript files
-import { leadershipHtml } from "@/html/leadership";
-import { aboutHtml } from "@/html/about";
-import { visionHtml } from "@/html/vision";
+import { SiteShell } from "@/SiteShell";
+import { teamHtml } from "@/html/team";
 
 export const Route = createFileRoute("/leadership")({
   head: () => ({
     meta: [
-      { title: "Leadership | VTEC Business Group" },
+      { title: "Leadership Team | VTEC Business Group" },
       {
         name: "description",
-        content:
-          "Meet the leadership team driving VTEC Business Group's 10-year vision — built by visionaries, led by purpose.",
+        content: "Meet the executive committee driving VTEC's multi-service business growth and Vision 2035 execution.",
       },
-      { property: "og:title", content: "Leadership | VTEC Business Group" },
-      {
-        property: "og:description",
-        content: "Built by visionaries. Led by purpose.",
-      },
-      { property: "og:url", content: "https://vtecgroup.co.ke/leadership" },
     ],
-    links: [{ rel: "canonical", href: "https://vtecgroup.co.ke/leadership" }],
   }),
-  component: LeadershipPage,
+  component: LeadershipComponent,
 });
 
-function LeadershipPage() {
-  return <SiteShell htmlSections={[leadershipHtml, aboutHtml, visionHtml]} />;
+function LeadershipComponent() {
+  return (
+    <SiteShell htmlSections={[teamHtml]} />
+  );
 }
