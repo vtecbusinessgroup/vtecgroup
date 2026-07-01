@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteShell } from "@/components/SiteShell";
-import contactHtml from "@/html/contact.html?raw";
-import aboutHtml from "@/html/about.html?raw";
-import servicesHtml from "@/html/services.html?raw";
+
+// Updated imports pointing to the new TypeScript files
+import { contactHtml } from "@/html/contact";
+import { aboutHtml } from "@/html/about";
+import { servicesHtml } from "@/html/services";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -19,9 +21,9 @@ export const Route = createFileRoute("/contact")({
         content:
           "Reach VTEC Business Group in Nairobi, Kenya. Let's build together.",
       },
-      { property: "og:url", content: "https://vtecgroup.lovable.app/contact" },
+      { property: "og:url", content: "https://vtecgroup.co.ke/contact" },
     ],
-    links: [{ rel: "canonical", href: "https://vtecgroup.lovable.app/contact" }],
+    links: [{ rel: "canonical", href: "https://vtecgroup.co.ke/contact" }],
   }),
   component: ContactPage,
 });
