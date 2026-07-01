@@ -1,3 +1,4 @@
+export const milikiHtml = `
 <section id="waitlist">
   <div class="container">
     <h2>Join the InvestorMind Academy Waitlist</h2>
@@ -10,4 +11,5 @@
     <p class="wl-note">No spam. Just updates on courses, launches, and financial insights.</p>
   </div>
 </section>
+`;
 
