@@ -7,12 +7,17 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Kenya's dynamic holding entity powering Financial Education, Strategic Consultancy, and Commerce. Empowering Kenya. One Venture at a Time.",
+          "Kenya's dynamic multi-service brand driving financial education, strategic consultancy, and commercial innovation. Empowering Kenya, one venture at a time.",
       },
-      { property: "og:title", content: "VTEC Business Group" },
-      { property: "og:description", content: "Empowering Kenya. One Venture at a Time." },
+      { property: "og:title", content: "VTEC Business Group | Visionary Trade, Empowerment & Consultancy" },
+      { 
+        property: "og:description", 
+        content: "Kenya's dynamic multi-service brand driving financial education, strategic consultancy, and commercial innovation." 
+      },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://vtecgroup.co.ke/" },
     ],
+    links: [{ rel: "canonical", href: "https://vtecgroup.co.ke/" }],
   }),
   component: Index,
 });
