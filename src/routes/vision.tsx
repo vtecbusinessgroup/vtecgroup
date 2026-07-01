@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteShell } from "@/components/SiteShell";
-import visionHtml from "@/html/vision.html?raw";
-import aboutHtml from "@/html/about.html?raw";
-import leadershipHtml from "@/html/leadership.html?raw";
+
+// Updated imports to use the named exports from the new .ts files
+import { visionHtml } from "@/html/vision";
+import { aboutHtml } from "@/html/about";
+import { leadershipHtml } from "@/html/leadership";
 
 export const Route = createFileRoute("/vision")({
   head: () => ({
