@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteShell } from "@/components/SiteShell";
-import academyHtml from "@/html/academy.html?raw";
-import servicesHtml from "@/html/services.html?raw";
-import milikiHtml from "@/html/miliki.html?raw";
+
+// Updated imports pointing to the new TypeScript files
+import { academyHtml } from "@/html/academy";
+import { servicesHtml } from "@/html/services";
+import { milikiHtml } from "@/html/miliki";
 
 export const Route = createFileRoute("/academy")({
   head: () => ({
@@ -19,9 +21,9 @@ export const Route = createFileRoute("/academy")({
         content:
           "Financial literacy and investment education designed for the modern Kenyan investor.",
       },
-      { property: "og:url", content: "https://vtecgroup.lovable.app/academy" },
+      { property: "og:url", content: "https://vtecgroup.co.ke/academy" },
     ],
-    links: [{ rel: "canonical", href: "https://vtecgroup.lovable.app/academy" }],
+    links: [{ rel: "canonical", href: "https://vtecgroup.co.ke/academy" }],
   }),
   component: AcademyPage,
 });
