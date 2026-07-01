@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteShell } from "@/components/SiteShell";
-import milikiHtml from "@/html/miliki.html?raw";
-import academyHtml from "@/html/academy.html?raw";
-import servicesHtml from "@/html/services.html?raw";
+
+// Updated imports pointing to the new TypeScript files
+import { milikiHtml } from "@/html/miliki";
+import { academyHtml } from "@/html/academy";
+import { servicesHtml } from "@/html/services";
 
 export const Route = createFileRoute("/miliki")({
   head: () => ({
@@ -19,9 +21,9 @@ export const Route = createFileRoute("/miliki")({
         content:
           "An intelligent wealth co-pilot for everyday Kenyan investors. Join the founding waitlist.",
       },
-      { property: "og:url", content: "https://vtecgroup.lovable.app/miliki" },
+      { property: "og:url", content: "https://vtecgroup.co.ke/miliki" },
     ],
-    links: [{ rel: "canonical", href: "https://vtecgroup.lovable.app/miliki" }],
+    links: [{ rel: "canonical", href: "https://vtecgroup.co.ke/miliki" }],
   }),
   component: MilikiPage,
 });
