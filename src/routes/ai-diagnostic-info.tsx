@@ -26,7 +26,9 @@ export const Route = createFileRoute("/ai-diagnostic-info")({
         content:
           "A free 7 question AI tool built for Kenya's entrepreneurs. Get a Business Health Score, critical gap analysis and 90 day roadmap.",
       },
+      { property: "og:url", content: "https://vtecgroup.co.ke/ai-diagnostic-info" },
     ],
+    links: [{ rel: "canonical", href: "https://vtecgroup.co.ke/ai-diagnostic-info" }],
   }),
   component: AiDiagnosticInfo,
 });
