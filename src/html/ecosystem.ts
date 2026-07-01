@@ -1,3 +1,4 @@
+export const ecosystemHtml = `
 <section id="ecosystem">
   <div class="container">
     <div class="section-label">The Ecosystem</div>
@@ -9,7 +10,7 @@
       <div class="eco-card reveal" onclick="openEco('vtec')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openEco('vtec')}">
         <span class="eco-badge">● Parent Group</span>
         <h3>VTEC Business Group</h3>
-        <p>The visionary holding entity uniting education, consultancy, retail, and digital innovation under one Kenyan-grown umbrella.</p>
+        <p>The visionary multi-service brand uniting education, consultancy, retail, and digital innovation under one Kenyan-grown umbrella.</p>
         <span class="eco-cta">Read more</span>
       </div>
 
@@ -38,7 +39,6 @@
   </div>
 </section>
 
-<!-- ECOSYSTEM MODAL -->
 <div class="eco-modal" id="ecoModal" onclick="if(event.target===this)closeEco()" aria-hidden="true">
   <div class="eco-modal-card" id="ecoModalCard" role="dialog" aria-modal="true" aria-labelledby="ecoTitle">
     <button class="eco-modal-close" onclick="closeEco()" aria-label="Close">×</button>
@@ -52,4 +52,4 @@
   </div>
 </div>
 
-<!-- INVESTORMIND ACADEMY DEDICATED SECTION -->
+`;
