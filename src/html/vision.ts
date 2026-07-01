@@ -1,3 +1,4 @@
+export const visionHtml = `
 <section id="vision">
   <div class="container">
     <div class="section-label">Our Roadmap</div>
@@ -57,5 +58,4 @@
   </div>
 </section>
 
-<!-- CONTACT -->
-<!-- WAITLIST / NEWSLETTER -->
+`;
