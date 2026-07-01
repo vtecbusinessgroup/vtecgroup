@@ -1,8 +1,10 @@
 import { useEffect, type ReactNode } from "react";
 import "@/styles/site.css";
-import navHtml from "@/html/nav.html?raw";
-import floatingHtml from "@/html/floating.html?raw";
-import footerHtml from "@/html/footer.html?raw";
+
+// Updated imports pointing to the new TypeScript files
+import { navHtml } from "@/html/nav";
+import { floatingHtml } from "@/html/floating";
+import { footerHtml } from "@/html/footer";
 
 type Props = {
   children?: ReactNode;
