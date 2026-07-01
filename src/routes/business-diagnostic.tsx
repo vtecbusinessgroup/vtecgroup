@@ -22,6 +22,8 @@ import {
   Lightbulb,
   Clock,
   ShieldAlert,
+  Zap,
+  BarChart2
 } from "lucide-react";
 import {
   RadarChart,
@@ -53,7 +55,9 @@ export const Route = createFileRoute("/business-diagnostic")({
         content: "Personalised business strategy report for Kenyan founders. 3 minutes. No sign up.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://vtecgroup.co.ke/business-diagnostic" },
     ],
+    links: [{ rel: "canonical", href: "https://vtecgroup.co.ke/business-diagnostic" }],
   }),
   component: BusinessDiagnostic,
 });
@@ -268,7 +272,7 @@ function BusinessDiagnostic() {
     } catch (e) {
       console.error(e);
       setErrMsg(
-        "Something went wrong generating your report. Our team has been notified. Please WhatsApp us at +254 116 6644 204 for your free diagnosis.",
+        "Something went wrong generating your report. Our team has been notified. Please WhatsApp us at +254 116 644 204 for your free diagnosis.",
       );
       setView("error");
     }
@@ -1402,10 +1406,10 @@ function Results({ report, answers }: { report: Report; answers: Answers }) {
               gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
             }}
           >
-            <SwotBox emoji="💪" title="Strengths" color={GREEN_BRIGHT} items={report.strengths} />
-            <SwotBox emoji="⚠️" title="Weaknesses" color="#ef4444" items={report.weaknesses} />
-            <SwotBox emoji="🚀" title="Opportunities" color="#3b82f6" items={report.opportunities} />
-            <SwotBox emoji="🛡️" title="Critical Gap" color="#f59e0b" text={report.criticalGap} />
+            <SwotBox icon={Zap} title="Strengths" color={GREEN_BRIGHT} items={report.strengths} />
+            <SwotBox icon={AlertTriangle} title="Weaknesses" color="#ef4444" items={report.weaknesses} />
+            <SwotBox icon={Rocket} title="Opportunities" color="#3b82f6" items={report.opportunities} />
+            <SwotBox icon={ShieldAlert} title="Critical Gap" color="#f59e0b" text={report.criticalGap} />
           </div>
         </ResultCard>
 
@@ -1539,7 +1543,9 @@ function Results({ report, answers }: { report: Report; answers: Answers }) {
                     </ul>
                     <span
                       style={{
-                        display: "inline-block",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 6,
                         background: "rgba(0,200,150,0.12)",
                         border: `1px solid ${BORDER}`,
                         color: TEAL,
@@ -1549,7 +1555,7 @@ function Results({ report, answers }: { report: Report; answers: Answers }) {
                         fontWeight: 700,
                       }}
                     >
-                      📊 Track: {m.kpi}
+                      <BarChart2 size={14} /> Track: {m.kpi}
                     </span>
                   </div>
                 </div>
@@ -1687,13 +1693,13 @@ function ComparisonBar({ label, value, color }: { label: string; value: number; 
 }
 
 function SwotBox({
-  emoji,
+  icon: Icon,
   title,
   color,
   items,
   text,
 }: {
-  emoji: string;
+  icon: LucideIcon;
   title: string;
   color: string;
   items?: string[];
@@ -1709,7 +1715,7 @@ function SwotBox({
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, color, fontWeight: 800, fontSize: 14, letterSpacing: 0.5, textTransform: "uppercase" }}>
-        <span style={{ fontSize: 18 }}>{emoji}</span> {title}
+        <span style={{ display: "flex", alignItems: "center" }}><Icon size={18} strokeWidth={2.5} /></span> {title}
       </div>
       {items ? (
         <ul style={{ paddingLeft: 18, margin: 0, lineHeight: 1.5, color: "rgba(255,255,255,0.85)", fontSize: 14 }}>
