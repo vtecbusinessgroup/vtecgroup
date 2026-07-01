@@ -1,3 +1,4 @@
+export const leadershipHtml = `
 <section id="leadership">
   <div class="container" style="text-align:center; max-width:760px; margin:0 auto;">
     <div class="section-label">The Team</div>
@@ -8,4 +9,4 @@
   </div>
 </section>
 
-<!-- VISION -->
+`;
