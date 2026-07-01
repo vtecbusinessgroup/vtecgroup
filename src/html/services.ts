@@ -1,4 +1,4 @@
-<section id="services">
+export const servicesHtml = `<section id="services">
   <div class="container">
     <div class="section-label">What We Do</div>
     <h2 class="section-title">Our Business Arms</h2>
@@ -108,3 +108,4 @@
 </section>
 
 <!-- ECOSYSTEM -->
+`;
