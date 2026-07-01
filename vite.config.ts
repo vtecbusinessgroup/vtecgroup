@@ -7,12 +7,10 @@ import tsConfigPaths from "vite-tsconfig-paths";
 
 // Standalone TanStack Start + Cloudflare Workers config — no Lovable wrapper.
 // Plugin order matters: cloudflare() first, tanstackStart() before viteReact().
-export default defineConfig({
+export default defineConfig(({ isSsrBuild }) => ({
   plugins: [
-    cloudflare({ viteEnvironment: { name: "ssr" } }),
+    !isSsrBuild && cloudflare({ viteEnvironment: { name: "ssr" } }),
     tanstackStart({
-      // Keep using src/server.ts (your SSR error-capture wrapper) as the
-      // server entry, same as the Lovable config's `server: { entry: "server" }`.
       server: {
         entry: "./src/server.ts",
       },
@@ -20,12 +18,30 @@ export default defineConfig({
     viteReact(),
     tailwindcss(),
     tsConfigPaths(),
-  ],
+  ].filter(Boolean),
   resolve: {
-    // Prevents duplicate React instances when multiple packages resolve React separately.
     dedupe: ["react", "react-dom"],
+  },
+  // Performance: Splitting large chunks to avoid 500kB+ build warnings
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('recharts')) return 'vendor-charts';
+            if (id.includes('lucide-react')) return 'vendor-icons';
+            if (id.includes('@tanstack')) return 'vendor-router';
+            if (id.includes('@radix-ui')) return 'vendor-radix';
+            return 'vendor-core';
+          }
+          if (id.includes('src/html/')) {
+            return 'html-content';
+          }
+        }
+      }
+    }
   },
   server: {
     port: 3000,
   },
-});
+}));
