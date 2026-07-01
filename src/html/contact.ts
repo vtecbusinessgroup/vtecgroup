@@ -1,3 +1,4 @@
+export const contactHtml = `
 <section id="contact">
   <div class="container">
     <div class="section-label">Get In Touch</div>
@@ -86,7 +87,6 @@
             <label>Message</label>
             <textarea name="message" placeholder="Tell us how we can help you..." required></textarea>
           </div>
-          <!-- FormSubmit hidden config -->
           <input type="hidden" name="_subject" value="New VTEC Website Enquiry"/>
           <input type="hidden" name="_template" value="table"/>
           <input type="hidden" name="_captcha" value="false"/>
@@ -99,4 +99,4 @@
   </div>
 </section>
 
-<!-- FOOTER -->
+`;
