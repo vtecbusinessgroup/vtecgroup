@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SiteShell } from "@/SiteShell";
+import { SiteShell } from "@/components/SiteShell";
 import { teamHtml } from "@/html/team";
 
 export const Route = createFileRoute("/leadership")({
