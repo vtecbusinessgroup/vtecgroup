@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteShell } from "@/components/SiteShell";
 
-// Updated imports pointing to the new TypeScript files
 import { servicesHtml } from "@/html/services";
 import { ecosystemHtml } from "@/html/ecosystem";
 import { academyHtml } from "@/html/academy";
@@ -21,6 +20,7 @@ export const Route = createFileRoute("/services")({
         content:
           "Four business arms unified under one Kenyan multi-service brand: financial education, strategic consultancy, retail commerce, and intelligent wealth tooling.",
       },
+      { property: "og:type", content: "website" },
       { property: "og:url", content: "https://vtecgroup.co.ke/services" },
     ],
     links: [{ rel: "canonical", href: "https://vtecgroup.co.ke/services" }],
