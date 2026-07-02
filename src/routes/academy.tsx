@@ -1,9 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SiteShell } from "@/components/SiteShell";
-
-import { academyHtml } from "@/html/academy";
-import { servicesHtml } from "@/html/services";
-import { milikiHtml } from "@/html/miliki";
 
 export const Route = createFileRoute("/academy")({
   head: () => ({
@@ -25,9 +20,11 @@ export const Route = createFileRoute("/academy")({
     ],
     links: [{ rel: "canonical", href: "https://vtecgroup.co.ke/academy" }],
   }),
-  component: AcademyPage,
+  component: () => (
+    <iframe 
+      src="/site.html#services" 
+      style={{ width: "100%", height: "100vh", border: "none", display: "block" }} 
+      title="InvestorMind Academy | VTEC Business Group"
+    />
+  ),
 });
-
-function AcademyPage() {
-  return <SiteShell htmlSections={[academyHtml, servicesHtml, milikiHtml]} />;
-}
