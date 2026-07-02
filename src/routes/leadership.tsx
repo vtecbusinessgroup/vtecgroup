@@ -1,6 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SiteShell } from "@/components/SiteShell";
-import { teamHtml } from "@/html/team";
 
 export const Route = createFileRoute("/leadership")({
   head: () => ({
@@ -12,11 +10,11 @@ export const Route = createFileRoute("/leadership")({
       },
     ],
   }),
-  component: LeadershipComponent,
+  component: () => (
+    <iframe 
+      src="/site.html#leadership" 
+      style={{ width: "100%", height: "100vh", border: "none", display: "block" }} 
+      title="Leadership Team | VTEC Business Group"
+    />
+  ),
 });
-
-function LeadershipComponent() {
-  return (
-    <SiteShell htmlSections={[teamHtml]} />
-  );
-}
