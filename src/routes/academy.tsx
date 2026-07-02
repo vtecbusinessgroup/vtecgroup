@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteShell } from "@/components/SiteShell";
 
-// Updated imports pointing to the new TypeScript files
 import { academyHtml } from "@/html/academy";
 import { servicesHtml } from "@/html/services";
 import { milikiHtml } from "@/html/miliki";
@@ -21,6 +20,7 @@ export const Route = createFileRoute("/academy")({
         content:
           "Financial literacy and investment education designed for the modern Kenyan investor.",
       },
+      { property: "og:type", content: "website" },
       { property: "og:url", content: "https://vtecgroup.co.ke/academy" },
     ],
     links: [{ rel: "canonical", href: "https://vtecgroup.co.ke/academy" }],
