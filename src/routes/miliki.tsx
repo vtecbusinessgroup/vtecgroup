@@ -1,9 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SiteShell } from "@/components/SiteShell";
-
-import { milikiHtml } from "@/html/miliki";
-import { academyHtml } from "@/html/academy";
-import { servicesHtml } from "@/html/services";
 
 export const Route = createFileRoute("/miliki")({
   head: () => ({
@@ -25,9 +20,11 @@ export const Route = createFileRoute("/miliki")({
     ],
     links: [{ rel: "canonical", href: "https://vtecgroup.co.ke/miliki" }],
   }),
-  component: MilikiPage,
+  component: () => (
+    <iframe 
+      src="/site.html#services" 
+      style={{ width: "100%", height: "100vh", border: "none", display: "block" }} 
+      title="MILIKI App | VTEC Business Group"
+    />
+  ),
 });
-
-function MilikiPage() {
-  return <SiteShell htmlSections={[milikiHtml, academyHtml, servicesHtml]} />;
-}
