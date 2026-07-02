@@ -4399,6 +4399,49 @@
   })();
 </script>
 
+  <script>
+    // 1. Floating Particles
+    (function buildParticles(){
+      const root = document.getElementById('heroParticles');
+      if (!root) return;
+      const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduced) { root.style.display = 'none'; return; }
+      const count = 15;
+      for (let i = 0; i < count; i++) {
+        const s = document.createElement('span');
+        const size = 4 + Math.random() * 8;
+        const isGreen = i % 4 !== 0;
+        s.style.setProperty('--x', (Math.random() * 100) + 'vw');
+        s.style.width = s.style.height = size + 'px';
+        s.style.background = isGreen ? 'rgba(39,174,96,0.25)' : 'rgba(255,255,255,0.15)';
+        s.style.setProperty('--op', isGreen ? '0.25' : '0.15');
+        s.style.setProperty('--dx', (Math.random() * 60 - 30) + 'px');
+        s.style.animationDuration = (6 + Math.random() * 8) + 's';
+        s.style.animationDelay = (Math.random() * 6) + 's';
+        root.appendChild(s);
+      }
+    })();
+
+    // 2. Number Counters
+    function animateCounters() {
+      document.querySelectorAll('.count').forEach(el => {
+        const from = parseInt(el.dataset.from || '0', 10);
+        const to   = parseInt(el.dataset.to   || '0', 10);
+        const dur  = 2000; const start = performance.now();
+        const tick = (now) => {
+          const p = Math.min(1, (now - start) / dur);
+          const eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = Math.round(from + (to - from) * eased);
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    }
+    
+    // Start counters when page loads
+    window.addEventListener('load', animateCounters);
+  </script>
+
 </body>
 </html>
 
