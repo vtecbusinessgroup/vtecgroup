@@ -1,9 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SiteShell } from "@/components/SiteShell";
-
-import { visionHtml } from "@/html/vision";
-import { aboutHtml } from "@/html/about";
-import { leadershipHtml } from "@/html/leadership";
 
 export const Route = createFileRoute("/vision")({
   head: () => ({
@@ -25,9 +20,11 @@ export const Route = createFileRoute("/vision")({
     ],
     links: [{ rel: "canonical", href: "https://vtecgroup.co.ke/vision" }],
   }),
-  component: VisionPage,
+  component: () => (
+    <iframe 
+      src="/site.html#vision" 
+      style={{ width: "100%", height: "100vh", border: "none", display: "block" }} 
+      title="Vision 2035 | VTEC Business Group"
+    />
+  ),
 });
-
-function VisionPage() {
-  return <SiteShell htmlSections={[visionHtml, aboutHtml, leadershipHtml]} />;
-}
