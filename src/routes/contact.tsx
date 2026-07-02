@@ -1,9 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SiteShell } from "@/components/SiteShell";
-
-import { contactHtml } from "@/html/contact";
-import { aboutHtml } from "@/html/about";
-import { servicesHtml } from "@/html/services";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -25,9 +20,11 @@ export const Route = createFileRoute("/contact")({
     ],
     links: [{ rel: "canonical", href: "https://vtecgroup.co.ke/contact" }],
   }),
-  component: ContactPage,
+  component: () => (
+    <iframe 
+      src="/site.html#contact" 
+      style={{ width: "100%", height: "100vh", border: "none", display: "block" }} 
+      title="Contact Us | VTEC Business Group"
+    />
+  ),
 });
-
-function ContactPage() {
-  return <SiteShell htmlSections={[contactHtml, aboutHtml, servicesHtml]} />;
-}
