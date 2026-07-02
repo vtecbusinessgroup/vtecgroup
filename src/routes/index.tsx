@@ -1,6 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SiteShell } from "@/components/SiteShell"; // Fixed import path!
-import { homeHtml } from "@/html/home"; 
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -21,11 +19,11 @@ export const Route = createFileRoute("/")({
     ],
     links: [{ rel: "canonical", href: "https://vtecgroup.co.ke/" }],
   }),
-  component: Index,
+  component: () => (
+    <iframe 
+      src="/site.html" 
+      style={{ width: "100%", height: "100vh", border: "none", display: "block" }} 
+      title="VTEC Business Group"
+    />
+  ),
 });
-
-function Index() {
-  return (
-    <SiteShell htmlSections={[homeHtml]} />
-  );
-}
