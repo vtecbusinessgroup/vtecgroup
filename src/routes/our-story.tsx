@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SiteShell } from "@/SiteShell";
+import { SiteShell } from "@/components/SiteShell";
 import { storyHtml } from "@/html/story";
 
 export const Route = createFileRoute("/our-story")({
