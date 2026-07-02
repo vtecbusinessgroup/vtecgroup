@@ -1,6 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SiteShell } from "@/components/SiteShell";
-import { storyHtml } from "@/html/ourstory"; // Updated import
 
 export const Route = createFileRoute("/our-story")({
   head: () => ({
@@ -12,11 +10,11 @@ export const Route = createFileRoute("/our-story")({
       },
     ],
   }),
-  component: OurStoryComponent,
+  component: () => (
+    <iframe 
+      src="/site.html" 
+      style={{ width: "100%", height: "100vh", border: "none", display: "block" }} 
+      title="Our Story | VTEC Business Group"
+    />
+  ),
 });
-
-function OurStoryComponent() {
-  return (
-    <SiteShell htmlSections={[storyHtml]} />
-  );
-}
