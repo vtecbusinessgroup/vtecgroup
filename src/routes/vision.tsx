@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteShell } from "@/components/SiteShell";
 
-// Updated imports to use the named exports from the new .ts files
 import { visionHtml } from "@/html/vision";
 import { aboutHtml } from "@/html/about";
 import { leadershipHtml } from "@/html/leadership";
@@ -13,7 +12,7 @@ export const Route = createFileRoute("/vision")({
       {
         name: "description",
         content:
-          "Where VTEC Business Group is headed. A purposeful 10-year roadmap building Kenya's next great diversified holding company by 2035.",
+          "Where VTEC Business Group is headed. A purposeful 10-year roadmap building Kenya's next great multi-service brand by 2035.",
       },
       { property: "og:title", content: "Vision 2035 | VTEC Business Group" },
       {
@@ -21,9 +20,10 @@ export const Route = createFileRoute("/vision")({
         content:
           "Every great empire begins with a clear destination. VTEC's 10-year roadmap to 2035.",
       },
-      { property: "og:url", content: "https://vtecgroup.lovable.app/vision" },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://vtecgroup.co.ke/vision" },
     ],
-    links: [{ rel: "canonical", href: "https://vtecgroup.lovable.app/vision" }],
+    links: [{ rel: "canonical", href: "https://vtecgroup.co.ke/vision" }],
   }),
   component: VisionPage,
 });
