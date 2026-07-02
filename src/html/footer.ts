@@ -1,56 +1,54 @@
 export const footerHtml = `
-<footer>
-  <div class="footer-grid">
-    <div class="footer-brand">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
-        <div style="width:58px;height:58px;border-radius:50%;overflow:hidden;border:2px solid var(--green-bright);box-shadow:0 0 16px rgba(39,174,96,0.35);flex-shrink:0;background:white;">
-          <img src="/vtec-icon-renewed.png" alt="VTEC Business Group Logo" style="width:100%;height:100%;object-fit:contain;object-position:center;">
+<footer style="background:#060f22; padding:56px 20px 28px;">
+  <div class="footer-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:40px; max-width:1160px; margin:0 auto;">
+    <div class="footer-brand" style="grid-column: 1 / -1;">
+      <div style="display:flex; align-items:center; gap:14px; margin-bottom:18px;">
+        <div style="width:58px; height:58px; border-radius:50%; overflow:hidden; border:2px solid var(--green-bright); box-shadow:0 0 16px rgba(39,174,96,0.35); flex-shrink:0; background:white;">
+          <img src="/vtec-icon-renewed.png" alt="VTEC Business Group Logo" style="width:100%;height:100%;object-fit:contain;object-position:center;" />
         </div>
         <div>
-          <div style="color:white;font-weight:700;font-size:16px;letter-spacing:2px;">VTEC</div>
-          <div style="color:var(--green-bright);font-size:10px;letter-spacing:2px;text-transform:uppercase;">Business Group</div>
+          <div style="color:white; font-weight:700; font-size:16px; letter-spacing:2px;">VTEC</div>
+          <div style="color:var(--green-bright); font-size:10px; letter-spacing:2px; text-transform:uppercase;">Business Group</div>
         </div>
       </div>
-      <p>VTEC Business Group is Kenya's dynamic multi-service brand powering financial education, strategic consultancy, and commerce. Building futures. Empowering people. Driving commerce.</p>
-      <div class="footer-socials">
-        <a href="#" target="_blank" rel="noopener" class="social-btn linkedin" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.268 2.37 4.268 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.063 2.063 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
-        <a href="#" target="_blank" rel="noopener" class="social-btn facebook" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
-        <a href="#" target="_blank" rel="noopener" class="social-btn twitter" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-        <a href="#" target="_blank" rel="noopener" class="social-btn tiktok" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43v-7.92a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.86-.31z"/></svg></a>
-        <a href="https://wa.me/254116644204" target="_blank" rel="noopener" class="social-btn whatsapp" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M.057 24l1.687-6.163A11.867 11.867 0 0 1 1.587 5.946C1.587.335 5.495 0 12.05 0a11.817 11.817 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.539 5.396l-.999 3.648 3.889-1.013zm11.387-5.864c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.148-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059.149-.297.016-.459.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.511-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg></a>
-      </div>
+      <p style="color:rgba(255,255,255,0.7); font-size:14px; max-width:400px; margin-bottom:20px;">VTEC Business Group is Kenya's dynamic multi-service brand powering financial education, strategic consultancy, and commerce. Building futures. Empowering people. Driving commerce.</p>
     </div>
-    <div class="footer-col">
-      <h4>Quick Links</h4>
-      <ul>
-        <li><a href="#about">About VTEC</a></li>
-        <li><a href="#services">Our Services</a></li>
-        <li><a href="#leadership">Leadership</a></li>
-        <li><a href="#vision">Vision 2035</a></li>
-        <li><a href="#contact">Contact Us</a></li>
+    
+    <div class="footer-col" style="color:white;">
+      <h4 style="font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-bottom:16px;">Quick Links</h4>
+      <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:10px;">
+        <li><a href="/about" style="color:rgba(255,255,255,0.7); text-decoration:none; font-size:13px; transition:color 0.2s;">About VTEC</a></li>
+        <li><a href="/services" style="color:rgba(255,255,255,0.7); text-decoration:none; font-size:13px; transition:color 0.2s;">Our Services</a></li>
+        <li><a href="/leadership" style="color:rgba(255,255,255,0.7); text-decoration:none; font-size:13px; transition:color 0.2s;">Leadership</a></li>
+        <li><a href="/vision" style="color:rgba(255,255,255,0.7); text-decoration:none; font-size:13px; transition:color 0.2s;">Vision 2035</a></li>
+        <li><a href="/our-story" style="color:rgba(255,255,255,0.7); text-decoration:none; font-size:13px; transition:color 0.2s;">Our Story</a></li>
+        <li><a href="/contact" style="color:rgba(255,255,255,0.7); text-decoration:none; font-size:13px; transition:color 0.2s;">Contact Us</a></li>
       </ul>
     </div>
-    <div class="footer-col">
-      <h4>Our Services</h4>
-      <ul>
-        <li><a href="#services">InvestorMind Academy</a></li>
-        <li><a href="#services">VTEC Consultancy</a></li>
-        <li><a href="#services">VTEC Retail (Soon)</a></li>
+    
+    <div class="footer-col" style="color:white;">
+      <h4 style="font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-bottom:16px;">Our Services</h4>
+      <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:10px;">
+        <li><a href="/academy" style="color:rgba(255,255,255,0.7); text-decoration:none; font-size:13px; transition:color 0.2s;">InvestorMind Academy</a></li>
+        <li><a href="/services" style="color:rgba(255,255,255,0.7); text-decoration:none; font-size:13px; transition:color 0.2s;">VTEC Consultancy</a></li>
+        <li><a href="/services" style="color:rgba(255,255,255,0.7); text-decoration:none; font-size:13px; transition:color 0.2s;">VTEC Retail (Soon)</a></li>
       </ul>
     </div>
-    <div class="footer-col">
-      <h4>Trust & Legal</h4>
-      <ul>
-        <li><a href="#privacy">Privacy Policy</a></li>
-        <li><a href="#terms">Terms of Service</a></li>
-        <li><a href="#cookies">Cookie Policy</a></li>
+    
+    <div class="footer-col" style="color:white;">
+      <h4 style="font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-bottom:16px;">Trust & Legal</h4>
+      <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:10px;">
+        <li><a href="/privacy-policy" style="color:rgba(255,255,255,0.7); text-decoration:none; font-size:13px; transition:color 0.2s;">Privacy Policy</a></li>
+        <li><a href="/terms-of-service" style="color:rgba(255,255,255,0.7); text-decoration:none; font-size:13px; transition:color 0.2s;">Terms of Service</a></li>
       </ul>
     </div>
   </div>
-  <div class="footer-divider"></div>
-  <div class="footer-bottom">
-    <p>&copy; 2026 VTEC Business Group. Empowering Kenya. One Venture at a Time.</p>
-    <a href="#home" class="top-link">Back to Top</a>
+  
+  <div class="footer-divider" style="height:1px; background:rgba(255,255,255,0.1); margin:40px auto 20px; max-width:1160px;"></div>
+  
+  <div class="footer-bottom" style="display:flex; justify-content:space-between; align-items:center; max-width:1160px; margin:0 auto; flex-wrap:wrap; gap:10px;">
+    <p style="color:rgba(255,255,255,0.5); font-size:12px;">&copy; 2026 VTEC Business Group. Empowering Kenya. One Venture at a Time.</p>
+    <a href="/" class="top-link" style="color:var(--green-bright); text-decoration:none; font-size:12px; font-weight:600; text-transform:uppercase;">Back to Top</a>
   </div>
 </footer>
 `;
