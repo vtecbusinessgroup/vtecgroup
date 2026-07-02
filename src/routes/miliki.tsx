@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteShell } from "@/components/SiteShell";
 
-// Updated imports pointing to the new TypeScript files
 import { milikiHtml } from "@/html/miliki";
 import { academyHtml } from "@/html/academy";
 import { servicesHtml } from "@/html/services";
@@ -21,6 +20,7 @@ export const Route = createFileRoute("/miliki")({
         content:
           "An intelligent wealth co-pilot for everyday Kenyan investors. Join the founding waitlist.",
       },
+      { property: "og:type", content: "website" },
       { property: "og:url", content: "https://vtecgroup.co.ke/miliki" },
     ],
     links: [{ rel: "canonical", href: "https://vtecgroup.co.ke/miliki" }],
