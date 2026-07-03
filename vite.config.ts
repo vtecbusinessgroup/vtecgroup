@@ -1,23 +1,23 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
-import path from "path";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import { cloudflare } from "@cloudflare/vite-plugin";
+import viteReact from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+import tsConfigPaths from "vite-tsconfig-paths";
 
-export default defineConfig({
-  server: {
-    host: "::",
-    port: 8080,
-  },
+export default defineConfig(({ isSsrBuild }) => ({
   plugins: [
-    react(),
-  ],
+    tailwindcss(),
+    tsConfigPaths(),
+    !isSsrBuild && cloudflare({ viteEnvironment: { name: "ssr" } }),
+    tanstackStart({
+      server: {
+        entry: "./src/server.ts",
+      },
+    }),
+    viteReact(),
+  ].filter(Boolean),
   resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
-  build: {
-    rollupOptions: {
-      input: path.resolve(__dirname, "site.html"),
-    },
-  },
-});
+    dedupe: ["react", "react-dom"],
+  }
+}));
