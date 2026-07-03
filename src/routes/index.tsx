@@ -3,8 +3,8 @@ import { useEffect } from "react";
 
 export const Route = createFileRoute("/")({
   component: function HomeRedirect() {
-    // If the React router accidentally loads the homepage, 
-    // force a hard refresh so Cloudflare serves your static public/index.html instead.
+    // If React accidentally loads, force a refresh so Cloudflare 
+    // natively serves your public/index.html static file instead.
     useEffect(() => {
       window.location.reload();
     }, []);
