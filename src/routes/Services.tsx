@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { GraduationCap, Briefcase, ShoppingBag, Check } from "lucide-react";
 import { PageHeader } from "../components/PageHeader";
-import { PageHeader } from "../components/PageHeader";
 
 export const Route = createFileRoute("/services")({
   component: ServicesPage,
@@ -77,9 +76,7 @@ const services = [
 
 function ServicesPage() {
   return (
-    <>
-      <PageHeader />
-      <main className="min-h-screen bg-[#f4f6f9] text-[#0D2149] font-sans">
+    <main className="min-h-screen bg-[#f4f6f9] text-[#0D2149] font-sans">
       <PageHeader />
       <div className="max-w-5xl mx-auto px-5 md:px-8 py-16 md:py-24">
         <div className="text-center mb-14">
@@ -148,6 +145,5 @@ function ServicesPage() {
         </div>
       </div>
       </main>
-    </>
   );
 }
