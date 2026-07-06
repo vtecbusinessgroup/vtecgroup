@@ -1,31 +1,23 @@
 import { defineConfig } from "vite";
-import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import { cloudflare } from "@cloudflare/vite-plugin";
-import viteReact from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
-import tsConfigPaths from "vite-tsconfig-paths";
+import react from "@vitejs/plugin-react-swc";
+import path from "path";
 
-// Standalone TanStack Start + Cloudflare Workers config — no Lovable wrapper.
-// Plugin order matters: cloudflare() first, tanstackStart() before viteReact().
 export default defineConfig({
+  server: {
+    host: "::",
+    port: 8080,
+  },
   plugins: [
-    cloudflare({ viteEnvironment: { name: "ssr" } }),
-    tanstackStart({
-      // Keep using src/server.ts (your SSR error-capture wrapper) as the
-      // server entry, same as the Lovable config's `server: { entry: "server" }`.
-      server: {
-        entry: "./src/server.ts",
-      },
-    }),
-    viteReact(),
-    tailwindcss(),
-    tsConfigPaths(),
+    react(),
   ],
   resolve: {
-    // Prevents duplicate React instances when multiple packages resolve React separately.
-    dedupe: ["react", "react-dom"],
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
   },
-  server: {
-    port: 3000,
+  build: {
+    rollupOptions: {
+      input: path.resolve(__dirname, "site.html"),
+    },
   },
 });
