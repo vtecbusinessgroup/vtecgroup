@@ -17,7 +17,7 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      input: path.resolve(__dirname, "site.html"),
+      input: path.resolve(__dirname, "public/site.html")
     },
   },
 });
