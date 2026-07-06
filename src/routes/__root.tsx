@@ -7,7 +7,6 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-
 import appCss from "../styles.css?url";
 import { ChatBot } from "@/components/ChatBot";
 
@@ -36,7 +35,6 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
@@ -68,7 +66,8 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-const OG_IMAGE = "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5a4a1678-22ea-45b4-841b-fb7e093f603a/id-preview-ffec7e30--eea3d331-2b93-4f5f-b70f-8802ca7b923d.lovable.app-1779745936491.png";
+// Clean local image reference, strictly decoupled from Lovable
+const OG_IMAGE = "https://vtecgroup.co.ke/vtec-logo.png";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
@@ -76,7 +75,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "VTEC Business Group" },
-      { name: "description", content: "VTEC Business Group — Kenya's dynamic holding entity powering financial education, strategic consultancy, and commerce. Empowering Kenya. One Venture at a Time." },
+      { name: "description", content: "VTEC Business Group — Kenya's dynamic multi-service brand powering financial education, strategic consultancy, and commerce. Empowering Kenya. One Venture at a Time." },
       { name: "author", content: "VTEC Business Group" },
       { property: "og:title", content: "VTEC Business Group" },
       { property: "og:description", content: "Empowering Kenya. One Venture at a Time. Financial education, business consultancy and commerce solutions for Kenyan entrepreneurs." },
@@ -124,10 +123,12 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
+      {/* NOTE: ChatBot is rendered globally here. 
+        Ensure it is NOT also rendered in index.tsx to prevent duplication crashes.
+      */}
       <ChatBot />
     </QueryClientProvider>
   );
