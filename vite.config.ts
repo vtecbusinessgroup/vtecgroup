@@ -1,22 +1,28 @@
 import { defineConfig } from "vite";
-import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import tsConfigPaths from "vite-tsconfig-paths";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 
 export default defineConfig({
   plugins: [
+    tsConfigPaths({
+      projects: ["./tsconfig.json"],
+    }),
+    tailwindcss(),
     tanstackStart({
-      server: {
-        preset: "cloudflare-pages",
-        entry: "./src/server.ts",
-      },
+      target: "cloudflare-module",
     }),
     viteReact(),
-    tailwindcss(),
-    tsConfigPaths(),
   ],
   resolve: {
-    dedupe: ["react", "react-dom"],
+    alias: {
+      "@": "/src",
+    },
+    dedupe: ["react", "react-dom", "@tanstack/react-router", "@tanstack/react-query"],
+  },
+  server: {
+    host: true,
+    strictPort: false,
   },
 });
