@@ -5,25 +5,19 @@ import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 
-export default defineConfig({
-  // Explicitly dictates where static assets like site.html live
-  publicDir: "public",
-  
+export default defineConfig(({ isSsrBuild }) => ({
   plugins: [
-    cloudflare({ viteEnvironment: { name: "ssr" } }),
+    tailwindcss(),
+    tsConfigPaths(),
+    !isSsrBuild && cloudflare({ viteEnvironment: { name: "ssr" } }),
     tanstackStart({
       server: {
         entry: "./src/server.ts",
       },
     }),
     viteReact(),
-    tailwindcss(),
-    tsConfigPaths(),
-  ],
+  ].filter(Boolean),
   resolve: {
     dedupe: ["react", "react-dom"],
-  },
-  server: {
-    port: 3000,
-  },
-});
+  }
+}));
