@@ -1,23 +1,29 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
-import path from "path";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import { cloudflare } from "@cloudflare/vite-plugin";
+import viteReact from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+import tsConfigPaths from "vite-tsconfig-paths";
 
+// Standalone TanStack Start + Cloudflare Workers config.
+// Plugin order matters: cloudflare() first, tanstackStart() before viteReact().
 export default defineConfig({
-  server: {
-    host: "::",
-    port: 8080,
-  },
   plugins: [
-    react(),
+    cloudflare({ viteEnvironment: { name: "ssr" } }),
+    tanstackStart({
+      server: {
+        entry: "./src/server.ts",
+      },
+    }),
+    viteReact(),
+    tailwindcss(),
+    tsConfigPaths(),
   ],
   resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
+    // Prevents duplicate React instances when multiple packages resolve React separately.
+    dedupe: ["react", "react-dom"],
   },
-  build: {
-    rollupOptions: {
-      input: path.resolve(__dirname, "public/site.html")
-    },
+  server: {
+    port: 3000,
   },
 });
