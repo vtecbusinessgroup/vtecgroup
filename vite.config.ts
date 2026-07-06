@@ -5,9 +5,10 @@ import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 
-// Standalone TanStack Start + Cloudflare Workers config.
-// Plugin order matters: cloudflare() first, tanstackStart() before viteReact().
 export default defineConfig({
+  // Explicitly dictates where static assets like site.html live
+  publicDir: "public",
+  
   plugins: [
     cloudflare({ viteEnvironment: { name: "ssr" } }),
     tanstackStart({
@@ -20,7 +21,6 @@ export default defineConfig({
     tsConfigPaths(),
   ],
   resolve: {
-    // Prevents duplicate React instances when multiple packages resolve React separately.
     dedupe: ["react", "react-dom"],
   },
   server: {
