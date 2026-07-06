@@ -7,6 +7,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import appCss from "../styles.css?url";
 import { ChatBot } from "@/components/ChatBot";
 
@@ -66,7 +67,6 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-// Clean local image reference, strictly decoupled from Lovable
 const OG_IMAGE = "https://vtecgroup.co.ke/vtec-logo.png";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
@@ -123,13 +123,17 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
-      {/* NOTE: ChatBot is rendered globally here. 
-        Ensure it is NOT also rendered in index.tsx to prevent duplication crashes.
-      */}
-      <ChatBot />
+      {/* Renders safely only on the client side to avoid SSR failures */}
+      {mounted && <ChatBot />}
     </QueryClientProvider>
   );
 }
