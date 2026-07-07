@@ -9,7 +9,10 @@ export default defineConfig(({ isSsrBuild }) => ({
   plugins: [
     tailwindcss(),
     tsConfigPaths(),
-    !isSsrBuild && cloudflare({ viteEnvironment: { name: "ssr" } }),
+    !isSsrBuild && cloudflare({
+  configPath: "./wrangler.jsonc",
+  viteEnvironment: { name: "ssr" },
+}),
     tanstackStart({
       server: {
         entry: "./src/server.ts",
