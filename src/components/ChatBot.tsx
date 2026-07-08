@@ -12,6 +12,8 @@ import {
   Globe,
   RotateCcw,
   Square,
+  Mic,
+  MicOff,
 } from "lucide-react";
 import { useLocation } from "@tanstack/react-router";
 
@@ -198,6 +200,35 @@ function RichText({ content }: { content: string }) {
   );
 }
 
+function BrandMark({ size = "h-5 w-5" }: { size?: string }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) return <Sparkles className={size} />;
+  return (
+    <img
+      src="/vtec-logo.png"
+      alt="VTEC"
+      className={`${size} object-contain drop-shadow-sm`}
+      onError={() => setFailed(true)}
+    />
+  );
+}
+
+type SpeechRecognitionLike = {
+  lang: string;
+  interimResults: boolean;
+  continuous: boolean;
+  onresult: ((event: any) => void) | null;
+  onend: (() => void) | null;
+  onerror: (() => void) | null;
+  start: () => void;
+  stop: () => void;
+};
+
+const SpeechRecognitionCtor: (new () => SpeechRecognitionLike) | undefined =
+  typeof window !== "undefined"
+    ? ((window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition)
+    : undefined;
+
 export const ChatBot = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
@@ -219,6 +250,8 @@ export const ChatBot = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const tooltipTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
+  const [isListening, setIsListening] = useState(false);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -264,8 +297,33 @@ export const ChatBot = () => {
   useEffect(() => {
     return () => {
       abortControllerRef.current?.abort();
+      recognitionRef.current?.stop();
     };
   }, []);
+
+  const toggleMic = () => {
+    if (!SpeechRecognitionCtor) return;
+    if (isListening) {
+      recognitionRef.current?.stop();
+      return;
+    }
+    const recognition = new SpeechRecognitionCtor();
+    recognition.lang = lang === "sw" ? "sw-KE" : "en-US";
+    recognition.interimResults = true;
+    recognition.continuous = false;
+    recognition.onresult = (event: any) => {
+      let transcript = "";
+      for (let i = 0; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+      }
+      setInput(transcript);
+    };
+    recognition.onend = () => setIsListening(false);
+    recognition.onerror = () => setIsListening(false);
+    recognitionRef.current = recognition;
+    recognition.start();
+    setIsListening(true);
+  };
 
   const isHomepage = location.pathname === "/";
   const hasRealConversation = messages.some((m) => m.id !== "greeting");
@@ -523,7 +581,7 @@ export const ChatBot = () => {
               className="absolute inset-0 rounded-full opacity-40 blur-md -z-10"
               style={{ backgroundImage: BRAND_GRADIENT }}
             />
-            <Sparkles className="h-6 w-6 drop-shadow-sm transition-transform duration-500 group-hover:rotate-[20deg]" />
+            <BrandMark size="h-7 w-7 transition-transform duration-500 group-hover:rotate-[8deg]" />
             <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-[#0A1628] flex items-center justify-center">
               <span className="h-2 w-2 rounded-full bg-[#34d399] animate-pulse" />
             </span>
@@ -542,15 +600,31 @@ export const ChatBot = () => {
               the first child with default stacking; nothing above it is clipped. */}
           <div className="pointer-events-none absolute inset-0 overflow-hidden">
             <div
-              className="absolute -top-16 -left-10 h-56 w-56 rounded-full blur-3xl opacity-25"
+              className="absolute inset-0 opacity-[0.05]"
+              style={{ backgroundImage: "radial-gradient(circle, #ffffff 1px, transparent 1px)", backgroundSize: "20px 20px" }}
+            />
+            <div className="absolute left-1/2 top-1/2 h-[440px] w-[440px] -translate-x-1/2 -translate-y-1/2 opacity-[0.05]">
+              <div className="h-full w-full" style={{ animation: "vtec-rotate 70s linear infinite" }}>
+                <img
+                  src="/vtec-logo.png"
+                  alt=""
+                  className="h-full w-full object-contain"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).style.display = "none";
+                  }}
+                />
+              </div>
+            </div>
+            <div
+              className="absolute -top-16 -left-10 h-64 w-64 rounded-full blur-3xl opacity-30"
               style={{ backgroundColor: TEAL_ACCENT, animation: "vtec-drift-a 14s ease-in-out infinite" }}
             />
             <div
-              className="absolute top-1/3 -right-16 h-64 w-64 rounded-full blur-3xl opacity-20"
+              className="absolute top-1/3 -right-20 h-72 w-72 rounded-full blur-3xl opacity-25"
               style={{ backgroundColor: GOLD, animation: "vtec-drift-b 18s ease-in-out infinite" }}
             />
             <div
-              className="absolute bottom-0 left-1/4 h-48 w-48 rounded-full blur-3xl opacity-[0.15]"
+              className="absolute bottom-0 left-1/4 h-56 w-56 rounded-full blur-3xl opacity-20"
               style={{ backgroundColor: "#06b6d4", animation: "vtec-drift-a 16s ease-in-out infinite reverse" }}
             />
           </div>
@@ -576,7 +650,7 @@ export const ChatBot = () => {
                   className="absolute inset-0 rounded-xl opacity-50 blur-md -z-10"
                   style={{ backgroundImage: BRAND_GRADIENT }}
                 />
-                <Sparkles className="h-5 w-5" />
+                <BrandMark size="h-6 w-6" />
               </div>
               <div>
                 <div className="text-white font-semibold text-sm leading-tight">VTEC Assistant</div>
@@ -701,7 +775,7 @@ export const ChatBot = () => {
                     className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white mt-0.5"
                     style={{ backgroundImage: BRAND_GRADIENT, boxShadow: "0 0 0 1px rgba(212,175,55,0.4)" }}
                   >
-                    <Sparkles className="h-3.5 w-3.5" />
+                    <BrandMark size="h-4 w-4" />
                   </div>
                   <div className="flex flex-col items-start max-w-[85%]">
                     <div
@@ -858,11 +932,26 @@ export const ChatBot = () => {
           )}
 
           <form onSubmit={onSubmit} className="relative border-t p-3 flex gap-2" style={{ borderColor: "rgba(20,184,166,0.2)" }}>
+            {SpeechRecognitionCtor && (
+              <button
+                type="button"
+                onClick={toggleMic}
+                aria-label={isListening ? "Stop voice input" : "Start voice input"}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-colors"
+                style={
+                  isListening
+                    ? { backgroundColor: "rgba(239,68,68,0.15)", borderColor: "rgba(239,68,68,0.4)", color: "#f87171", animation: "vtec-pulse 1.6s infinite" }
+                    : { backgroundColor: "#0d1c33", borderColor: "rgba(20,184,166,0.25)", color: "rgba(255,255,255,0.7)" }
+                }
+              >
+                {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+              </button>
+            )}
             <input
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Type your message..."
+              placeholder={isListening ? "Listening..." : "Type your message..."}
               disabled={loading}
               className="flex-1 rounded-full border px-4 py-2.5 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-[#2dd4bf]"
               style={{ backgroundColor: "#0d1c33", borderColor: "rgba(20,184,166,0.25)" }}
@@ -913,6 +1002,10 @@ export const ChatBot = () => {
         }
         @keyframes vtec-caret {
           50% { opacity: 0; }
+        }
+        @keyframes vtec-rotate {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
         }
       `}</style>
     </>
