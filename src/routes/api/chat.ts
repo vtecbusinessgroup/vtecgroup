@@ -50,7 +50,7 @@ export const Route = createFileRoute("/api/chat")({
           ];
 
           const aiRes = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${geminiKey}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:streamGenerateContent?alt=sse&key=${geminiKey}`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -62,26 +62,57 @@ export const Route = createFileRoute("/api/chat")({
             },
           );
 
-          if (!aiRes.ok) {
-            const errText = await aiRes.text();
-            console.error("Gemini chat error", aiRes.status, errText);
+          if (!aiRes.ok || !aiRes.body) {
+            const errText = await aiRes.text().catch(() => "");
+            console.error("Gemini stream error", aiRes.status, errText);
             return json({ error: "AI service error" }, { status: 502 });
           }
 
-          const aiData = await aiRes.json();
-          const reply: string =
-            aiData?.candidates?.[0]?.content?.parts?.[0]?.text ??
-            aiData?.candidates?.[0]?.content?.parts
-              ?.map((p: { text?: string }) => p.text ?? "")
-              .join("") ??
-            "";
+          const encoder = new TextEncoder();
+          const decoder = new TextDecoder();
+          let buffer = "";
+          let sawAnyText = false;
 
-          if (!reply) {
-            console.error("Empty Gemini chat response", JSON.stringify(aiData).slice(0, 600));
-            return json({ error: "Empty AI response" }, { status: 502 });
-          }
+          const transform = new TransformStream<Uint8Array, Uint8Array>({
+            transform(chunk, controller) {
+              buffer += decoder.decode(chunk, { stream: true });
+              const lines = buffer.split("\n");
+              buffer = lines.pop() ?? "";
+              for (const line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed.startsWith("data:")) continue;
+                const payload = trimmed.slice(5).trim();
+                if (!payload || payload === "[DONE]") continue;
+                try {
+                  const parsed = JSON.parse(payload) as {
+                    candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+                  };
+                  const text =
+                    parsed?.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
+                  if (text) {
+                    sawAnyText = true;
+                    controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text })}\n\n`));
+                  }
+                } catch {
+                  // incomplete JSON line mid-chunk — will complete on a later read
+                }
+              }
+            },
+            flush(controller) {
+              if (!sawAnyText) {
+                console.error("Gemini stream produced no text");
+              }
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true })}\n\n`));
+            },
+          });
 
-          return json({ reply });
+          return new Response(aiRes.body.pipeThrough(transform), {
+            headers: {
+              "Content-Type": "text/event-stream",
+              "Cache-Control": "no-cache",
+              Connection: "keep-alive",
+            },
+          });
         } catch (err) {
           console.error("Chat route error", err);
           return json({ error: "Failed to generate reply" }, { status: 500 });
