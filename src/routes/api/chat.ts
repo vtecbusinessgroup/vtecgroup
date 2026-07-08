@@ -20,9 +20,11 @@ export const Route = createFileRoute("/api/chat")({
           const body = (await request.json()) as {
             message?: string;
             history?: ChatMessage[];
+            lang?: "en" | "sw";
           };
           const message = (body.message ?? "").toString().slice(0, 2000);
           const history = Array.isArray(body.history) ? body.history.slice(-20) : [];
+          const lang = body.lang === "sw" ? "sw" : "en";
 
           if (!message.trim()) {
             return json({ error: "Empty message" }, { status: 400 });
@@ -33,6 +35,11 @@ export const Route = createFileRoute("/api/chat")({
             console.error("GEMINI_API_KEY missing");
             return json({ error: "AI key not configured" }, { status: 500 });
           }
+
+          const languageInstruction =
+            lang === "sw"
+              ? " Respond in Swahili (Kiswahili), naturally and fluently, unless the user writes in English, in which case you may reply in English for that message."
+              : " Respond in English.";
 
           const contents = [
             ...history.map((m) => ({
@@ -48,7 +55,7 @@ export const Route = createFileRoute("/api/chat")({
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+                systemInstruction: { parts: [{ text: SYSTEM_PROMPT + languageInstruction }] },
                 contents,
                 generationConfig: { temperature: 0.7, maxOutputTokens: 400 },
               }),
