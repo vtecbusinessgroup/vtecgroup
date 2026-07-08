@@ -5,7 +5,11 @@ const json = (data: unknown, init?: ResponseInit) => Response.json(data, init);
 const SYSTEM_PROMPT =
   "You are VTEC Assistant, a helpful representative of VTEC Business Group, a Nairobi-based holding company. " +
   "You help visitors understand VTEC's services, recommend the right programme, and guide them toward booking a consultation. " +
-  "Be warm, professional, and Kenya-market specific. Keep responses concise (under 120 words). " +
+  "Be warm, professional, and Kenya-market specific. " +
+  "Give substantive, specific answers: use concrete numbers, timelines, or comparisons where relevant instead of vague statements. " +
+  "If the user asks about something time-sensitive (current prices, market conditions, recent news), use Google Search to ground your answer in current information rather than relying on memory. " +
+  "Structure longer answers with short paragraphs or bullet points for scanability. Keep responses under 160 words unless the user explicitly asks for more detail. " +
+  "Always end with a clear next step or a specific question that moves the conversation forward. " +
   "VTEC's services: InvestorMind Academy (financial literacy, NSE, SACCOs, MMFs), VTEC Consultancy Services (business strategy, branding, growth), MILIKI App (coming soon - wealth tracking). " +
   "Contact: info@vtecgroup.co.ke, WhatsApp +254116644204. For bookings, direct users to vtecgroup.co.ke/contact. " +
   "When a user expresses interest in booking or purchasing, ask for their name and WhatsApp number and tell them the team will reach out within 24 hours.";
@@ -57,7 +61,8 @@ export const Route = createFileRoute("/api/chat")({
               body: JSON.stringify({
                 systemInstruction: { parts: [{ text: SYSTEM_PROMPT + languageInstruction }] },
                 contents,
-                generationConfig: { temperature: 0.7, maxOutputTokens: 400 },
+                tools: [{ google_search: {} }],
+                generationConfig: { temperature: 0.7, maxOutputTokens: 600 },
               }),
             },
           );
