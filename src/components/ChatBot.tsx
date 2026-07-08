@@ -10,6 +10,8 @@ import {
   Check,
   Mail,
   Globe,
+  RotateCcw,
+  Square,
 } from "lucide-react";
 import { useLocation } from "@tanstack/react-router";
 
@@ -27,6 +29,13 @@ const SUGGESTIONS = [
   "How can VTEC help my business?",
   "I want to book a consultation",
   "Tell me about InvestorMind Academy",
+];
+
+const FOLLOW_UPS = [
+  "Tell me more",
+  "How much does this cost?",
+  "How do I get started?",
+  "Connect me with a strategist",
 ];
 
 const GREETING: Message = {
@@ -63,10 +72,7 @@ function formatTime(ts: number): string {
   }
 }
 
-/* ---------------- Lightweight Markdown rendering ----------------
-   Gemini replies with **bold**, *italic*, "- " bullets, and "1. "
-   numbered lists. We parse just enough of that to render it properly
-   instead of showing raw asterisks, with brand-colored emphasis. */
+/* ---------------- Lightweight Markdown rendering ---------------- */
 
 type Block = { type: "p"; text: string } | { type: "ul"; items: string[] } | { type: "ol"; items: string[] };
 
@@ -199,6 +205,7 @@ export const ChatBot = () => {
   const [messages, setMessages] = useState<Message[]>(() => loadStoredMessages());
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [streamingId, setStreamingId] = useState<string | null>(null);
   const [homepageReady, setHomepageReady] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [lang, setLang] = useState<Lang>("en");
@@ -211,6 +218,7 @@ export const ChatBot = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const tooltipTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -240,18 +248,12 @@ export const ChatBot = () => {
 
   useEffect(() => {
     const markReady = () => setHomepageReady(true);
-
-    // site.html's preloader broadcasts this once its splash animation
-    // finishes, via window.parent.postMessage (if embedded in an iframe)
-    // and a same-document CustomEvent (if rendered inline).
     const onMessage = (e: MessageEvent) => {
       if (e?.data?.type === "vtec-preloader-done") markReady();
     };
     window.addEventListener("message", onMessage);
     window.addEventListener("vtec-preloader-done", markReady);
-
     const fallback = setTimeout(markReady, 4200);
-
     return () => {
       window.removeEventListener("message", onMessage);
       window.removeEventListener("vtec-preloader-done", markReady);
@@ -259,55 +261,121 @@ export const ChatBot = () => {
     };
   }, []);
 
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
+
   const isHomepage = location.pathname === "/";
   const hasRealConversation = messages.some((m) => m.id !== "greeting");
 
-  const send = async (text: string) => {
-    const trimmed = text.trim();
-    if (!trimmed || loading) return;
-
-    const userMsg: Message = {
-      id: `u-${Date.now()}`,
-      role: "user",
-      content: trimmed,
-      timestamp: Date.now(),
-    };
-    const history = messages
+  const runAssistant = async (userText: string, priorMessages: Message[]) => {
+    const history = priorMessages
       .filter((m) => m.id !== "greeting")
       .map((m) => ({ role: m.role, content: m.content }));
 
-    setMessages((prev) => [...prev, userMsg]);
-    setInput("");
     setLoading(true);
+    const assistantId = `a-${Date.now()}`;
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    setStreamingId(assistantId);
+    setMessages((prev) => [...prev, { id: assistantId, role: "assistant", content: "", timestamp: Date.now() }]);
+
+    let accumulated = "";
 
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: trimmed, history, lang }),
+        body: JSON.stringify({ message: userText, history, lang }),
+        signal: controller.signal,
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error ?? "Chat failed");
 
-      setMessages((prev) => [
-        ...prev,
-        { id: `a-${Date.now()}`, role: "assistant", content: data.reply, timestamp: Date.now() },
-      ]);
+      if (!res.ok || !res.body) {
+        const data = await res.json().catch(() => ({}) as { error?: string });
+        throw new Error(data?.error ?? "Chat failed");
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const frames = buffer.split("\n\n");
+        buffer = frames.pop() ?? "";
+        for (const frame of frames) {
+          const line = frame.trim();
+          if (!line.startsWith("data:")) continue;
+          const payload = line.slice(5).trim();
+          if (!payload) continue;
+          try {
+            const parsed = JSON.parse(payload) as { text?: string; done?: boolean };
+            if (parsed.text) {
+              accumulated += parsed.text;
+              const snapshot = accumulated;
+              setMessages((prev) => prev.map((m) => (m.id === assistantId ? { ...m, content: snapshot } : m)));
+            }
+          } catch {
+            // partial frame — ignore
+          }
+        }
+      }
+
+      if (!accumulated.trim()) {
+        throw new Error("Empty response");
+      }
     } catch (err) {
-      console.error(err);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `e-${Date.now()}`,
-          role: "assistant",
-          content:
-            "Sorry, I'm having trouble connecting right now. You can reach us at info@vtecgroup.co.ke or WhatsApp +254 116 644204.",
-          timestamp: Date.now(),
-        },
-      ]);
+      if ((err as Error).name === "AbortError") {
+        // user stopped generation — keep whatever streamed so far
+      } else {
+        console.error(err);
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === assistantId
+              ? {
+                  ...m,
+                  content:
+                    accumulated ||
+                    "Sorry, I'm having trouble connecting right now. You can reach us at info@vtecgroup.co.ke or WhatsApp +254 116 644204.",
+                }
+              : m,
+          ),
+        );
+      }
     } finally {
       setLoading(false);
+      setStreamingId(null);
+      abortControllerRef.current = null;
     }
+  };
+
+  const send = async (text: string) => {
+    const trimmed = text.trim();
+    if (!trimmed || loading) return;
+    const userMsg: Message = { id: `u-${Date.now()}`, role: "user", content: trimmed, timestamp: Date.now() };
+    const priorMessages = messages;
+    setMessages((prev) => [...prev, userMsg]);
+    setInput("");
+    await runAssistant(trimmed, priorMessages);
+  };
+
+  const regenerate = async () => {
+    if (loading) return;
+    const reversedIdx = [...messages].reverse().findIndex((m) => m.role === "user");
+    if (reversedIdx === -1) return;
+    const lastUserIdx = messages.length - 1 - reversedIdx;
+    const lastUserContent = messages[lastUserIdx].content;
+    const priorMessages = messages.slice(0, lastUserIdx);
+    setMessages((prev) => prev.slice(0, lastUserIdx + 1));
+    await runAssistant(lastUserContent, priorMessages);
+  };
+
+  const stopGenerating = () => {
+    abortControllerRef.current?.abort();
   };
 
   const onSubmit = (e: FormEvent) => {
@@ -398,6 +466,7 @@ export const ChatBot = () => {
   };
 
   const clearConversation = () => {
+    abortControllerRef.current?.abort();
     setMessages([GREETING]);
     setEmailSentOnce(false);
     setEmailStatus("idle");
@@ -469,14 +538,35 @@ export const ChatBot = () => {
             sm:inset-auto sm:bottom-8 sm:right-8 sm:top-auto sm:h-[640px] sm:w-[400px] sm:rounded-3xl sm:border sm:border-white/10"
           style={{ backgroundColor: "#0A1628", animation: "vtec-panel-in 0.28s cubic-bezier(0.16,1,0.3,1) both" }}
         >
+          {/* Ambient aurora background — sits behind header/messages/input since it's
+              the first child with default stacking; nothing above it is clipped. */}
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            <div
+              className="absolute -top-16 -left-10 h-56 w-56 rounded-full blur-3xl opacity-25"
+              style={{ backgroundColor: TEAL_ACCENT, animation: "vtec-drift-a 14s ease-in-out infinite" }}
+            />
+            <div
+              className="absolute top-1/3 -right-16 h-64 w-64 rounded-full blur-3xl opacity-20"
+              style={{ backgroundColor: GOLD, animation: "vtec-drift-b 18s ease-in-out infinite" }}
+            />
+            <div
+              className="absolute bottom-0 left-1/4 h-48 w-48 rounded-full blur-3xl opacity-[0.15]"
+              style={{ backgroundColor: "#06b6d4", animation: "vtec-drift-a 16s ease-in-out infinite reverse" }}
+            />
+          </div>
+
+          {/* Header — no overflow-hidden here (that was clipping/killing the menu's
+              hit area below); the sheen layer is scoped to its own clipped wrapper. */}
           <div
-            className="relative flex items-center justify-between px-4 py-4 border-b overflow-hidden"
+            className="relative flex items-center justify-between px-4 py-4 border-b"
             style={{ borderColor: "rgba(20,184,166,0.25)" }}
           >
-            <div
-              className="absolute inset-0 opacity-[0.16]"
-              style={{ backgroundImage: BRAND_GRADIENT, backgroundSize: "200% 200%", animation: "vtec-sheen 6s ease-in-out infinite" }}
-            />
+            <div className="absolute inset-0 overflow-hidden">
+              <div
+                className="absolute inset-0 opacity-[0.16]"
+                style={{ backgroundImage: BRAND_GRADIENT, backgroundSize: "200% 200%", animation: "vtec-sheen 6s ease-in-out infinite" }}
+              />
+            </div>
             <div className="relative flex items-center gap-3">
               <div
                 className="relative flex h-10 w-10 items-center justify-center rounded-xl font-bold text-sm text-white shadow-lg"
@@ -501,7 +591,7 @@ export const ChatBot = () => {
                 type="button"
                 onClick={() => setShowMenu((v) => !v)}
                 aria-label="Chat options"
-                className="relative rounded-full p-2 text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+                className="relative z-10 rounded-full p-2 text-white/70 hover:bg-white/10 hover:text-white transition-colors"
               >
                 <MoreVertical className="h-5 w-5" />
               </button>
@@ -509,7 +599,7 @@ export const ChatBot = () => {
                 type="button"
                 onClick={handleCloseRequest}
                 aria-label="Close chat"
-                className="relative rounded-full p-2 text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+                className="relative z-10 rounded-full p-2 text-white/70 hover:bg-white/10 hover:text-white transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -521,10 +611,10 @@ export const ChatBot = () => {
                   type="button"
                   aria-label="Close menu"
                   onClick={() => setShowMenu(false)}
-                  className="fixed inset-0 z-[5] cursor-default bg-transparent"
+                  className="fixed inset-0 z-[15] cursor-default bg-transparent"
                 />
                 <div
-                  className="absolute right-3 top-14 z-10 w-64 rounded-2xl border shadow-2xl overflow-hidden"
+                  className="absolute right-3 top-14 z-20 w-64 rounded-2xl border shadow-2xl overflow-hidden"
                   style={{ backgroundColor: "#0d1c33", borderColor: "rgba(212,175,55,0.3)" }}
                 >
                   <div className="px-3.5 pt-3 pb-1.5 text-[10px] uppercase tracking-wider font-semibold" style={{ color: GOLD }}>
@@ -587,9 +677,11 @@ export const ChatBot = () => {
             )}
           </div>
 
-          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-            {messages.map((m, mi) =>
-              m.role === "user" ? (
+          <div className="relative flex-1 overflow-y-auto px-4 py-4 space-y-4">
+            {messages.map((m, mi) => {
+              const isLast = mi === messages.length - 1;
+              const isStreamingThis = streamingId === m.id;
+              return m.role === "user" ? (
                 <div
                   key={m.id}
                   className="flex flex-col items-end"
@@ -604,11 +696,7 @@ export const ChatBot = () => {
                   <span className="text-[10px] text-white/35 mt-1 mr-1">{formatTime(m.timestamp)}</span>
                 </div>
               ) : (
-                <div
-                  key={m.id}
-                  className="flex items-start gap-2"
-                  style={{ animation: `vtec-msg-in 0.25s ease-out ${Math.min(mi, 4) * 0.03}s both` }}
-                >
+                <div key={m.id} className="flex items-start gap-2" style={{ animation: `vtec-msg-in 0.25s ease-out ${Math.min(mi, 4) * 0.03}s both` }}>
                   <div
                     className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white mt-0.5"
                     style={{ backgroundImage: BRAND_GRADIENT, boxShadow: "0 0 0 1px rgba(212,175,55,0.4)" }}
@@ -621,66 +709,76 @@ export const ChatBot = () => {
                       style={{
                         backgroundImage: "linear-gradient(160deg, #14284a, #0f1f36)",
                         borderColor: "rgba(20,184,166,0.25)",
-                        borderLeft: `3px solid rgba(45,212,191,0.55)`,
+                        borderLeft: "3px solid rgba(45,212,191,0.55)",
                         color: IVORY,
                       }}
                     >
-                      <RichText content={m.content} />
+                      {m.content ? (
+                        <>
+                          <RichText content={m.content} />
+                          {isStreamingThis && (
+                            <span
+                              className="inline-block w-[2px] h-[13px] align-middle ml-0.5 -mb-[2px]"
+                              style={{ backgroundColor: TEAL_ACCENT, animation: "vtec-caret 0.9s steps(1) infinite" }}
+                            />
+                          )}
+                        </>
+                      ) : (
+                        <div className="flex gap-1.5 py-0.5">
+                          <span className="h-1.5 w-1.5 rounded-full animate-bounce" style={{ backgroundColor: TEAL_ACCENT }} />
+                          <span className="h-1.5 w-1.5 rounded-full animate-bounce" style={{ backgroundColor: GOLD, animationDelay: "0.15s" }} />
+                          <span className="h-1.5 w-1.5 rounded-full animate-bounce" style={{ backgroundColor: TEAL_ACCENT, animationDelay: "0.3s" }} />
+                        </div>
+                      )}
                     </div>
+
                     <div className="flex items-center gap-2 mt-1 ml-1">
                       <span className="text-[10px] text-white/35">{formatTime(m.timestamp)}</span>
-                      {m.id !== "greeting" && (
+                      {m.id !== "greeting" && !isStreamingThis && m.content && (
                         <button
                           type="button"
                           onClick={() => copyMessage(m)}
                           aria-label="Copy message"
                           className="text-white/35 hover:text-white/70 transition-colors"
                         >
-                          {copiedId === m.id ? (
-                            <Check className="h-3 w-3" style={{ color: "#34d399" }} />
-                          ) : (
-                            <Copy className="h-3 w-3" />
-                          )}
+                          {copiedId === m.id ? <Check className="h-3 w-3" style={{ color: "#34d399" }} /> : <Copy className="h-3 w-3" />}
+                        </button>
+                      )}
+                      {m.id !== "greeting" && isLast && !isStreamingThis && m.content && !loading && (
+                        <button
+                          type="button"
+                          onClick={() => void regenerate()}
+                          aria-label="Regenerate response"
+                          className="text-white/35 hover:text-white/70 transition-colors"
+                        >
+                          <RotateCcw className="h-3 w-3" />
                         </button>
                       )}
                     </div>
-                  </div>
-                </div>
-              ),
-            )}
 
-            {loading && (
-              <div className="flex items-start gap-2">
-                <div
-                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white mt-0.5"
-                  style={{ backgroundImage: BRAND_GRADIENT }}
-                >
-                  <Sparkles className="h-3.5 w-3.5" />
-                </div>
-                <div
-                  className="rounded-2xl rounded-bl-md px-4 py-3 border"
-                  style={{ backgroundColor: "#13243d", borderColor: "rgba(20,184,166,0.25)" }}
-                >
-                  <div className="flex gap-1.5">
-                    <span className="h-2 w-2 rounded-full animate-bounce" style={{ backgroundColor: TEAL_ACCENT }} />
-                    <span
-                      className="h-2 w-2 rounded-full animate-bounce"
-                      style={{ backgroundColor: GOLD, animationDelay: "0.15s" }}
-                    />
-                    <span
-                      className="h-2 w-2 rounded-full animate-bounce"
-                      style={{ backgroundColor: TEAL_ACCENT, animationDelay: "0.3s" }}
-                    />
+                    {m.id !== "greeting" && isLast && !isStreamingThis && m.content && !loading && (
+                      <div className="flex flex-wrap gap-1.5 mt-2">
+                        {FOLLOW_UPS.map((f) => (
+                          <button
+                            key={f}
+                            type="button"
+                            onClick={() => void send(f)}
+                            className="rounded-full border px-2.5 py-1 text-[11px] text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+                            style={{ borderColor: "rgba(20,184,166,0.3)" }}
+                          >
+                            {f}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-            )}
+              );
+            })}
 
             {messages.length === 1 && !loading && (
               <div className="pt-2 space-y-2">
-                <div className="text-[11px] uppercase tracking-wider text-white/40 px-1 font-semibold">
-                  Suggested
-                </div>
+                <div className="text-[11px] uppercase tracking-wider text-white/40 px-1 font-semibold">Suggested</div>
                 {SUGGESTIONS.map((s, i) => (
                   <button
                     key={s}
@@ -690,10 +788,7 @@ export const ChatBot = () => {
                     style={{ borderColor: "rgba(20,184,166,0.25)" }}
                   >
                     <span className="flex items-center gap-2">
-                      <span
-                        className="h-1.5 w-1.5 rounded-full"
-                        style={{ backgroundColor: i % 2 === 0 ? TEAL_ACCENT : GOLD }}
-                      />
+                      <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: i % 2 === 0 ? TEAL_ACCENT : GOLD }} />
                       {s}
                     </span>
                     <span className="text-[#2dd4bf] opacity-0 group-hover:opacity-100 transition-opacity">&rarr;</span>
@@ -706,10 +801,7 @@ export const ChatBot = () => {
           </div>
 
           {showEmailPrompt && (
-            <div
-              className="absolute inset-0 z-20 flex items-end sm:items-center justify-center p-4"
-              style={{ backgroundColor: "rgba(10,22,40,0.82)" }}
-            >
+            <div className="absolute inset-0 z-20 flex items-end sm:items-center justify-center p-4" style={{ backgroundColor: "rgba(10,22,40,0.82)" }}>
               <form
                 onSubmit={submitEmail}
                 className="w-full max-w-sm rounded-2xl p-5 border"
@@ -728,9 +820,7 @@ export const ChatBot = () => {
                   </p>
                 ) : (
                   <>
-                    <p className="text-white/60 text-xs mb-3">
-                      We'll send a copy from VTEC Business Group. No spam, just this transcript.
-                    </p>
+                    <p className="text-white/60 text-xs mb-3">We'll send a copy from VTEC Business Group. No spam, just this transcript.</p>
                     <input
                       type="email"
                       value={emailInput}
@@ -741,9 +831,7 @@ export const ChatBot = () => {
                       style={{ backgroundColor: "#13243d", borderColor: "rgba(20,184,166,0.25)" }}
                     />
                     {emailStatus === "error" && (
-                      <p className="text-red-300 text-xs mb-2">
-                        Couldn't send that, you can try again{closeAfterEmail ? " or skip" : ""}.
-                      </p>
+                      <p className="text-red-300 text-xs mb-2">Couldn't send that, you can try again{closeAfterEmail ? " or skip" : ""}.</p>
                     )}
                     <div className="flex gap-2">
                       <button
@@ -769,11 +857,7 @@ export const ChatBot = () => {
             </div>
           )}
 
-          <form
-            onSubmit={onSubmit}
-            className="border-t p-3 flex gap-2"
-            style={{ borderColor: "rgba(20,184,166,0.2)" }}
-          >
+          <form onSubmit={onSubmit} className="relative border-t p-3 flex gap-2" style={{ borderColor: "rgba(20,184,166,0.2)" }}>
             <input
               ref={inputRef}
               value={input}
@@ -784,13 +868,14 @@ export const ChatBot = () => {
               style={{ backgroundColor: "#0d1c33", borderColor: "rgba(20,184,166,0.25)" }}
             />
             <button
-              type="submit"
-              disabled={loading || !input.trim()}
-              aria-label="Send message"
+              type={loading ? "button" : "submit"}
+              onClick={loading ? stopGenerating : undefined}
+              disabled={!loading && !input.trim()}
+              aria-label={loading ? "Stop generating" : "Send message"}
               className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white transition-opacity disabled:opacity-40 shadow-md"
               style={{ backgroundImage: BRAND_GRADIENT }}
             >
-              <Send className="h-4 w-4" />
+              {loading ? <Square className="h-3.5 w-3.5" fill="currentColor" /> : <Send className="h-4 w-4" />}
             </button>
           </form>
         </div>
@@ -817,6 +902,17 @@ export const ChatBot = () => {
         @keyframes vtec-sheen {
           0%, 100% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
+        }
+        @keyframes vtec-drift-a {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(20px, 15px) scale(1.08); }
+        }
+        @keyframes vtec-drift-b {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(-18px, 20px) scale(1.05); }
+        }
+        @keyframes vtec-caret {
+          50% { opacity: 0; }
         }
       `}</style>
     </>
