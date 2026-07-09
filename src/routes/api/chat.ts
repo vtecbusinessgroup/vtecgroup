@@ -25,21 +25,22 @@ const SYSTEM_PROMPT =
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
 const SITE_ORIGIN = "https://vtecgroup.co.ke";
-const SITE_CONTEXT_CACHE_KEY = "https://vtecgroup.co.ke/__internal-chat-site-context__";
 const SITE_CONTEXT_TTL_SECONDS = 1800; // 30 minutes
+const MAX_PAGE_CHARS = 1800;
+const MAX_PAGES_PER_REQUEST = 4;
 
 // Best-guess paths based on the routes I can see in the repo. If any of these
 // don't match your live URLs, that page is silently skipped (never breaks the
 // chat), tell me the real slugs and I'll correct them.
-const SITE_PAGES: Array<{ label: string; path: string }> = [
-  { label: "Home", path: "/" },
-  { label: "Services", path: "/services" },
-  { label: "Leadership", path: "/leadership" },
-  { label: "Solutions", path: "/solutions" },
-  { label: "About", path: "/about-us" },
-  { label: "Blog", path: "/blog" },
-  { label: "VTEC Intelligence", path: "/ai-diagnostic-info" },
-  { label: "Vision 2035", path: "/vision-2035" },
+const SITE_PAGES: Array<{ label: string; path: string; keywords: string[] }> = [
+  { label: "Home", path: "/", keywords: ["home", "overview", "vtec business group", "who are you", "what is vtec"] },
+  { label: "Services", path: "/services", keywords: ["service", "consult", "consultancy", "business help", "offer"] },
+  { label: "Leadership", path: "/leadership", keywords: ["ceo", "founder", "leadership", "team", "who runs", "who owns", "kevin", "management"] },
+  { label: "Solutions", path: "/solutions", keywords: ["solution", "problem", "challenge"] },
+  { label: "About", path: "/about-us", keywords: ["about", "history", "founded", "mission", "story", "background"] },
+  { label: "Blog", path: "/blog", keywords: ["blog", "article", "news", "post", "read"] },
+  { label: "VTEC Intelligence", path: "/ai-diagnostic-info", keywords: ["intelligence", "diagnostic", "ai tool", "assessment"] },
+  { label: "Vision 2035", path: "/vision-2035", keywords: ["vision", "2035", "future", "target", "goal"] },
 ];
 
 function stripHtml(html: string): string {
@@ -56,51 +57,65 @@ function stripHtml(html: string): string {
     .trim();
 }
 
-async function fetchSiteContext(): Promise<string> {
+// Only pull in the pages that are actually relevant to this message (plus a
+// cheap Home + Leadership baseline), instead of always shipping all 8 pages
+// of site text to Gemini on every single turn. This is the real lever for
+// keeping token usage down without breaking streaming.
+function selectRelevantPages(message: string, history: ChatMessage[]): typeof SITE_PAGES {
+  const haystack = (message + " " + history.map((h) => h.content).join(" ")).toLowerCase();
+  const scored = SITE_PAGES.map((page) => ({
+    page,
+    score: page.keywords.reduce((acc, kw) => (haystack.includes(kw) ? acc + 1 : acc), 0),
+  }));
+  const matched = scored.filter((s) => s.score > 0).map((s) => s.page);
+  const baseline = SITE_PAGES.filter((p) => p.label === "Home" || p.label === "Leadership");
+  const combined = [...baseline, ...matched];
+  const deduped = Array.from(new Map(combined.map((p) => [p.path, p])).values());
+  return deduped.slice(0, MAX_PAGES_PER_REQUEST);
+}
+
+async function fetchPage(page: { label: string; path: string }): Promise<string | null> {
   const cache = (caches as any).default;
-  const cacheRequest = new Request(SITE_CONTEXT_CACHE_KEY);
+  const cacheRequest = new Request(`${SITE_ORIGIN}${page.path}?__vtec_chat_cache=1`);
 
   try {
     const cached = await cache.match(cacheRequest);
-    if (cached) {
-      return await cached.text();
-    }
+    if (cached) return await cached.text();
   } catch {
     // cache unavailable — fall through and fetch fresh
   }
 
-  const results = await Promise.all(
-    SITE_PAGES.map(async (page) => {
-      try {
-        const res = await fetch(`${SITE_ORIGIN}${page.path}`, {
-          headers: { "User-Agent": "VTEC-Assistant-Internal-Fetch/1.0" },
-        });
-        if (!res.ok) return null;
-        const html = await res.text();
-        const text = stripHtml(html).slice(0, 2500);
-        return `--- ${page.label} (${SITE_ORIGIN}${page.path}) ---\n${text}`;
-      } catch (err) {
-        console.error(`Site context fetch failed for ${page.path}`, err);
-        return null;
-      }
-    }),
-  );
-
-  const combined = results.filter((r): r is string => Boolean(r)).join("\n\n");
-
   try {
-    const response = new Response(combined, {
-      headers: {
-        "Cache-Control": `public, max-age=${SITE_CONTEXT_TTL_SECONDS}`,
-        "Content-Type": "text/plain",
-      },
+    const res = await fetch(`${SITE_ORIGIN}${page.path}`, {
+      headers: { "User-Agent": "VTEC-Assistant-Internal-Fetch/1.0" },
     });
-    await cache.put(cacheRequest, response.clone());
-  } catch {
-    // cache write failed — non-fatal, we still return the freshly fetched content
-  }
+    if (!res.ok) return null;
+    const html = await res.text();
+    const text = stripHtml(html).slice(0, MAX_PAGE_CHARS);
+    const block = `--- ${page.label} (${SITE_ORIGIN}${page.path}) ---\n${text}`;
 
-  return combined;
+    try {
+      const cacheResponse = new Response(block, {
+        headers: {
+          "Cache-Control": `public, max-age=${SITE_CONTEXT_TTL_SECONDS}`,
+          "Content-Type": "text/plain",
+        },
+      });
+      await cache.put(cacheRequest, cacheResponse.clone());
+    } catch {
+      // cache write failed — non-fatal
+    }
+
+    return block;
+  } catch (err) {
+    console.error(`Site context fetch failed for ${page.path}`, err);
+    return null;
+  }
+}
+
+async function fetchSiteContext(pages: typeof SITE_PAGES): Promise<string> {
+  const results = await Promise.all(pages.map(fetchPage));
+  return results.filter((r): r is string => Boolean(r)).join("\n\n");
 }
 
 export const Route = createFileRoute("/api/chat")({
@@ -132,7 +147,7 @@ export const Route = createFileRoute("/api/chat")({
               ? " Respond in Swahili (Kiswahili), naturally and fluently, unless the user writes in English, in which case you may reply in English for that message."
               : " Respond in English.";
 
-          const siteContext = await fetchSiteContext().catch(() => "");
+          const siteContext = await fetchSiteContext(selectRelevantPages(message, history)).catch(() => "");
           const siteContextBlock = siteContext
             ? "\n\nLIVE VTEC WEBSITE CONTENT (fetched just now from vtecgroup.co.ke — this is your primary, most current source of truth for VTEC's services, leadership, and offerings; prefer it over the verified facts list above if the two ever disagree, since this reflects what's live on the site right now):\n" +
               siteContext
