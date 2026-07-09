@@ -24,6 +24,85 @@ const SYSTEM_PROMPT =
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
+const SITE_ORIGIN = "https://vtecgroup.co.ke";
+const SITE_CONTEXT_CACHE_KEY = "https://vtecgroup.co.ke/__internal-chat-site-context__";
+const SITE_CONTEXT_TTL_SECONDS = 1800; // 30 minutes
+
+// Best-guess paths based on the routes I can see in the repo. If any of these
+// don't match your live URLs, that page is silently skipped (never breaks the
+// chat), tell me the real slugs and I'll correct them.
+const SITE_PAGES: Array<{ label: string; path: string }> = [
+  { label: "Home", path: "/" },
+  { label: "Services", path: "/services" },
+  { label: "Leadership", path: "/leadership" },
+  { label: "Solutions", path: "/solutions" },
+  { label: "About", path: "/about-us" },
+  { label: "Blog", path: "/blog" },
+  { label: "VTEC Intelligence", path: "/ai-diagnostic-info" },
+  { label: "Vision 2035", path: "/vision-2035" },
+];
+
+function stripHtml(html: string): string {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<!--[\s\S]*?-->/g, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+async function fetchSiteContext(): Promise<string> {
+  const cache = (caches as any).default;
+  const cacheRequest = new Request(SITE_CONTEXT_CACHE_KEY);
+
+  try {
+    const cached = await cache.match(cacheRequest);
+    if (cached) {
+      return await cached.text();
+    }
+  } catch {
+    // cache unavailable — fall through and fetch fresh
+  }
+
+  const results = await Promise.all(
+    SITE_PAGES.map(async (page) => {
+      try {
+        const res = await fetch(`${SITE_ORIGIN}${page.path}`, {
+          headers: { "User-Agent": "VTEC-Assistant-Internal-Fetch/1.0" },
+        });
+        if (!res.ok) return null;
+        const html = await res.text();
+        const text = stripHtml(html).slice(0, 2500);
+        return `--- ${page.label} (${SITE_ORIGIN}${page.path}) ---\n${text}`;
+      } catch (err) {
+        console.error(`Site context fetch failed for ${page.path}`, err);
+        return null;
+      }
+    }),
+  );
+
+  const combined = results.filter((r): r is string => Boolean(r)).join("\n\n");
+
+  try {
+    const response = new Response(combined, {
+      headers: {
+        "Cache-Control": `public, max-age=${SITE_CONTEXT_TTL_SECONDS}`,
+        "Content-Type": "text/plain",
+      },
+    });
+    await cache.put(cacheRequest, response.clone());
+  } catch {
+    // cache write failed — non-fatal, we still return the freshly fetched content
+  }
+
+  return combined;
+}
+
 export const Route = createFileRoute("/api/chat")({
   server: {
     handlers: {
@@ -53,6 +132,12 @@ export const Route = createFileRoute("/api/chat")({
               ? " Respond in Swahili (Kiswahili), naturally and fluently, unless the user writes in English, in which case you may reply in English for that message."
               : " Respond in English.";
 
+          const siteContext = await fetchSiteContext().catch(() => "");
+          const siteContextBlock = siteContext
+            ? "\n\nLIVE VTEC WEBSITE CONTENT (fetched just now from vtecgroup.co.ke — this is your primary, most current source of truth for VTEC's services, leadership, and offerings; prefer it over the verified facts list above if the two ever disagree, since this reflects what's live on the site right now):\n" +
+              siteContext
+            : "";
+
           const contents = [
             ...history.map((m) => ({
               role: m.role === "assistant" ? "model" : "user",
@@ -67,7 +152,7 @@ export const Route = createFileRoute("/api/chat")({
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                systemInstruction: { parts: [{ text: SYSTEM_PROMPT + languageInstruction }] },
+                systemInstruction: { parts: [{ text: SYSTEM_PROMPT + languageInstruction + siteContextBlock }] },
                 contents,
                 tools: [{ google_search: {} }],
                 generationConfig: { temperature: 0.7, maxOutputTokens: 600 },
