@@ -643,17 +643,28 @@ export const ChatBot = () => {
             </div>
             <div className="relative flex items-center gap-3">
               <div
-                className="relative flex h-10 w-10 items-center justify-center rounded-xl font-bold text-sm text-white shadow-lg"
+                className="relative flex h-10 w-10 items-center justify-center rounded-full font-bold text-sm text-white shadow-lg"
                 style={{ backgroundImage: BRAND_GRADIENT, boxShadow: `0 0 0 1.5px ${GOLD}` }}
               >
                 <span
-                  className="absolute inset-0 rounded-xl opacity-50 blur-md -z-10"
+                  className="absolute inset-0 rounded-full opacity-50 blur-md -z-10"
                   style={{ backgroundImage: BRAND_GRADIENT }}
                 />
                 <BrandMark size="h-6 w-6" />
+                <span
+                  className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full border-2"
+                  style={{ backgroundColor: GOLD, borderColor: "#0A1628" }}
+                >
+                  <Check className="h-2 w-2" style={{ color: "#0A1628" }} strokeWidth={4} />
+                </span>
               </div>
               <div>
-                <div className="text-white font-semibold text-sm leading-tight">VTEC Assistant</div>
+                <div
+                  className="text-white font-semibold text-sm leading-tight"
+                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                >
+                  VTEC Assistant
+                </div>
                 <div className="flex items-center gap-1.5 text-[11px] text-white/60 mt-0.5">
                   <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#34d399] animate-pulse" />
                   Online now
