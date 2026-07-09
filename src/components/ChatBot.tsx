@@ -628,11 +628,15 @@ export const ChatBot = () => {
           className="fixed z-40 flex flex-col overflow-hidden shadow-2xl
             inset-x-0 bottom-0 top-0 w-full rounded-none
             sm:inset-auto sm:bottom-8 sm:right-8 sm:top-auto sm:h-[640px] sm:w-[400px] sm:rounded-3xl sm:border sm:border-white/10"
-          style={{ backgroundColor: "#0A1628", animation: "vtec-panel-in 0.28s cubic-bezier(0.16,1,0.3,1) both" }}
+          style={{
+            backgroundColor: "#0A1628",
+            animation: "vtec-panel-in 0.28s cubic-bezier(0.16,1,0.3,1) both",
+            perspective: "1200px",
+          }}
         >
           {/* Ambient aurora background — sits behind header/messages/input since it's
               the first child with default stacking; nothing above it is clipped. */}
-          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="pointer-events-none absolute inset-0 overflow-hidden" style={{ perspective: "600px" }}>
             <div
               className="absolute inset-0 opacity-[0.05]"
               style={{ backgroundImage: "radial-gradient(circle, #ffffff 1px, transparent 1px)", backgroundSize: "20px 20px" }}
@@ -678,7 +682,12 @@ export const ChatBot = () => {
             <div className="relative flex items-center gap-3">
               <div
                 className="relative flex h-10 w-10 items-center justify-center rounded-full font-bold text-sm text-white shadow-lg"
-                style={{ backgroundImage: BRAND_GRADIENT, boxShadow: `0 0 0 1.5px ${GOLD}` }}
+                style={{
+                  backgroundImage: BRAND_GRADIENT,
+                  boxShadow: `0 0 0 1.5px ${GOLD}`,
+                  animation: "vtec-avatar-3d 9s ease-in-out infinite",
+                  transformStyle: "preserve-3d",
+                }}
               >
                 <span
                   className="absolute inset-0 rounded-full opacity-50 blur-md -z-10"
@@ -804,7 +813,7 @@ export const ChatBot = () => {
             {formatHeaderDateTime(now)}
           </div>
 
-          <div className="relative flex-1 overflow-y-auto px-4 py-4 space-y-4">
+          <div className="relative flex-1 overflow-y-auto px-4 py-4 space-y-4" style={{ perspective: "800px" }}>
             {messages.map((m, mi) => {
               const isLast = mi === messages.length - 1;
               const isStreamingThis = streamingId === m.id;
@@ -984,6 +993,16 @@ export const ChatBot = () => {
             </div>
           )}
 
+          <div
+            className="relative flex items-center justify-center gap-1.5 py-1 text-[10px] text-white/40 border-t"
+            style={{ borderColor: "rgba(20,184,166,0.12)" }}
+          >
+            <span aria-hidden="true">🇰🇪</span>
+            <span>
+              Powered by <span style={{ color: GOLD, fontWeight: 600 }}>VTEC Intelligence</span>
+            </span>
+          </div>
+
           <form onSubmit={onSubmit} className="relative border-t p-3 flex gap-2" style={{ borderColor: "rgba(20,184,166,0.2)" }}>
             {SpeechRecognitionCtor && (
               <button
@@ -1038,20 +1057,25 @@ export const ChatBot = () => {
           to { opacity: 1; transform: translateY(0) scale(1); }
         }
         @keyframes vtec-msg-in {
-          from { opacity: 0; transform: translateY(6px); }
-          to { opacity: 1; transform: translateY(0); }
+          from { opacity: 0; transform: translateY(8px) rotateX(-10deg); }
+          to { opacity: 1; transform: translateY(0) rotateX(0deg); }
+        }
+        @keyframes vtec-avatar-3d {
+          0%, 100% { transform: rotateY(0deg); }
+          25% { transform: rotateY(18deg); }
+          75% { transform: rotateY(-18deg); }
         }
         @keyframes vtec-sheen {
           0%, 100% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
         }
         @keyframes vtec-drift-a {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          50% { transform: translate(20px, 15px) scale(1.08); }
+          0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+          50% { transform: translate3d(20px, 15px, 40px) scale(1.1); }
         }
         @keyframes vtec-drift-b {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          50% { transform: translate(-18px, 20px) scale(1.05); }
+          0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+          50% { transform: translate3d(-18px, 20px, -30px) scale(1.05); }
         }
         @keyframes vtec-caret {
           50% { opacity: 0; }
