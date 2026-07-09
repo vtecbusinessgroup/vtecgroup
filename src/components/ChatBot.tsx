@@ -14,6 +14,7 @@ import {
   Square,
   Mic,
   MicOff,
+  Clock,
 } from "lucide-react";
 import { useLocation } from "@tanstack/react-router";
 
@@ -69,6 +70,21 @@ function loadStoredMessages(): Message[] {
 function formatTime(ts: number): string {
   try {
     return new Date(ts).toLocaleTimeString("en-KE", { hour: "numeric", minute: "2-digit" });
+  } catch {
+    return "";
+  }
+}
+
+function formatHeaderDateTime(d: Date): string {
+  try {
+    return d.toLocaleString("en-KE", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      timeZone: "Africa/Nairobi",
+    });
   } catch {
     return "";
   }
@@ -200,16 +216,28 @@ function RichText({ content }: { content: string }) {
   );
 }
 
-function BrandMark({ size = "h-5 w-5" }: { size?: string }) {
+function BrandMark({ className = "h-5 w-5", cover = false }: { className?: string; cover?: boolean }) {
   const [failed, setFailed] = useState(false);
-  if (failed) return <Sparkles className={size} />;
+  if (failed) return <Sparkles className={className} />;
+  if (!cover) {
+    return (
+      <img
+        src="/vtec-logo.png"
+        alt="VTEC"
+        className={`${className} object-contain drop-shadow-sm`}
+        onError={() => setFailed(true)}
+      />
+    );
+  }
   return (
-    <img
-      src="/vtec-logo.png"
-      alt="VTEC"
-      className={`${size} object-contain drop-shadow-sm`}
-      onError={() => setFailed(true)}
-    />
+    <div className={`${className} overflow-hidden rounded-full`}>
+      <img
+        src="/vtec-logo.png"
+        alt="VTEC"
+        className="h-full w-full object-cover scale-110"
+        onError={() => setFailed(true)}
+      />
+    </div>
   );
 }
 
@@ -252,6 +280,12 @@ export const ChatBot = () => {
   const abortControllerRef = useRef<AbortController | null>(null);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const [isListening, setIsListening] = useState(false);
+  const [now, setNow] = useState(() => new Date());
+
+  useEffect(() => {
+    const t = setInterval(() => setNow(new Date()), 30000);
+    return () => clearInterval(t);
+  }, []);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -581,7 +615,7 @@ export const ChatBot = () => {
               className="absolute inset-0 rounded-full opacity-40 blur-md -z-10"
               style={{ backgroundImage: BRAND_GRADIENT }}
             />
-            <BrandMark size="h-7 w-7 transition-transform duration-500 group-hover:rotate-[8deg]" />
+            <BrandMark className="h-8 w-8 transition-transform duration-500 group-hover:rotate-[8deg]" cover />
             <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-[#0A1628] flex items-center justify-center">
               <span className="h-2 w-2 rounded-full bg-[#34d399] animate-pulse" />
             </span>
@@ -650,7 +684,7 @@ export const ChatBot = () => {
                   className="absolute inset-0 rounded-full opacity-50 blur-md -z-10"
                   style={{ backgroundImage: BRAND_GRADIENT }}
                 />
-                <BrandMark size="h-6 w-6" />
+                <BrandMark className="h-7 w-7" cover />
                 <span
                   className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full border-2"
                   style={{ backgroundColor: GOLD, borderColor: "#0A1628" }}
@@ -762,6 +796,14 @@ export const ChatBot = () => {
             )}
           </div>
 
+          <div
+            className="relative flex items-center justify-center gap-1.5 py-1.5 text-[11px] text-white/50 border-b"
+            style={{ borderColor: "rgba(20,184,166,0.15)" }}
+          >
+            <Clock className="h-3 w-3" />
+            {formatHeaderDateTime(now)}
+          </div>
+
           <div className="relative flex-1 overflow-y-auto px-4 py-4 space-y-4">
             {messages.map((m, mi) => {
               const isLast = mi === messages.length - 1;
@@ -786,7 +828,7 @@ export const ChatBot = () => {
                     className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white mt-0.5"
                     style={{ backgroundImage: BRAND_GRADIENT, boxShadow: "0 0 0 1px rgba(212,175,55,0.4)" }}
                   >
-                    <BrandMark size="h-4 w-4" />
+                    <BrandMark className="h-6 w-6" cover />
                   </div>
                   <div className="flex flex-col items-start max-w-[85%]">
                     <div
