@@ -21,6 +21,9 @@ import {
   HelpCircle,
 } from "lucide-react";
 
+const PAGE_URL = "https://www.vtecgroup.co.ke/miliki";
+const OG_IMAGE = "https://www.vtecgroup.co.ke/og-image.png";
+
 export const Route = createFileRoute("/miliki")({
   head: () => ({
     meta: [
@@ -30,12 +33,31 @@ export const Route = createFileRoute("/miliki")({
         content:
           "MILIKI is VTEC Business Group's 2-in-1 financial co-pilot: budget and invest in NSE equities, Money Market Funds, and more from one dashboard.",
       },
+      {
+        name: "keywords",
+        content:
+          "MILIKI App Kenya, financial co-pilot Kenya, NSE investing app, Money Market Fund app Kenya, budgeting app Kenya, VTEC MILIKI, wealth app Kenya, asset ownership app",
+      },
+      { name: "robots", content: "index, follow" },
+      { property: "og:title", content: "MILIKI App | Kenya's Financial Co-Pilot" },
+      {
+        property: "og:description",
+        content:
+          "Stop managing money. Start owning it. MILIKI fuses budgeting with real NSE and Money Market Fund investing in one dashboard.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: PAGE_URL },
+      { property: "og:image", content: OG_IMAGE },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "MILIKI App | Kenya's Financial Co-Pilot" },
+      { name: "twitter:image", content: OG_IMAGE },
     ],
     links: [
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600;700&display=swap",
       },
+      { rel: "canonical", href: PAGE_URL },
     ],
   }),
   component: MilikiPage,
@@ -93,6 +115,43 @@ const FAQS = [
   { q: "What does MILIKI cost?", a: "MILIKI has a free Starter tier to begin budgeting and exploring investments today, with Premium and Pro tiers for deeper tools as your portfolio grows." },
   { q: "Can I withdraw my money anytime?", a: "Yes. MILIKI is built on ownership, your assets and your access are always yours, on your terms." },
 ];
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      name: "MILIKI App",
+      applicationCategory: "FinanceApplication",
+      operatingSystem: "Web, PWA",
+      url: "https://miliki.vtecgroup.co.ke",
+      description:
+        "A 2-in-1 financial co-pilot that fuses everyday budgeting with real investing in NSE equities, Money Market Funds, and bonds inside one dashboard.",
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "KES",
+        description: "Free Starter tier, with Premium and Pro tiers available.",
+      },
+      publisher: { "@id": "https://www.vtecgroup.co.ke/#organization" },
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: FAQS.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://www.vtecgroup.co.ke/" },
+        { "@type": "ListItem", position: 2, name: "MILIKI App", item: PAGE_URL },
+      ],
+    },
+  ],
+};
 
 function SectionEyebrow({ children }: { children: ReactNode }) {
   return (
@@ -199,6 +258,10 @@ function MilikiPage() {
 
   return (
     <div style={{ backgroundColor: BLACK, minHeight: "100vh", fontFamily: BODY_FONT }} className="text-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       {/* Top bar */}
       <div
         className="sticky top-0 z-20 border-b backdrop-blur"
@@ -461,6 +524,17 @@ function MilikiPage() {
         </div>
         <p className="relative mt-4 text-xs text-white/40">miliki.vtecgroup.co.ke · A VTEC Business Group product</p>
       </section>
+
+      {/* Footer nav — keeps MILIKI connected to the rest of the site for navigation and crawl discovery */}
+      <footer className="border-t px-5 py-8 text-center" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+        <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-white/50">
+          <Link to="/" className="hover:text-white transition-colors">Home</Link>
+          <Link to="/about-us" className="hover:text-white transition-colors">About Us</Link>
+          <Link to="/services" className="hover:text-white transition-colors">Services</Link>
+          <Link to="/solutions" className="hover:text-white transition-colors">Solutions</Link>
+          <Link to="/leadership" className="hover:text-white transition-colors">Leadership</Link>
+        </nav>
+      </footer>
 
       <InstallButton fixed visible={scrolledPastHero} />
     </div>
