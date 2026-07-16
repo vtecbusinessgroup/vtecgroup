@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { PageHeader } from "../components/PageHeader";
 
-const PAGE_URL = "https://www.vtecgroup.co.ke/blog";
+const PAGE_URL = "https://vtecgroup.co.ke/blog";
 const OG_IMAGE = "https://www.vtecgroup.co.ke/og-image.png";
 
 export const Route = createFileRoute("/blog")({
@@ -55,12 +55,12 @@ const structuredData = {
       name: "VTEC Business Group Blog",
       description:
         "Practical insights on financial literacy, business strategy, and wealth building for the modern Kenyan investor.",
-      publisher: { "@id": "https://www.vtecgroup.co.ke/#organization" },
+      publisher: { "@id": "https://vtecgroup.co.ke/#organization" },
     },
     {
       "@type": "BreadcrumbList",
       itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: "https://www.vtecgroup.co.ke/" },
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://vtecgroup.co.ke/" },
         { "@type": "ListItem", position: 2, name: "Blog", item: PAGE_URL },
       ],
     },
@@ -140,22 +140,36 @@ function BlogPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       <PageHeader />
-      <div className="max-w-4xl mx-auto px-5 md:px-8 py-16 md:py-24">
-        <div className="text-center mb-14">
-          <span className="inline-block text-[#27ae60] text-xs font-semibold tracking-[2px] uppercase mb-3">
-            Insights
-          </span>
-          <h1 className="font-serif text-3xl md:text-5xl font-bold">
-            The VTEC Blog
-          </h1>
-          <p className="text-white/60 mt-4 text-lg max-w-xl mx-auto">
-            Practical insights on financial literacy, business strategy, and
-            wealth building — written for the modern Kenyan investor.
-          </p>
-          <span className="inline-block mt-5 text-[11px] font-semibold uppercase tracking-wide bg-white/10 px-4 py-2 rounded-full">
-            Launching Soon
-          </span>
+      <div className="relative overflow-hidden">
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse 640px 460px at 22% 15%, rgba(39,174,96,0.16) 0%, transparent 70%)",
+          }}
+        />
+        <div className="relative max-w-4xl mx-auto px-5 md:px-8 pt-16 md:pt-24">
+          <div className="mb-14">
+            <div className="flex items-center gap-2.5 mb-3">
+              <span className="w-1 h-4 bg-[#27ae60]" />
+              <span className="text-[#27ae60] text-xs font-semibold tracking-[2px] uppercase">
+                Insights
+              </span>
+            </div>
+            <h1 className="font-serif text-3xl md:text-5xl font-bold">
+              The VTEC Blog
+            </h1>
+            <p className="text-white/60 mt-4 text-lg max-w-xl">
+              Practical insights on financial literacy, business strategy, and
+              wealth building — written for the modern Kenyan investor.
+            </p>
+            <span className="inline-block mt-5 text-[11px] font-semibold uppercase tracking-wide bg-white/10 px-4 py-2 rounded-full">
+              Launching Soon
+            </span>
+          </div>
         </div>
+      </div>
+      <div className="max-w-4xl mx-auto px-5 md:px-8 pb-16 md:pb-24">
 
         <div className="mb-4 text-white/40 text-xs font-semibold uppercase tracking-wide">
           Up Next On The Blog
