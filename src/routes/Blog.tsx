@@ -9,6 +9,9 @@ import {
 } from "lucide-react";
 import { PageHeader } from "../components/PageHeader";
 
+const PAGE_URL = "https://www.vtecgroup.co.ke/blog";
+const OG_IMAGE = "https://www.vtecgroup.co.ke/og-image.png";
+
 export const Route = createFileRoute("/blog")({
   component: BlogPage,
   head: () => ({
@@ -24,6 +27,7 @@ export const Route = createFileRoute("/blog")({
         content:
           "VTEC blog, financial literacy blog Kenya, NSE investing tips, Money Market Funds Kenya, business strategy blog Kenya, SACCO investing Kenya, VTEC Business Group news, Kenyan investor education",
       },
+      { name: "robots", content: "index, follow" },
       { property: "og:title", content: "Blog | VTEC Business Group" },
       {
         property: "og:description",
@@ -31,9 +35,37 @@ export const Route = createFileRoute("/blog")({
           "Practical insights on financial literacy, business strategy, and wealth building for the modern Kenyan investor.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: PAGE_URL },
+      { property: "og:image", content: OG_IMAGE },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Blog | VTEC Business Group" },
+      { name: "twitter:image", content: OG_IMAGE },
     ],
+    links: [{ rel: "canonical", href: PAGE_URL }],
   }),
 });
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Blog",
+      "@id": `${PAGE_URL}#webpage`,
+      url: PAGE_URL,
+      name: "VTEC Business Group Blog",
+      description:
+        "Practical insights on financial literacy, business strategy, and wealth building for the modern Kenyan investor.",
+      publisher: { "@id": "https://www.vtecgroup.co.ke/#organization" },
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://www.vtecgroup.co.ke/" },
+        { "@type": "ListItem", position: 2, name: "Blog", item: PAGE_URL },
+      ],
+    },
+  ],
+};
 
 const categoryMeta: Record<
   string,
@@ -103,6 +135,10 @@ function BlogPage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0D2149] to-[#0a1628] text-white font-sans">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       <PageHeader />
       <div className="max-w-4xl mx-auto px-5 md:px-8 py-16 md:py-24">
         <div className="text-center mb-14">
