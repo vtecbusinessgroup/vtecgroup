@@ -11,6 +11,9 @@ import {
 } from "lucide-react";
 import { PageHeader } from "../components/PageHeader";
 
+const PAGE_URL = "https://www.vtecgroup.co.ke/about-us";
+const OG_IMAGE = "https://www.vtecgroup.co.ke/og-image.png";
+
 export const Route = createFileRoute("/about-us")({
   component: AboutUsPage,
   head: () => ({
@@ -26,6 +29,7 @@ export const Route = createFileRoute("/about-us")({
         content:
           "About VTEC Business Group, VTEC Kenya history, Nairobi business group founded 2025, VTEC founders story, multi-service brand Kenya, financial literacy consultancy retail Kenya",
       },
+      { name: "robots", content: "index, follow" },
       { property: "og:title", content: "About Us | VTEC Business Group" },
       {
         property: "og:description",
@@ -33,9 +37,49 @@ export const Route = createFileRoute("/about-us")({
           "From a single idea to an empire in motion — the story of VTEC Business Group.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: PAGE_URL },
+      { property: "og:image", content: OG_IMAGE },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "About Us | VTEC Business Group" },
+      { name: "twitter:image", content: OG_IMAGE },
     ],
+    links: [{ rel: "canonical", href: PAGE_URL }],
   }),
 });
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "AboutPage",
+      "@id": `${PAGE_URL}#webpage`,
+      url: PAGE_URL,
+      name: "About Us | VTEC Business Group Kenya",
+      description:
+        "VTEC Business Group is a modern, multi-service brand founded in October 2025 in Nairobi, Kenya.",
+      isPartOf: { "@id": "https://www.vtecgroup.co.ke/#website" },
+      about: { "@id": "https://www.vtecgroup.co.ke/#organization" },
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://www.vtecgroup.co.ke/#organization",
+      name: "VTEC Business Group",
+      url: "https://www.vtecgroup.co.ke",
+      foundingDate: "2025-10",
+      foundingLocation: "Nairobi, Kenya",
+      description:
+        "Kenya's dynamic multi-service brand powering financial education, strategic consultancy, and commerce.",
+      slogan: "Empowering Kenya. One Venture at a Time.",
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://www.vtecgroup.co.ke/" },
+        { "@type": "ListItem", position: 2, name: "About Us", item: PAGE_URL },
+      ],
+    },
+  ],
+};
 
 const pillars = [
   {
@@ -97,6 +141,10 @@ const facts = [
 function AboutUsPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0D2149] to-[#0a1628] text-white font-sans">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       <PageHeader />
       <div className="max-w-4xl mx-auto px-5 md:px-8 py-16 md:py-24">
         {/* Hero */}
