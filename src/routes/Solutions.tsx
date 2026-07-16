@@ -10,6 +10,9 @@ import {
 } from "lucide-react";
 import { PageHeader } from "../components/PageHeader";
 
+const PAGE_URL = "https://www.vtecgroup.co.ke/solutions";
+const OG_IMAGE = "https://www.vtecgroup.co.ke/og-image.png";
+
 export const Route = createFileRoute("/solutions")({
   component: SolutionsPage,
   head: () => ({
@@ -25,6 +28,7 @@ export const Route = createFileRoute("/solutions")({
         content:
           "VTEC solutions, MILIKI App Kenya, wealth management Kenya, financial ecosystem Kenya, business growth solutions Nairobi, personal finance app Kenya, VTEC ecosystem, asset ownership Kenya, NSE investing app, financial literacy solution Kenya",
       },
+      { name: "robots", content: "index, follow" },
       { property: "og:title", content: "Solutions | VTEC Business Group" },
       {
         property: "og:description",
@@ -32,9 +36,45 @@ export const Route = createFileRoute("/solutions")({
           "A connected ecosystem of brands and digital tools, each engineered to educate, empower, and equip the modern Kenyan investor.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: PAGE_URL },
+      { property: "og:image", content: OG_IMAGE },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Solutions | VTEC Business Group" },
+      { name: "twitter:image", content: OG_IMAGE },
     ],
+    links: [{ rel: "canonical", href: PAGE_URL }],
   }),
 });
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": `${PAGE_URL}#webpage`,
+      url: PAGE_URL,
+      name: "Solutions | VTEC Business Group's Ecosystem for Kenyans",
+      description:
+        "A connected ecosystem of brands and digital tools, each engineered to educate, empower, and equip the modern Kenyan investor.",
+    },
+    {
+      "@type": "ItemList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "VTEC Business Group", url: "https://www.vtecgroup.co.ke/about-us" },
+        { "@type": "ListItem", position: 2, name: "InvestorMind Academy", url: "https://www.vtecgroup.co.ke/services" },
+        { "@type": "ListItem", position: 3, name: "VTEC Consultancy Services", url: "https://www.vtecgroup.co.ke/services" },
+        { "@type": "ListItem", position: 4, name: "MILIKI App", url: "https://miliki.vtecgroup.co.ke" },
+      ],
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://www.vtecgroup.co.ke/" },
+        { "@type": "ListItem", position: 2, name: "Solutions", item: PAGE_URL },
+      ],
+    },
+  ],
+};
 
 type Solution = {
   icon: typeof Building2;
@@ -168,6 +208,10 @@ function SolutionCard({ s }: { s: Solution }) {
 function SolutionsPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0D2149] to-[#0a1628] text-white font-sans">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       <PageHeader />
       <div className="max-w-5xl mx-auto px-5 md:px-8 py-16 md:py-24">
         <div className="text-center mb-14">
