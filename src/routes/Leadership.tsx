@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Phone, Mail } from "lucide-react";
 import { PageHeader } from "../components/PageHeader";
 
-const PAGE_URL = "https://www.vtecgroup.co.ke/leadership";
+const PAGE_URL = "https://vtecgroup.co.ke/leadership";
 const OG_IMAGE = "https://www.vtecgroup.co.ke/og-image.png";
 
 export const Route = createFileRoute("/leadership")({
@@ -55,7 +55,7 @@ const structuredData = {
       "@type": "Person",
       name: "Kevin Inyangala",
       jobTitle: "Group CEO & Co-Founder",
-      worksFor: { "@id": "https://www.vtecgroup.co.ke/#organization" },
+      worksFor: { "@id": "https://vtecgroup.co.ke/#organization" },
       email: "kevin@vtecgroup.co.ke",
       telephone: "+254748626367",
     },
@@ -63,7 +63,7 @@ const structuredData = {
       "@type": "Person",
       name: "Allan Andati",
       jobTitle: "Chief Operation Officer & Co-Founder",
-      worksFor: { "@id": "https://www.vtecgroup.co.ke/#organization" },
+      worksFor: { "@id": "https://vtecgroup.co.ke/#organization" },
       email: "andati@vtecgroup.co.ke",
       telephone: "+254728004765",
     },
@@ -71,15 +71,15 @@ const structuredData = {
       "@type": "Person",
       name: "Chrisantus Khaemba",
       jobTitle: "Chief Growth Officer & Co-Founder",
-      worksFor: { "@id": "https://www.vtecgroup.co.ke/#organization" },
+      worksFor: { "@id": "https://vtecgroup.co.ke/#organization" },
       email: "khaemba@vtecgroup.co.ke",
       telephone: "+254742264472",
     },
     {
       "@type": "Organization",
-      "@id": "https://www.vtecgroup.co.ke/#organization",
+      "@id": "https://vtecgroup.co.ke/#organization",
       name: "VTEC Business Group",
-      url: "https://www.vtecgroup.co.ke",
+      url: "https://vtecgroup.co.ke",
       founder: [
         { "@type": "Person", name: "Kevin Inyangala" },
         { "@type": "Person", name: "Allan Andati" },
@@ -89,7 +89,7 @@ const structuredData = {
     {
       "@type": "BreadcrumbList",
       itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: "https://www.vtecgroup.co.ke/" },
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://vtecgroup.co.ke/" },
         { "@type": "ListItem", position: 2, name: "Leadership", item: PAGE_URL },
       ],
     },
@@ -314,18 +314,32 @@ function LeadershipPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       <PageHeader />
-      <div className="max-w-5xl mx-auto px-5 md:px-8 py-16 md:py-24">
-        <div className="text-center mb-14">
-          <span className="inline-block text-[#27ae60] text-xs font-semibold tracking-[2px] uppercase mb-3">
-            The Team
-          </span>
-          <h1 className="font-serif text-3xl md:text-5xl font-bold">
-            Our Leadership Team
-          </h1>
-          <p className="text-white/60 mt-3 text-lg">
-            Built by Visionaries. Led by Purpose.
-          </p>
+      <div className="relative overflow-hidden">
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse 640px 460px at 22% 15%, rgba(39,174,96,0.16) 0%, transparent 70%)",
+          }}
+        />
+        <div className="relative max-w-5xl mx-auto px-5 md:px-8 pt-16 md:pt-24">
+          <div className="mb-14">
+            <div className="flex items-center gap-2.5 mb-3">
+              <span className="w-1 h-4 bg-[#27ae60]" />
+              <span className="text-[#27ae60] text-xs font-semibold tracking-[2px] uppercase">
+                The Team
+              </span>
+            </div>
+            <h1 className="font-serif text-3xl md:text-5xl font-bold">
+              Our Leadership Team
+            </h1>
+            <p className="text-white/60 mt-3 text-lg">
+              Built by Visionaries. Led by Purpose.
+            </p>
+          </div>
         </div>
+      </div>
+      <div className="max-w-5xl mx-auto px-5 md:px-8 pb-16 md:pb-24">
 
         <div className="space-y-8">
           {leaders.map((leader) => (
