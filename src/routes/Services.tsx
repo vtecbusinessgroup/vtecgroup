@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { GraduationCap, Briefcase, ShoppingBag, Check } from "lucide-react";
 import { PageHeader } from "../components/PageHeader";
 
-const PAGE_URL = "https://www.vtecgroup.co.ke/services";
+const PAGE_URL = "https://vtecgroup.co.ke/services";
 const OG_IMAGE = "https://www.vtecgroup.co.ke/og-image.png";
 
 export const Route = createFileRoute("/services")({
@@ -45,7 +45,7 @@ const structuredData = {
       "@type": "Service",
       serviceType: "Financial Literacy Education",
       name: "InvestorMind Academy",
-      provider: { "@id": "https://www.vtecgroup.co.ke/#organization" },
+      provider: { "@id": "https://vtecgroup.co.ke/#organization" },
       areaServed: "Kenya",
       description:
         "Cohort-based courses covering NSE stock market fundamentals, Money Market Funds, and SACCOs.",
@@ -54,7 +54,7 @@ const structuredData = {
       "@type": "Service",
       serviceType: "Business Consultancy",
       name: "VTEC Consultancy Services",
-      provider: { "@id": "https://www.vtecgroup.co.ke/#organization" },
+      provider: { "@id": "https://vtecgroup.co.ke/#organization" },
       areaServed: "Kenya",
       description:
         "Financial consulting, brand consulting, content marketing, and business strategy for Kenyan SMEs and institutions.",
@@ -63,14 +63,14 @@ const structuredData = {
       "@type": "Service",
       serviceType: "Retail",
       name: "VTEC Retail Services",
-      provider: { "@id": "https://www.vtecgroup.co.ke/#organization" },
+      provider: { "@id": "https://vtecgroup.co.ke/#organization" },
       areaServed: "Kenya",
       description: "Premium apparel and lifestyle commerce for Kenya's urban fashion market.",
     },
     {
       "@type": "BreadcrumbList",
       itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: "https://www.vtecgroup.co.ke/" },
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://vtecgroup.co.ke/" },
         { "@type": "ListItem", position: 2, name: "Our Services", item: PAGE_URL },
       ],
     },
@@ -131,20 +131,34 @@ function ServicesPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       <PageHeader />
-      <div className="max-w-5xl mx-auto px-5 md:px-8 py-16 md:py-24">
-        <div className="text-center mb-14">
-          <span className="inline-block text-[#27ae60] text-xs font-semibold tracking-[2px] uppercase mb-3">
-            What We Do
-          </span>
-          <h1 className="font-serif text-3xl md:text-5xl font-bold">
-            Our Services
-          </h1>
-          <p className="text-white/60 mt-4 text-lg max-w-2xl mx-auto">
-            Three strategically positioned services, each serving a distinct
-            market need — yet all unified under the VTEC Business Group
-            standard of excellence.
-          </p>
+      <div className="relative overflow-hidden">
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse 640px 460px at 22% 15%, rgba(39,174,96,0.16) 0%, transparent 70%)",
+          }}
+        />
+        <div className="relative max-w-5xl mx-auto px-5 md:px-8 pt-16 md:pt-24">
+          <div className="mb-14">
+            <div className="flex items-center gap-2.5 mb-3">
+              <span className="w-1 h-4 bg-[#27ae60]" />
+              <span className="text-[#27ae60] text-xs font-semibold tracking-[2px] uppercase">
+                What We Do
+              </span>
+            </div>
+            <h1 className="font-serif text-3xl md:text-5xl font-bold">
+              Our Services
+            </h1>
+            <p className="text-white/60 mt-4 text-lg max-w-2xl">
+              Three strategically positioned services, each serving a distinct
+              market need — yet all unified under the VTEC Business Group
+              standard of excellence.
+            </p>
+          </div>
         </div>
+      </div>
+      <div className="max-w-5xl mx-auto px-5 md:px-8 pb-16 md:pb-24">
 
         <div className="space-y-8">
           {services.map((s) => (
