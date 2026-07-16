@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { PageHeader } from "../components/PageHeader";
 
-const PAGE_URL = "https://www.vtecgroup.co.ke/solutions";
+const PAGE_URL = "https://vtecgroup.co.ke/solutions";
 const OG_IMAGE = "https://www.vtecgroup.co.ke/og-image.png";
 
 export const Route = createFileRoute("/solutions")({
@@ -60,16 +60,16 @@ const structuredData = {
     {
       "@type": "ItemList",
       itemListElement: [
-        { "@type": "ListItem", position: 1, name: "VTEC Business Group", url: "https://www.vtecgroup.co.ke/about-us" },
-        { "@type": "ListItem", position: 2, name: "InvestorMind Academy", url: "https://www.vtecgroup.co.ke/services" },
-        { "@type": "ListItem", position: 3, name: "VTEC Consultancy Services", url: "https://www.vtecgroup.co.ke/services" },
+        { "@type": "ListItem", position: 1, name: "VTEC Business Group", url: "https://vtecgroup.co.ke/about-us" },
+        { "@type": "ListItem", position: 2, name: "InvestorMind Academy", url: "https://vtecgroup.co.ke/services" },
+        { "@type": "ListItem", position: 3, name: "VTEC Consultancy Services", url: "https://vtecgroup.co.ke/services" },
         { "@type": "ListItem", position: 4, name: "MILIKI App", url: "https://miliki.vtecgroup.co.ke" },
       ],
     },
     {
       "@type": "BreadcrumbList",
       itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: "https://www.vtecgroup.co.ke/" },
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://vtecgroup.co.ke/" },
         { "@type": "ListItem", position: 2, name: "Solutions", item: PAGE_URL },
       ],
     },
@@ -213,20 +213,34 @@ function SolutionsPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       <PageHeader />
-      <div className="max-w-5xl mx-auto px-5 md:px-8 py-16 md:py-24">
-        <div className="text-center mb-14">
-          <span className="inline-block text-[#27ae60] text-xs font-semibold tracking-[2px] uppercase mb-3">
-            The Ecosystem
-          </span>
-          <h1 className="font-serif text-3xl md:text-5xl font-bold">
-            One Group. Four Pillars.
-          </h1>
-          <p className="text-white/60 mt-4 text-lg max-w-2xl mx-auto">
-            A connected ecosystem of brands and digital tools — each
-            engineered to educate, empower, and equip the modern Kenyan
-            investor. Tap "Read more" on any solution for the full picture.
-          </p>
+      <div className="relative overflow-hidden">
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse 640px 460px at 22% 15%, rgba(39,174,96,0.16) 0%, transparent 70%)",
+          }}
+        />
+        <div className="relative max-w-5xl mx-auto px-5 md:px-8 pt-16 md:pt-24">
+          <div className="mb-14">
+            <div className="flex items-center gap-2.5 mb-3">
+              <span className="w-1 h-4 bg-[#27ae60]" />
+              <span className="text-[#27ae60] text-xs font-semibold tracking-[2px] uppercase">
+                The Ecosystem
+              </span>
+            </div>
+            <h1 className="font-serif text-3xl md:text-5xl font-bold">
+              One Group. Four Pillars.
+            </h1>
+            <p className="text-white/60 mt-4 text-lg max-w-2xl">
+              A connected ecosystem of brands and digital tools — each
+              engineered to educate, empower, and equip the modern Kenyan
+              investor. Tap "Read more" on any solution for the full picture.
+            </p>
+          </div>
         </div>
+      </div>
+      <div className="max-w-5xl mx-auto px-5 md:px-8 pb-16 md:pb-24">
 
         <div className="grid sm:grid-cols-2 gap-6">
           {solutions.map((s) => (
