@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { CheckCircle2 } from "lucide-react";
 import { PageHeader } from "../components/PageHeader";
 
-const PAGE_URL = "https://www.vtecgroup.co.ke/vision-2035";
+const PAGE_URL = "https://vtecgroup.co.ke/vision-2035";
 const OG_IMAGE = "https://www.vtecgroup.co.ke/og-image.png";
 
 export const Route = createFileRoute("/vision-2035")({
@@ -48,7 +48,7 @@ const structuredData = {
       name: "Vision 2035 | VTEC Business Group's 10-Year Roadmap",
       description:
         "A clear 10-year roadmap to build a recognised, impactful, and profitable business empire across Kenya and East Africa.",
-      about: { "@id": "https://www.vtecgroup.co.ke/#organization" },
+      about: { "@id": "https://vtecgroup.co.ke/#organization" },
     },
     {
       "@type": "ItemList",
@@ -64,7 +64,7 @@ const structuredData = {
     {
       "@type": "BreadcrumbList",
       itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: "https://www.vtecgroup.co.ke/" },
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://vtecgroup.co.ke/" },
         { "@type": "ListItem", position: 2, name: "Vision 2035", item: PAGE_URL },
       ],
     },
@@ -122,26 +122,40 @@ function Vision2035Page() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       <PageHeader />
-      <div className="max-w-4xl mx-auto px-5 md:px-8 py-16 md:py-24">
-        <div className="text-center mb-14">
-          <span className="inline-block text-[#27ae60] text-xs font-semibold tracking-[2px] uppercase mb-3">
-            Chapter 05
-          </span>
-          <h1 className="font-serif text-3xl md:text-5xl font-bold">
-            Our Vision: The <span className="text-[#27ae60]">2035 Empire</span>
-          </h1>
-          <p className="text-white/60 mt-4 text-lg max-w-2xl mx-auto">
-            Every great empire begins with a clear destination. VTEC is
-            building purposefully toward 2035, not in a hurry, but with
-            intention.
-          </p>
+      <div className="relative overflow-hidden">
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse 640px 460px at 22% 15%, rgba(39,174,96,0.16) 0%, transparent 70%)",
+          }}
+        />
+        <div className="relative max-w-4xl mx-auto px-5 md:px-8 pt-16 md:pt-24">
+          <div className="mb-14">
+            <div className="flex items-center gap-2.5 mb-3">
+              <span className="w-1 h-4 bg-[#27ae60]" />
+              <span className="text-[#27ae60] text-xs font-semibold tracking-[2px] uppercase">
+                Chapter 05
+              </span>
+            </div>
+            <h1 className="font-serif text-3xl md:text-5xl font-bold">
+              Our Vision: The <span className="text-[#27ae60]">2035 Empire</span>
+            </h1>
+            <p className="text-white/60 mt-4 text-lg max-w-2xl">
+              Every great empire begins with a clear destination. VTEC is
+              building purposefully toward 2035, not in a hurry, but with
+              intention.
+            </p>
+          </div>
         </div>
+      </div>
+      <div className="max-w-4xl mx-auto px-5 md:px-8 pb-16 md:pb-24">
 
         <div className="space-y-5">
           {milestones.map((m) => (
             <div
               key={m.year}
-              className="bg-[#0f2444]/60 border border-white/10 rounded-2xl p-6 md:p-7"
+              className="bg-[#0f2444]/60 border border-white/10 rounded-2xl p-6 md:p-7 hover:border-[#27ae60]/40 transition-colors"
             >
               <div className="flex items-center justify-between gap-4 mb-3">
                 <div className="flex items-center gap-3">
@@ -168,15 +182,15 @@ function Vision2035Page() {
         </div>
 
         <div className="mt-16 grid sm:grid-cols-3 gap-5 text-center">
-          <div className="bg-[#0f2444]/60 border border-white/10 rounded-2xl p-6">
+          <div className="bg-[#0f2444]/60 border border-white/10 rounded-2xl p-6 hover:border-[#27ae60]/40 transition-colors">
             <div className="font-serif text-3xl font-bold text-[#27ae60]">4+</div>
             <div className="text-white/60 text-sm mt-1">Business Arms</div>
           </div>
-          <div className="bg-[#0f2444]/60 border border-white/10 rounded-2xl p-6">
+          <div className="bg-[#0f2444]/60 border border-white/10 rounded-2xl p-6 hover:border-[#27ae60]/40 transition-colors">
             <div className="font-serif text-3xl font-bold text-[#27ae60]">#1</div>
             <div className="text-white/60 text-sm mt-1">Holding Vision</div>
           </div>
-          <div className="bg-[#0f2444]/60 border border-white/10 rounded-2xl p-6">
+          <div className="bg-[#0f2444]/60 border border-white/10 rounded-2xl p-6 hover:border-[#27ae60]/40 transition-colors">
             <div className="font-serif text-3xl font-bold text-[#27ae60]">2035</div>
             <div className="text-white/60 text-sm mt-1">Empire Target</div>
           </div>
