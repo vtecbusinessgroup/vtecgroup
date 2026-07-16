@@ -2,6 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { GraduationCap, Briefcase, ShoppingBag, Check } from "lucide-react";
 import { PageHeader } from "../components/PageHeader";
 
+const PAGE_URL = "https://www.vtecgroup.co.ke/services";
+const OG_IMAGE = "https://www.vtecgroup.co.ke/og-image.png";
+
 export const Route = createFileRoute("/services")({
   component: ServicesPage,
   head: () => ({
@@ -17,6 +20,7 @@ export const Route = createFileRoute("/services")({
         content:
           "VTEC services, financial literacy Kenya, investment education Nairobi, business consultancy Kenya, brand consulting SME, VTEC Retail Services, NSE investment training",
       },
+      { name: "robots", content: "index, follow" },
       { property: "og:title", content: "Our Services | VTEC Business Group" },
       {
         property: "og:description",
@@ -24,15 +28,60 @@ export const Route = createFileRoute("/services")({
           "Three strategically positioned services, each serving a distinct market need, unified under one multi-service brand.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: PAGE_URL },
+      { property: "og:image", content: OG_IMAGE },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Our Services | VTEC Business Group" },
+      { name: "twitter:image", content: OG_IMAGE },
     ],
+    links: [{ rel: "canonical", href: PAGE_URL }],
   }),
 });
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Service",
+      serviceType: "Financial Literacy Education",
+      name: "InvestorMind Academy",
+      provider: { "@id": "https://www.vtecgroup.co.ke/#organization" },
+      areaServed: "Kenya",
+      description:
+        "Cohort-based courses covering NSE stock market fundamentals, Money Market Funds, and SACCOs.",
+    },
+    {
+      "@type": "Service",
+      serviceType: "Business Consultancy",
+      name: "VTEC Consultancy Services",
+      provider: { "@id": "https://www.vtecgroup.co.ke/#organization" },
+      areaServed: "Kenya",
+      description:
+        "Financial consulting, brand consulting, content marketing, and business strategy for Kenyan SMEs and institutions.",
+    },
+    {
+      "@type": "Service",
+      serviceType: "Retail",
+      name: "VTEC Retail Services",
+      provider: { "@id": "https://www.vtecgroup.co.ke/#organization" },
+      areaServed: "Kenya",
+      description: "Premium apparel and lifestyle commerce for Kenya's urban fashion market.",
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://www.vtecgroup.co.ke/" },
+        { "@type": "ListItem", position: 2, name: "Our Services", item: PAGE_URL },
+      ],
+    },
+  ],
+};
 
 const services = [
   {
     icon: GraduationCap,
     tag: "Education",
-    color: "bg-[#0D2149]",
+    color: "bg-gradient-to-br from-[#163272] to-[#0D2149]",
     name: "InvestorMind Academy",
     desc: "Kenya's dedicated financial literacy and investment education platform. We bridge the knowledge gap between everyday Kenyans and the wealth-building tools available to them — covering the NSE, Money Market Funds, SACCOs, and long-term investment strategy.",
     features: [
@@ -76,7 +125,11 @@ const services = [
 
 function ServicesPage() {
   return (
-    <main className="min-h-screen bg-[#f4f6f9] text-[#0D2149] font-sans">
+    <main className="min-h-screen bg-gradient-to-b from-[#0D2149] to-[#0a1628] text-white font-sans">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       <PageHeader />
       <div className="max-w-5xl mx-auto px-5 md:px-8 py-16 md:py-24">
         <div className="text-center mb-14">
@@ -86,7 +139,7 @@ function ServicesPage() {
           <h1 className="font-serif text-3xl md:text-5xl font-bold">
             Our Services
           </h1>
-          <p className="text-[#0D2149]/60 mt-4 text-lg max-w-2xl mx-auto">
+          <p className="text-white/60 mt-4 text-lg max-w-2xl mx-auto">
             Three strategically positioned services, each serving a distinct
             market need — yet all unified under the VTEC Business Group
             standard of excellence.
@@ -97,7 +150,7 @@ function ServicesPage() {
           {services.map((s) => (
             <div
               key={s.name}
-              className="rounded-2xl overflow-hidden border border-black/5 shadow-sm bg-white"
+              className="rounded-2xl overflow-hidden border border-white/10 bg-[#0f2444]/60 hover:border-[#27ae60]/40 transition-colors"
             >
               <div className={`${s.color} px-7 py-8 text-white relative`}>
                 {s.comingSoon && (
@@ -111,12 +164,12 @@ function ServicesPage() {
                 <h2 className="font-serif text-2xl font-bold">{s.name}</h2>
               </div>
               <div className="p-7">
-                <p className="text-[#0D2149]/70 leading-relaxed mb-5">
+                <p className="text-white/70 leading-relaxed mb-5">
                   {s.desc}
                 </p>
                 <ul className="grid sm:grid-cols-2 gap-3 mb-6">
                   {s.features.map((f) => (
-                    <li key={f} className="flex items-center gap-2 text-sm text-[#0D2149]/80">
+                    <li key={f} className="flex items-center gap-2 text-sm text-white/80">
                       <Check className="w-4 h-4 text-[#27ae60] shrink-0" />
                       {f}
                     </li>
@@ -138,12 +191,12 @@ function ServicesPage() {
         <div className="text-center mt-16">
           <a
             href="/solutions"
-            className="inline-block px-9 py-4 rounded-full bg-[#0D2149] text-white hover:bg-[#163272] transition font-semibold"
+            className="inline-block px-9 py-4 rounded-full bg-[#27ae60] hover:bg-[#2ecc71] transition font-semibold"
           >
             See Our Full Ecosystem of Solutions &rarr;
           </a>
         </div>
       </div>
-      </main>
+    </main>
   );
 }
