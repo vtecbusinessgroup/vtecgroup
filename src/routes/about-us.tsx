@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { PageHeader } from "../components/PageHeader";
 
-const PAGE_URL = "https://www.vtecgroup.co.ke/about-us";
+const PAGE_URL = "https://vtecgroup.co.ke/about-us";
 const OG_IMAGE = "https://www.vtecgroup.co.ke/og-image.png";
 
 export const Route = createFileRoute("/about-us")({
@@ -57,14 +57,14 @@ const structuredData = {
       name: "About Us | VTEC Business Group Kenya",
       description:
         "VTEC Business Group is a modern, multi-service brand founded in October 2025 in Nairobi, Kenya.",
-      isPartOf: { "@id": "https://www.vtecgroup.co.ke/#website" },
-      about: { "@id": "https://www.vtecgroup.co.ke/#organization" },
+      isPartOf: { "@id": "https://vtecgroup.co.ke/#website" },
+      about: { "@id": "https://vtecgroup.co.ke/#organization" },
     },
     {
       "@type": "Organization",
-      "@id": "https://www.vtecgroup.co.ke/#organization",
+      "@id": "https://vtecgroup.co.ke/#organization",
       name: "VTEC Business Group",
-      url: "https://www.vtecgroup.co.ke",
+      url: "https://vtecgroup.co.ke",
       foundingDate: "2025-10",
       foundingLocation: "Nairobi, Kenya",
       description:
@@ -74,7 +74,7 @@ const structuredData = {
     {
       "@type": "BreadcrumbList",
       itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: "https://www.vtecgroup.co.ke/" },
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://vtecgroup.co.ke/" },
         { "@type": "ListItem", position: 2, name: "About Us", item: PAGE_URL },
       ],
     },
@@ -146,27 +146,44 @@ function AboutUsPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       <PageHeader />
-      <div className="max-w-4xl mx-auto px-5 md:px-8 py-16 md:py-24">
-        {/* Hero */}
-        <div className="text-center mb-16">
-          <span className="inline-block text-[#27ae60] text-xs font-semibold tracking-[2px] uppercase mb-3">
-            Our Story
-          </span>
-          <h1 className="font-serif text-3xl md:text-5xl font-bold leading-tight">
-            From a Single Idea to <span className="text-[#27ae60]">An Empire in Motion.</span>
-          </h1>
-          <p className="text-white/60 mt-5 text-lg max-w-2xl mx-auto">
-            The story of VTEC Business Group, how a shared vision in Nairobi
-            became a structured multi-service brand with a ten year roadmap
-            to redefine commerce, capital, and consultancy in East Africa.
-          </p>
+      <div className="relative overflow-hidden">
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse 640px 460px at 22% 15%, rgba(39,174,96,0.16) 0%, transparent 70%)",
+          }}
+        />
+        <div className="relative max-w-4xl mx-auto px-5 md:px-8 pt-16 md:pt-24">
+          {/* Hero */}
+          <div className="mb-16">
+            <div className="flex items-center gap-2.5 mb-3">
+              <span className="w-1 h-4 bg-[#27ae60]" />
+              <span className="text-[#27ae60] text-xs font-semibold tracking-[2px] uppercase">
+                Our Story
+              </span>
+            </div>
+            <h1 className="font-serif text-3xl md:text-5xl font-bold leading-tight">
+              From a Single Idea to <span className="text-[#27ae60]">An Empire in Motion</span>.
+            </h1>
+            <p className="text-white/60 mt-5 text-lg max-w-2xl">
+              The story of VTEC Business Group, how a shared vision in Nairobi
+              became a structured multi-service brand with a ten year roadmap
+              to redefine commerce, capital, and consultancy in East Africa.
+            </p>
+          </div>
         </div>
+      </div>
+      <div className="max-w-4xl mx-auto px-5 md:px-8 pb-16 md:pb-24">
 
         {/* Chapter 01 */}
         <section className="mb-16">
-          <span className="text-[#27ae60] text-xs font-semibold tracking-[2px] uppercase">
-            Chapter 01
-          </span>
+          <div className="flex items-center gap-2.5 mb-2">
+            <span className="w-1 h-4 bg-[#27ae60]" />
+            <span className="text-[#27ae60] text-xs font-semibold tracking-[2px] uppercase">
+              Chapter 01
+            </span>
+          </div>
           <h2 className="font-serif text-2xl md:text-3xl font-bold mt-2 mb-4">
             Where It All Began
           </h2>
@@ -177,7 +194,7 @@ function AboutUsPage() {
             empowerment, strategic thinking, and serious commerce had to
             remain reserved for the privileged few.
           </p>
-          <div className="bg-[#0f2444]/60 border border-white/10 rounded-2xl p-6 md:p-7 mb-8">
+          <div className="bg-[#0f2444]/60 border border-white/10 rounded-2xl p-6 md:p-7 mb-8 hover:border-[#27ae60]/40 transition-colors">
             <p className="text-white/75 leading-relaxed mb-3">
               What started as a structured plan on paper quickly evolved
               into a registered multi-service brand with a clear mission:
@@ -196,7 +213,7 @@ function AboutUsPage() {
             {pillars.map((p) => (
               <div
                 key={p.letter}
-                className="flex gap-4 bg-[#0f2444]/60 border border-white/10 rounded-2xl p-5"
+                className="flex gap-4 bg-[#0f2444]/60 border border-white/10 rounded-2xl p-5 hover:border-[#27ae60]/40 transition-colors"
               >
                 <span className="w-10 h-10 shrink-0 rounded-lg bg-[#27ae60] flex items-center justify-center font-bold">
                   {p.letter}
@@ -219,7 +236,7 @@ function AboutUsPage() {
             {facts.map((f) => (
               <div
                 key={f.label}
-                className="flex gap-4 bg-[#0f2444]/60 border border-white/10 rounded-2xl p-5"
+                className="flex gap-4 bg-[#0f2444]/60 border border-white/10 rounded-2xl p-5 hover:border-[#27ae60]/40 transition-colors"
               >
                 <span className="w-10 h-10 shrink-0 rounded-lg bg-white/10 flex items-center justify-center">
                   <f.icon className="w-5 h-5 text-[#d4af37]" />
@@ -235,9 +252,12 @@ function AboutUsPage() {
 
         {/* Journey so far */}
         <section className="mb-16">
-          <span className="text-[#27ae60] text-xs font-semibold tracking-[2px] uppercase">
-            Chapter 03
-          </span>
+          <div className="flex items-center gap-2.5 mb-2">
+            <span className="w-1 h-4 bg-[#27ae60]" />
+            <span className="text-[#27ae60] text-xs font-semibold tracking-[2px] uppercase">
+              Chapter 03
+            </span>
+          </div>
           <h2 className="font-serif text-2xl md:text-3xl font-bold mt-2 mb-2">
             The Journey So Far
           </h2>
@@ -249,7 +269,7 @@ function AboutUsPage() {
             {journey.map((j) => (
               <div
                 key={j.num}
-                className="bg-[#0f2444]/60 border border-white/10 rounded-2xl p-6"
+                className="bg-[#0f2444]/60 border border-white/10 rounded-2xl p-6 hover:border-[#27ae60]/40 transition-colors"
               >
                 <div className="flex items-center gap-3 mb-2">
                   <span className="font-serif text-2xl font-bold text-[#27ae60]">
