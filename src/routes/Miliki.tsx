@@ -21,7 +21,7 @@ import {
   HelpCircle,
 } from "lucide-react";
 
-const PAGE_URL = "https://www.vtecgroup.co.ke/miliki";
+const PAGE_URL = "https://vtecgroup.co.ke/miliki";
 const OG_IMAGE = "https://www.vtecgroup.co.ke/og-image.png";
 
 export const Route = createFileRoute("/miliki")({
@@ -133,7 +133,7 @@ const structuredData = {
         priceCurrency: "KES",
         description: "Free Starter tier, with Premium and Pro tiers available.",
       },
-      publisher: { "@id": "https://www.vtecgroup.co.ke/#organization" },
+      publisher: { "@id": "https://vtecgroup.co.ke/#organization" },
     },
     {
       "@type": "FAQPage",
@@ -146,7 +146,7 @@ const structuredData = {
     {
       "@type": "BreadcrumbList",
       itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: "https://www.vtecgroup.co.ke/" },
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://vtecgroup.co.ke/" },
         { "@type": "ListItem", position: 2, name: "MILIKI App", item: PAGE_URL },
       ],
     },
