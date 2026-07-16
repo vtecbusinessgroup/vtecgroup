@@ -2,6 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Phone, Mail } from "lucide-react";
 import { PageHeader } from "../components/PageHeader";
 
+const PAGE_URL = "https://www.vtecgroup.co.ke/leadership";
+const OG_IMAGE = "https://www.vtecgroup.co.ke/og-image.png";
+
 export const Route = createFileRoute("/leadership")({
   component: LeadershipPage,
   head: () => ({
@@ -19,6 +22,7 @@ export const Route = createFileRoute("/leadership")({
         content:
           "VTEC Business Group leadership, Kevin Inyangala CEO, Allan Andati COO, Chrisantus Khaemba, VTEC founders, Nairobi business leaders, Kenya business group leadership team",
       },
+      { name: "robots", content: "index, follow" },
       { property: "og:title", content: "Leadership Team | VTEC Business Group" },
       {
         property: "og:description",
@@ -26,9 +30,71 @@ export const Route = createFileRoute("/leadership")({
           "Built by visionaries, led by purpose. Meet the co-founders and business partners driving VTEC's 10-year roadmap.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: PAGE_URL },
+      { property: "og:image", content: OG_IMAGE },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Leadership Team | VTEC Business Group" },
+      { name: "twitter:image", content: OG_IMAGE },
     ],
+    links: [{ rel: "canonical", href: PAGE_URL }],
   }),
 });
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": `${PAGE_URL}#webpage`,
+      url: PAGE_URL,
+      name: "Leadership Team | VTEC Business Group Kenya",
+      description:
+        "Meet the leadership team behind VTEC Business Group and the strategic partners driving its 2035 empire vision.",
+    },
+    {
+      "@type": "Person",
+      name: "Kevin Inyangala",
+      jobTitle: "Group CEO & Co-Founder",
+      worksFor: { "@id": "https://www.vtecgroup.co.ke/#organization" },
+      email: "kevin@vtecgroup.co.ke",
+      telephone: "+254748626367",
+    },
+    {
+      "@type": "Person",
+      name: "Allan Andati",
+      jobTitle: "Chief Operation Officer & Co-Founder",
+      worksFor: { "@id": "https://www.vtecgroup.co.ke/#organization" },
+      email: "andati@vtecgroup.co.ke",
+      telephone: "+254728004765",
+    },
+    {
+      "@type": "Person",
+      name: "Chrisantus Khaemba",
+      jobTitle: "Chief Growth Officer & Co-Founder",
+      worksFor: { "@id": "https://www.vtecgroup.co.ke/#organization" },
+      email: "khaemba@vtecgroup.co.ke",
+      telephone: "+254742264472",
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://www.vtecgroup.co.ke/#organization",
+      name: "VTEC Business Group",
+      url: "https://www.vtecgroup.co.ke",
+      founder: [
+        { "@type": "Person", name: "Kevin Inyangala" },
+        { "@type": "Person", name: "Allan Andati" },
+        { "@type": "Person", name: "Chrisantus Khaemba" },
+      ],
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://www.vtecgroup.co.ke/" },
+        { "@type": "ListItem", position: 2, name: "Leadership", item: PAGE_URL },
+      ],
+    },
+  ],
+};
 
 type Leader = {
   name: string;
@@ -243,6 +309,10 @@ function LeaderCard({ leader }: { leader: Leader }) {
 function LeadershipPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0D2149] to-[#0a1628] text-white font-sans">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       <PageHeader />
       <div className="max-w-5xl mx-auto px-5 md:px-8 py-16 md:py-24">
         <div className="text-center mb-14">
