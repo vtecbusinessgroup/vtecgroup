@@ -23,9 +23,9 @@ const NAV_LINKS = [
 
 export function PageHeader() {
   return (
-    <header className="sticky top-0 z-40 flex items-center justify-between gap-3 px-5 md:px-8 py-3.5 bg-[#0D2149]/95 backdrop-blur border-b border-[#27ae60]/30">
+    <header className="sticky top-0 z-50 flex items-center justify-between gap-3 px-5 md:px-8 py-3.5 bg-[#0a1628]/[0.92] backdrop-blur-[10px] border-b border-white/[0.08]">
       <a href="/" className="flex items-center gap-2.5 group">
-        <span className="w-9 h-9 rounded-full bg-white/5 border-2 border-[#27ae60]/60 flex items-center justify-center overflow-hidden shrink-0 group-hover:border-[#27ae60] transition-colors">
+        <span className="w-9 h-9 rounded-full bg-white/5 border-2 border-[#22c55e]/60 flex items-center justify-center overflow-hidden shrink-0 group-hover:border-[#22c55e] transition-colors">
           <img
             src="/vtec-logo.png"
             alt="VTEC Business Group logo"
@@ -36,7 +36,7 @@ export function PageHeader() {
           <span className="block text-white font-bold text-sm tracking-wide">
             VTEC
           </span>
-          <span className="block text-[#27ae60] text-[10px] font-semibold tracking-[1.5px] uppercase">
+          <span className="block text-[#22c55e] text-[10px] font-semibold tracking-[1.5px] uppercase">
             Business Group
           </span>
         </span>
@@ -48,7 +48,7 @@ export function PageHeader() {
       <div className="flex items-center gap-2">
         <details className="relative">
           <summary
-            className="list-none inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-white/20 text-white/85 text-xs font-semibold hover:border-[#27ae60] hover:text-[#27ae60] hover:bg-[#27ae60]/10 transition cursor-pointer select-none"
+            className="list-none inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-white/20 text-white/85 text-xs font-semibold hover:border-[#22c55e] hover:text-[#22c55e] hover:bg-[#22c55e]/10 transition cursor-pointer select-none"
           >
             <Menu className="w-3.5 h-3.5" />
             Menu
@@ -61,7 +61,7 @@ export function PageHeader() {
               <a
                 key={link.href}
                 href={link.href}
-                className="block px-4 py-2.5 text-sm text-white/80 hover:bg-[#27ae60]/15 hover:text-white transition-colors"
+                className="block px-4 py-2.5 text-sm text-white/80 hover:bg-[#22c55e]/15 hover:text-white transition-colors"
               >
                 {link.label}
               </a>
@@ -71,7 +71,7 @@ export function PageHeader() {
 
         <a
           href="/"
-          className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-white/20 text-white/85 text-xs font-semibold hover:border-[#27ae60] hover:text-[#27ae60] hover:bg-[#27ae60]/10 transition"
+          className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-white/20 text-white/85 text-xs font-semibold hover:border-[#22c55e] hover:text-[#22c55e] hover:bg-[#22c55e]/10 transition"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           Back to Site
