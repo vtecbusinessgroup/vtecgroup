@@ -94,6 +94,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
+      {
+        rel: "icon",
+        type: "image/png",
+        href: "/vtec-logo.png",
+      },
+      {
+        rel: "apple-touch-icon",
+        href: "/vtec-logo.png",
+      },
     ],
   }),
   shellComponent: RootShell,
