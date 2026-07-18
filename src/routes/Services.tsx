@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { GraduationCap, Briefcase, ShoppingBag, Check } from "lucide-react";
 import { PageHeader } from "../components/PageHeader";
+import { Reveal } from "../components/Reveal";
 
 const PAGE_URL = "https://vtecgroup.co.ke/services";
 const OG_IMAGE = "https://www.vtecgroup.co.ke/og-image.png";
@@ -34,7 +35,13 @@ export const Route = createFileRoute("/services")({
       { name: "twitter:title", content: "Our Services | VTEC Business Group" },
       { name: "twitter:image", content: OG_IMAGE },
     ],
-    links: [{ rel: "canonical", href: PAGE_URL }],
+    links: [
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600;700&display=swap",
+      },
+      { rel: "canonical", href: PAGE_URL },
+    ],
   }),
 });
 
@@ -95,7 +102,7 @@ const services = [
   {
     icon: Briefcase,
     tag: "Consultancy",
-    color: "bg-gradient-to-br from-[#1f8c3b] to-[#27ae60]",
+    color: "bg-gradient-to-br from-[#1f8c3b] to-[#22c55e]",
     name: "VTEC Consultancy Services",
     desc: "Strategic professional services tailored for Kenya's business landscape. We guide entrepreneurs, SMEs, and brands to make smarter decisions and build stronger market presence.",
     features: [
@@ -125,7 +132,7 @@ const services = [
 
 function ServicesPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#0D2149] to-[#0a1628] text-white font-sans">
+    <main className="min-h-screen bg-gradient-to-b from-[#0D2149] to-[#0a1628] text-white font-['Outfit',system-ui,sans-serif]">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -136,18 +143,15 @@ function ServicesPage() {
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse 640px 460px at 22% 15%, rgba(39,174,96,0.16) 0%, transparent 70%)",
+              "radial-gradient(1000px 500px at 80% -10%, rgba(34,197,94,0.18), transparent 60%), radial-gradient(800px 400px at -10% 20%, rgba(201,162,39,0.12), transparent 60%)",
           }}
         />
-        <div className="relative max-w-5xl mx-auto px-5 md:px-8 pt-16 md:pt-24">
-          <div className="mb-14">
-            <div className="flex items-center gap-2.5 mb-3">
-              <span className="w-1 h-4 bg-[#27ae60]" />
-              <span className="text-[#27ae60] text-xs font-semibold tracking-[2px] uppercase">
-                What We Do
-              </span>
-            </div>
-            <h1 className="font-serif text-3xl md:text-5xl font-bold">
+        <div className="relative max-w-5xl mx-auto px-5 md:px-8 pt-[64px] lg:pt-[88px]">
+          <Reveal className="mb-14">
+            <span className="inline-block text-[#22c55e] text-xs font-bold tracking-[0.18em] uppercase border-l-[3px] border-[#22c55e] pl-[14px] mb-4">
+              What We Do
+            </span>
+            <h1 className="font-['Playfair_Display','DM_Serif_Display',Georgia,serif] text-[clamp(36px,6vw,64px)] font-extrabold leading-[1.2] tracking-[-0.01em]">
               Our Services
             </h1>
             <p className="text-white/60 mt-4 text-lg max-w-2xl">
@@ -155,16 +159,16 @@ function ServicesPage() {
               market need — yet all unified under the VTEC Business Group
               standard of excellence.
             </p>
-          </div>
+          </Reveal>
         </div>
       </div>
-      <div className="max-w-5xl mx-auto px-5 md:px-8 pb-16 md:pb-24">
+      <div className="max-w-5xl mx-auto px-5 md:px-8 pb-[64px] lg:pb-[88px]">
 
         <div className="space-y-8">
           {services.map((s) => (
             <div
               key={s.name}
-              className="rounded-2xl overflow-hidden border border-white/10 bg-[#0f2444]/60 hover:border-[#27ae60]/40 transition-colors"
+              className="rounded-[18px] overflow-hidden border border-white/[0.08] bg-[#0f2444]/60 hover:border-[#22c55e]/25 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)] transition-all duration-300"
             >
               <div className={`${s.color} px-7 py-8 text-white relative`}>
                 {s.comingSoon && (
@@ -175,7 +179,7 @@ function ServicesPage() {
                 <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide bg-white/15 px-3 py-1 rounded-full mb-4">
                   <s.icon className="w-3.5 h-3.5" /> {s.tag}
                 </span>
-                <h2 className="font-serif text-2xl font-bold">{s.name}</h2>
+                <h2 className="font-['Playfair_Display','DM_Serif_Display',Georgia,serif] text-2xl font-bold">{s.name}</h2>
               </div>
               <div className="p-7">
                 <p className="text-white/70 leading-relaxed mb-5">
@@ -184,7 +188,7 @@ function ServicesPage() {
                 <ul className="grid sm:grid-cols-2 gap-3 mb-6">
                   {s.features.map((f) => (
                     <li key={f} className="flex items-center gap-2 text-sm text-white/80">
-                      <Check className="w-4 h-4 text-[#27ae60] shrink-0" />
+                      <Check className="w-4 h-4 text-[#22c55e] shrink-0" />
                       {f}
                     </li>
                   ))}
@@ -193,7 +197,7 @@ function ServicesPage() {
                   href={s.cta.href}
                   target={s.cta.href.startsWith("http") ? "_blank" : undefined}
                   rel={s.cta.href.startsWith("http") ? "noopener" : undefined}
-                  className="inline-block px-6 py-3 rounded-full border-2 border-[#27ae60] text-[#27ae60] font-semibold hover:bg-[#27ae60] hover:text-white transition"
+                  className="inline-block px-6 py-3 rounded-[10px] border-2 border-white text-white font-bold hover:bg-white hover:text-[#0a1628] hover:-translate-y-0.5 transition-all"
                 >
                   {s.cta.label} &rarr;
                 </a>
@@ -205,7 +209,7 @@ function ServicesPage() {
         <div className="text-center mt-16">
           <a
             href="/solutions"
-            className="inline-block px-9 py-4 rounded-full bg-[#27ae60] hover:bg-[#2ecc71] transition font-semibold"
+            className="inline-block px-9 py-4 rounded-[10px] bg-[#22c55e] text-[#06190f] hover:bg-[#16a34a] hover:-translate-y-0.5 transition-all font-bold"
           >
             See Our Full Ecosystem of Solutions &rarr;
           </a>
