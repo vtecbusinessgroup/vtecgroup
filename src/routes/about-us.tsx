@@ -10,6 +10,7 @@ import {
   Link2,
 } from "lucide-react";
 import { PageHeader } from "../components/PageHeader";
+import { Reveal } from "../components/Reveal";
 
 const PAGE_URL = "https://vtecgroup.co.ke/about-us";
 const OG_IMAGE = "https://www.vtecgroup.co.ke/og-image.png";
@@ -43,7 +44,13 @@ export const Route = createFileRoute("/about-us")({
       { name: "twitter:title", content: "About Us | VTEC Business Group" },
       { name: "twitter:image", content: OG_IMAGE },
     ],
-    links: [{ rel: "canonical", href: PAGE_URL }],
+    links: [
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600;700&display=swap",
+      },
+      { rel: "canonical", href: PAGE_URL },
+    ],
   }),
 });
 
@@ -140,7 +147,7 @@ const facts = [
 
 function AboutUsPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#0D2149] to-[#0a1628] text-white font-sans">
+    <main className="min-h-screen bg-gradient-to-b from-[#0D2149] to-[#0a1628] text-white font-['Outfit',system-ui,sans-serif]">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -151,40 +158,35 @@ function AboutUsPage() {
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse 640px 460px at 22% 15%, rgba(39,174,96,0.16) 0%, transparent 70%)",
+              "radial-gradient(1000px 500px at 80% -10%, rgba(34,197,94,0.18), transparent 60%), radial-gradient(800px 400px at -10% 20%, rgba(201,162,39,0.12), transparent 60%)",
           }}
         />
-        <div className="relative max-w-4xl mx-auto px-5 md:px-8 pt-16 md:pt-24">
+        <div className="relative max-w-4xl mx-auto px-5 md:px-8 pt-[64px] lg:pt-[88px]">
           {/* Hero */}
-          <div className="mb-16">
-            <div className="flex items-center gap-2.5 mb-3">
-              <span className="w-1 h-4 bg-[#27ae60]" />
-              <span className="text-[#27ae60] text-xs font-semibold tracking-[2px] uppercase">
-                Our Story
-              </span>
-            </div>
-            <h1 className="font-serif text-3xl md:text-5xl font-bold leading-tight">
-              From a Single Idea to <span className="text-[#27ae60]">An Empire in Motion</span>.
+          <Reveal className="mb-16">
+            <span className="inline-block text-[#22c55e] text-xs font-bold tracking-[0.18em] uppercase border-l-[3px] border-[#22c55e] pl-[14px] mb-4">
+            Our Story
+          </span>
+            <h1 className="font-['Playfair_Display','DM_Serif_Display',Georgia,serif] text-[clamp(36px,6vw,64px)] font-extrabold leading-[1.2] tracking-[-0.01em]">
+              From a Single Idea to <span className="text-[#22c55e]">An Empire in Motion</span>.
             </h1>
             <p className="text-white/60 mt-5 text-lg max-w-2xl">
               The story of VTEC Business Group, how a shared vision in Nairobi
               became a structured multi-service brand with a ten year roadmap
               to redefine commerce, capital, and consultancy in East Africa.
             </p>
-          </div>
+          </Reveal>
         </div>
       </div>
-      <div className="max-w-4xl mx-auto px-5 md:px-8 pb-16 md:pb-24">
+      <div className="max-w-4xl mx-auto px-5 md:px-8 pb-[64px] lg:pb-[88px]">
 
         {/* Chapter 01 */}
         <section className="mb-16">
-          <div className="flex items-center gap-2.5 mb-2">
-            <span className="w-1 h-4 bg-[#27ae60]" />
-            <span className="text-[#27ae60] text-xs font-semibold tracking-[2px] uppercase">
-              Chapter 01
-            </span>
-          </div>
-          <h2 className="font-serif text-2xl md:text-3xl font-bold mt-2 mb-4">
+          <Reveal>
+          <span className="inline-block text-[#22c55e] text-xs font-bold tracking-[0.18em] uppercase border-l-[3px] border-[#22c55e] pl-[14px] mb-4">
+            Chapter 01
+          </span>
+          <h2 className="font-['Playfair_Display','DM_Serif_Display',Georgia,serif] text-[clamp(28px,4vw,44px)] font-extrabold leading-[1.2] tracking-[-0.01em] mt-2 mb-4">
             Where It All Began
           </h2>
           <p className="text-white/70 leading-relaxed mb-6">
@@ -194,7 +196,8 @@ function AboutUsPage() {
             empowerment, strategic thinking, and serious commerce had to
             remain reserved for the privileged few.
           </p>
-          <div className="bg-[#0f2444]/60 border border-white/10 rounded-2xl p-6 md:p-7 mb-8 hover:border-[#27ae60]/40 transition-colors">
+          </Reveal>
+          <div className="bg-[#0f2444]/60 border border-white/[0.08] rounded-[18px] p-6 md:p-7 mb-8 hover:border-[#22c55e]/25 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)] transition-all duration-300">
             <p className="text-white/75 leading-relaxed mb-3">
               What started as a structured plan on paper quickly evolved
               into a registered multi-service brand with a clear mission:
@@ -203,7 +206,7 @@ function AboutUsPage() {
               translates ambition into outcomes.
             </p>
             <p className="text-white/75 leading-relaxed">
-              The name itself, <span className="text-[#27ae60] font-semibold">VTEC</span>,
+              The name itself, <span className="text-[#22c55e] font-semibold">VTEC</span>,
               was deliberate. Each letter is a pillar, a promise, and a
               discipline.
             </p>
@@ -213,9 +216,9 @@ function AboutUsPage() {
             {pillars.map((p) => (
               <div
                 key={p.letter}
-                className="flex gap-4 bg-[#0f2444]/60 border border-white/10 rounded-2xl p-5 hover:border-[#27ae60]/40 transition-colors"
+                className="flex gap-4 bg-[#0f2444]/60 border border-white/[0.08] rounded-[18px] p-5 hover:border-[#22c55e]/25 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)] transition-all duration-300"
               >
-                <span className="w-10 h-10 shrink-0 rounded-lg bg-[#27ae60] flex items-center justify-center font-bold">
+                <span className="w-10 h-10 shrink-0 rounded-lg bg-[#22c55e] flex items-center justify-center font-bold">
                   {p.letter}
                 </span>
                 <div>
@@ -229,14 +232,14 @@ function AboutUsPage() {
 
         {/* What we stand for / facts */}
         <section className="mb-16">
-          <h2 className="font-serif text-2xl md:text-3xl font-bold mb-6">
+          <h2 className="font-['Playfair_Display','DM_Serif_Display',Georgia,serif] text-[clamp(28px,4vw,44px)] font-extrabold leading-[1.2] tracking-[-0.01em] mb-6">
             Built on Vision. Driven by Purpose.
           </h2>
           <div className="grid sm:grid-cols-2 gap-4">
             {facts.map((f) => (
               <div
                 key={f.label}
-                className="flex gap-4 bg-[#0f2444]/60 border border-white/10 rounded-2xl p-5 hover:border-[#27ae60]/40 transition-colors"
+                className="flex gap-4 bg-[#0f2444]/60 border border-white/[0.08] rounded-[18px] p-5 hover:border-[#22c55e]/25 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)] transition-all duration-300"
               >
                 <span className="w-10 h-10 shrink-0 rounded-lg bg-white/10 flex items-center justify-center">
                   <f.icon className="w-5 h-5 text-[#d4af37]" />
@@ -252,27 +255,26 @@ function AboutUsPage() {
 
         {/* Journey so far */}
         <section className="mb-16">
-          <div className="flex items-center gap-2.5 mb-2">
-            <span className="w-1 h-4 bg-[#27ae60]" />
-            <span className="text-[#27ae60] text-xs font-semibold tracking-[2px] uppercase">
-              Chapter 03
-            </span>
-          </div>
-          <h2 className="font-serif text-2xl md:text-3xl font-bold mt-2 mb-2">
+          <Reveal>
+          <span className="inline-block text-[#22c55e] text-xs font-bold tracking-[0.18em] uppercase border-l-[3px] border-[#22c55e] pl-[14px] mb-4">
+            Chapter 03
+          </span>
+          <h2 className="font-['Playfair_Display','DM_Serif_Display',Georgia,serif] text-[clamp(28px,4vw,44px)] font-extrabold leading-[1.2] tracking-[-0.01em] mt-2 mb-2">
             The Journey So Far
           </h2>
           <p className="text-white/60 mb-6">
             Months in, the group has already laid the foundations of a
             business built to last.
           </p>
+          </Reveal>
           <div className="grid sm:grid-cols-2 gap-5">
             {journey.map((j) => (
               <div
                 key={j.num}
-                className="bg-[#0f2444]/60 border border-white/10 rounded-2xl p-6 hover:border-[#27ae60]/40 transition-colors"
+                className="bg-[#0f2444]/60 border border-white/[0.08] rounded-[18px] p-6 hover:border-[#22c55e]/25 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)] transition-all duration-300"
               >
                 <div className="flex items-center gap-3 mb-2">
-                  <span className="font-serif text-2xl font-bold text-[#27ae60]">
+                  <span className="font-['Playfair_Display','DM_Serif_Display',Georgia,serif] text-2xl font-bold text-[#22c55e]">
                     {j.num}
                   </span>
                   <j.icon className="w-5 h-5 text-[#d4af37]" />
@@ -289,7 +291,7 @@ function AboutUsPage() {
         <div className="text-center">
           <a
             href="/leadership"
-            className="inline-block px-9 py-4 rounded-full bg-[#27ae60] hover:bg-[#2ecc71] transition font-semibold"
+            className="inline-block px-9 py-4 rounded-[10px] bg-[#22c55e] text-[#06190f] hover:bg-[#16a34a] hover:-translate-y-0.5 transition-all font-bold"
           >
             Meet The Team &rarr;
           </a>
