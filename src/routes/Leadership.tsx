@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Phone, Mail } from "lucide-react";
 import { PageHeader } from "../components/PageHeader";
+import { Reveal } from "../components/Reveal";
 
 const PAGE_URL = "https://vtecgroup.co.ke/leadership";
 const OG_IMAGE = "https://www.vtecgroup.co.ke/og-image.png";
@@ -36,7 +37,13 @@ export const Route = createFileRoute("/leadership")({
       { name: "twitter:title", content: "Leadership Team | VTEC Business Group" },
       { name: "twitter:image", content: OG_IMAGE },
     ],
-    links: [{ rel: "canonical", href: PAGE_URL }],
+    links: [
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600;700&display=swap",
+      },
+      { rel: "canonical", href: PAGE_URL },
+    ],
   }),
 });
 
@@ -113,7 +120,7 @@ const leaders: Leader[] = [
     name: "Kevin Inyangala",
     role: "Group CEO & Co-Founder",
     photo: "/kevin-inyangala.jpg",
-    borderColor: "border-[#27ae60]/60",
+    borderColor: "border-[#22c55e]/60",
     bio: "Kevin is the visionary architect of VTEC Business Group. He steers the overarching strategy and 10 year roadmap, drawing on deep expertise in media, communication, and market compounding.",
     sections: [
       {
@@ -140,7 +147,7 @@ const leaders: Leader[] = [
     name: "Allan Andati",
     role: "Chief Operation Officer & Co-Founder",
     photo: "/allan-andati.jpg",
-    borderColor: "border-[#27ae60]/50",
+    borderColor: "border-[#22c55e]/50",
     bio: "Allan is the engine room of VTEC Business Group. He ensures the ambitious vision is executed flawlessly on a day to day basis, overseeing logistics, infrastructure, and internal workflows.",
     sections: [
       {
@@ -194,7 +201,7 @@ const partners: Leader[] = [
     name: "Pride Andaye",
     role: "Business Partner",
     photo: "/pride-andaye.jpg",
-    borderColor: "border-[#27ae60]/40",
+    borderColor: "border-[#22c55e]/40",
     bio: "Pride is a strategic partner to VTEC Business Group, contributing to the relationships and collaborations that extend the group's reach and open new avenues for growth.",
     sections: [
       {
@@ -217,7 +224,7 @@ const partners: Leader[] = [
     name: "Joel Odongo",
     role: "Business Partner",
     photo: "/joel-odongo.jpg",
-    borderColor: "border-[#27ae60]/40",
+    borderColor: "border-[#22c55e]/40",
     bio: "Joel is a strategic partner to VTEC Business Group, contributing to the partnerships and business development efforts that strengthen the group's footprint in Kenya's market.",
     sections: [
       {
@@ -240,11 +247,11 @@ const partners: Leader[] = [
 
 function LeaderCard({ leader }: { leader: Leader }) {
   return (
-    <div className="relative overflow-hidden flex flex-col md:flex-row gap-6 md:gap-8 bg-gradient-to-br from-[#10264a]/80 to-[#0a1830]/80 border border-white/10 rounded-2xl p-7 md:p-9 shadow-[0_18px_40px_rgba(0,0,0,0.28)] hover:border-[#27ae60]/40 transition-colors">
-      <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#27ae60] via-[#d4af37] to-[#27ae60] opacity-70" />
+    <div className="relative overflow-hidden flex flex-col md:flex-row gap-6 md:gap-8 bg-gradient-to-br from-[#10264a]/80 to-[#0a1830]/80 border border-white/[0.08] rounded-[18px] p-7 md:p-9 shadow-[0_18px_40px_rgba(0,0,0,0.28)] hover:border-[#22c55e]/25 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)] transition-all duration-300">
+      <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#22c55e] via-[#d4af37] to-[#22c55e] opacity-70" />
       <div className="flex flex-col items-center md:items-start shrink-0 md:w-48 text-center md:text-left">
         <div
-          className={`w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden border-4 ${leader.borderColor} ${leader.glow ?? ""} ring-4 ring-black/20`}
+          className={`w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden border-[3px] ${leader.borderColor} ${leader.glow ?? "shadow-[0_0_24px_rgba(34,197,94,0.15)]"} ring-4 ring-black/20`}
         >
           <img
             src={leader.photo}
@@ -253,8 +260,8 @@ function LeaderCard({ leader }: { leader: Leader }) {
             className="w-full h-full object-cover object-[center_28%]"
           />
         </div>
-        <h3 className="mt-4 font-serif text-xl text-white">{leader.name}</h3>
-        <div className="text-[#27ae60] font-semibold text-sm mt-1">{leader.role}</div>
+        <h3 className="mt-4 font-['Playfair_Display','DM_Serif_Display',Georgia,serif] text-xl text-white">{leader.name}</h3>
+        <div className="text-[#22c55e] font-semibold text-sm mt-1">{leader.role}</div>
       </div>
 
       <div className="flex-1 text-white/75 text-[15px] leading-relaxed space-y-4">
@@ -273,11 +280,11 @@ function LeaderCard({ leader }: { leader: Leader }) {
         ))}
 
         {(leader.phone || leader.email) && (
-          <div className="flex flex-wrap gap-2.5 pt-4 mt-2 border-t border-white/10">
+          <div className="flex flex-wrap gap-2.5 pt-4 mt-2 border-t border-white/[0.08]">
             {leader.phone && (
               <a
                 href={`tel:${leader.phone}`}
-                className="inline-flex items-center gap-2 pl-1.5 pr-4 py-1.5 rounded-full bg-white/[0.06] border border-white/10 hover:border-[#25D366]/50 hover:bg-white/10 transition text-sm font-medium text-white/90 shadow-sm"
+                className="inline-flex items-center gap-2 pl-1.5 pr-4 py-1.5 rounded-full bg-white/[0.06] border border-white/[0.08] hover:border-[#25D366]/50 hover:bg-white/10 transition text-sm font-medium text-white/90 shadow-sm"
               >
                 <span className="w-7 h-7 rounded-full bg-[#25D366] flex items-center justify-center shrink-0">
                   <Phone className="w-3.5 h-3.5 text-white" />
@@ -291,7 +298,7 @@ function LeaderCard({ leader }: { leader: Leader }) {
             {leader.email && (
               <a
                 href={`mailto:${leader.email}`}
-                className="inline-flex items-center gap-2 pl-1.5 pr-4 py-1.5 rounded-full bg-white/[0.06] border border-white/10 hover:border-[#d4af37]/50 hover:bg-white/10 transition text-sm font-medium text-white/90 shadow-sm"
+                className="inline-flex items-center gap-2 pl-1.5 pr-4 py-1.5 rounded-full bg-white/[0.06] border border-white/[0.08] hover:border-[#d4af37]/50 hover:bg-white/10 transition text-sm font-medium text-white/90 shadow-sm"
               >
                 <span className="w-7 h-7 rounded-full bg-white flex items-center justify-center shrink-0">
                   <Mail className="w-3.5 h-3.5 text-[#0D2149]" />
@@ -308,7 +315,7 @@ function LeaderCard({ leader }: { leader: Leader }) {
 
 function LeadershipPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#0D2149] to-[#0a1628] text-white font-sans">
+    <main className="min-h-screen bg-gradient-to-b from-[#0D2149] to-[#0a1628] text-white font-['Outfit',system-ui,sans-serif]">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -319,27 +326,24 @@ function LeadershipPage() {
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse 640px 460px at 22% 15%, rgba(39,174,96,0.16) 0%, transparent 70%)",
+              "radial-gradient(1000px 500px at 80% -10%, rgba(34,197,94,0.18), transparent 60%), radial-gradient(800px 400px at -10% 20%, rgba(201,162,39,0.12), transparent 60%)",
           }}
         />
-        <div className="relative max-w-5xl mx-auto px-5 md:px-8 pt-16 md:pt-24">
-          <div className="mb-14">
-            <div className="flex items-center gap-2.5 mb-3">
-              <span className="w-1 h-4 bg-[#27ae60]" />
-              <span className="text-[#27ae60] text-xs font-semibold tracking-[2px] uppercase">
-                The Team
-              </span>
-            </div>
-            <h1 className="font-serif text-3xl md:text-5xl font-bold">
+        <div className="relative max-w-5xl mx-auto px-5 md:px-8 pt-[64px] lg:pt-[88px]">
+          <Reveal className="mb-14">
+            <span className="inline-block text-[#22c55e] text-xs font-bold tracking-[0.18em] uppercase border-l-[3px] border-[#22c55e] pl-[14px] mb-4">
+              The Team
+            </span>
+            <h1 className="font-['Playfair_Display','DM_Serif_Display',Georgia,serif] text-[clamp(36px,6vw,64px)] font-extrabold leading-[1.2] tracking-[-0.01em]">
               Our Leadership Team
             </h1>
             <p className="text-white/60 mt-3 text-lg">
               Built by Visionaries. Led by Purpose.
             </p>
-          </div>
+          </Reveal>
         </div>
       </div>
-      <div className="max-w-5xl mx-auto px-5 md:px-8 pb-16 md:pb-24">
+      <div className="max-w-5xl mx-auto px-5 md:px-8 pb-[64px] lg:pb-[88px]">
 
         <div className="space-y-8">
           {leaders.map((leader) => (
@@ -348,7 +352,7 @@ function LeadershipPage() {
         </div>
 
         <div className="text-center mt-16 mb-8">
-          <h2 className="font-serif text-2xl md:text-3xl font-bold">
+          <h2 className="font-['Playfair_Display','DM_Serif_Display',Georgia,serif] text-[clamp(28px,4vw,44px)] font-extrabold leading-[1.2] tracking-[-0.01em]">
             Our Business Partners
           </h2>
           <p className="text-white/60 mt-2">
@@ -365,7 +369,7 @@ function LeadershipPage() {
         <div className="text-center mt-16">
           <a
             href="/business-diagnostic"
-            className="inline-block px-9 py-4 rounded-full bg-[#27ae60] hover:bg-[#2ecc71] transition font-semibold"
+            className="inline-block px-9 py-4 rounded-[10px] bg-[#22c55e] text-[#06190f] hover:bg-[#16a34a] hover:-translate-y-0.5 transition-all font-bold"
           >
             Get Your Free VTEC Intelligence Diagnosis &rarr;
           </a>
