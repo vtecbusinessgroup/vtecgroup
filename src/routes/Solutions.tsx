@@ -9,6 +9,7 @@ import {
   Check,
 } from "lucide-react";
 import { PageHeader } from "../components/PageHeader";
+import { Reveal } from "../components/Reveal";
 
 const PAGE_URL = "https://vtecgroup.co.ke/solutions";
 const OG_IMAGE = "https://www.vtecgroup.co.ke/og-image.png";
@@ -42,7 +43,13 @@ export const Route = createFileRoute("/solutions")({
       { name: "twitter:title", content: "Solutions | VTEC Business Group" },
       { name: "twitter:image", content: OG_IMAGE },
     ],
-    links: [{ rel: "canonical", href: PAGE_URL }],
+    links: [
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600;700&display=swap",
+      },
+      { rel: "canonical", href: PAGE_URL },
+    ],
   }),
 });
 
@@ -152,22 +159,22 @@ function SolutionCard({ s }: { s: Solution }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="bg-[#0f2444]/60 border border-white/10 hover:border-[#27ae60]/40 rounded-2xl p-7 transition-colors">
+    <div className="bg-[#0f2444]/60 border border-white/[0.08] hover:border-[#22c55e]/25 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)] rounded-[18px] p-7 transition-all duration-300">
       <div className="flex items-center gap-3 mb-4">
-        <span className="w-11 h-11 rounded-xl bg-[#27ae60]/15 border border-[#27ae60]/30 flex items-center justify-center">
-          <s.icon className="w-5 h-5 text-[#27ae60]" />
+        <span className="w-11 h-11 rounded-xl bg-[#22c55e]/15 border border-[#22c55e]/30 flex items-center justify-center">
+          <s.icon className="w-5 h-5 text-[#22c55e]" />
         </span>
         <span className="text-[11px] font-semibold uppercase tracking-wide text-[#d4af37]">
           {s.tag}
         </span>
       </div>
-      <h2 className="font-serif text-xl font-bold mb-1">{s.name}</h2>
+      <h2 className="font-['Playfair_Display','DM_Serif_Display',Georgia,serif] text-xl font-bold mb-1">{s.name}</h2>
       <div className="text-white/40 text-xs mb-3">{s.forWho}</div>
       <p className="text-white/65 text-sm leading-relaxed mb-4">{s.desc}</p>
 
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-1.5 text-[#27ae60] font-semibold text-sm mb-1"
+        className="flex items-center gap-1.5 text-[#22c55e] font-semibold text-sm mb-1"
         aria-expanded={open}
       >
         Read more
@@ -183,10 +190,10 @@ function SolutionCard({ s }: { s: Solution }) {
         style={{ display: "grid" }}
       >
         <div className="overflow-hidden">
-          <ul className="space-y-2.5 mb-5 border-t border-white/10 pt-4">
+          <ul className="space-y-2.5 mb-5 border-t border-white/[0.08] pt-4">
             {s.details.map((d, i) => (
               <li key={i} className="flex gap-2 text-sm text-white/70 leading-relaxed">
-                <Check className="w-4 h-4 text-[#27ae60] shrink-0 mt-0.5" />
+                <Check className="w-4 h-4 text-[#22c55e] shrink-0 mt-0.5" />
                 {d}
               </li>
             ))}
@@ -195,7 +202,7 @@ function SolutionCard({ s }: { s: Solution }) {
             href={s.href}
             target={s.external ? "_blank" : undefined}
             rel={s.external ? "noopener" : undefined}
-            className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-[#27ae60] hover:bg-[#2ecc71] transition text-sm font-semibold text-white"
+            className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-[10px] bg-[#22c55e] hover:bg-[#16a34a] hover:-translate-y-0.5 transition-all text-sm font-bold text-[#06190f]"
           >
             {s.cta} &rarr;
           </a>
@@ -207,7 +214,7 @@ function SolutionCard({ s }: { s: Solution }) {
 
 function SolutionsPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#0D2149] to-[#0a1628] text-white font-sans">
+    <main className="min-h-screen bg-gradient-to-b from-[#0D2149] to-[#0a1628] text-white font-['Outfit',system-ui,sans-serif]">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -218,18 +225,15 @@ function SolutionsPage() {
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse 640px 460px at 22% 15%, rgba(39,174,96,0.16) 0%, transparent 70%)",
+              "radial-gradient(1000px 500px at 80% -10%, rgba(34,197,94,0.18), transparent 60%), radial-gradient(800px 400px at -10% 20%, rgba(201,162,39,0.12), transparent 60%)",
           }}
         />
-        <div className="relative max-w-5xl mx-auto px-5 md:px-8 pt-16 md:pt-24">
-          <div className="mb-14">
-            <div className="flex items-center gap-2.5 mb-3">
-              <span className="w-1 h-4 bg-[#27ae60]" />
-              <span className="text-[#27ae60] text-xs font-semibold tracking-[2px] uppercase">
-                The Ecosystem
-              </span>
-            </div>
-            <h1 className="font-serif text-3xl md:text-5xl font-bold">
+        <div className="relative max-w-5xl mx-auto px-5 md:px-8 pt-[64px] lg:pt-[88px]">
+          <Reveal className="mb-14">
+            <span className="inline-block text-[#22c55e] text-xs font-bold tracking-[0.18em] uppercase border-l-[3px] border-[#22c55e] pl-[14px] mb-4">
+              The Ecosystem
+            </span>
+            <h1 className="font-['Playfair_Display','DM_Serif_Display',Georgia,serif] text-[clamp(36px,6vw,64px)] font-extrabold leading-[1.2] tracking-[-0.01em]">
               One Group. Four Pillars.
             </h1>
             <p className="text-white/60 mt-4 text-lg max-w-2xl">
@@ -237,10 +241,10 @@ function SolutionsPage() {
               engineered to educate, empower, and equip the modern Kenyan
               investor. Tap "Read more" on any solution for the full picture.
             </p>
-          </div>
+          </Reveal>
         </div>
       </div>
-      <div className="max-w-5xl mx-auto px-5 md:px-8 pb-16 md:pb-24">
+      <div className="max-w-5xl mx-auto px-5 md:px-8 pb-[64px] lg:pb-[88px]">
 
         <div className="grid sm:grid-cols-2 gap-6">
           {solutions.map((s) => (
@@ -248,8 +252,8 @@ function SolutionsPage() {
           ))}
         </div>
 
-        <div className="mt-16 bg-[#0f2444]/60 border border-white/10 rounded-2xl p-8 text-center">
-          <h2 className="font-serif text-2xl font-bold mb-3">
+        <div className="mt-16 bg-[#0f2444]/60 border border-white/[0.08] rounded-[18px] p-8 text-center">
+          <h2 className="font-['Playfair_Display','DM_Serif_Display',Georgia,serif] text-2xl font-bold mb-3">
             Not sure which solution fits you?
           </h2>
           <p className="text-white/60 mb-6 max-w-xl mx-auto">
@@ -258,7 +262,7 @@ function SolutionsPage() {
           </p>
           <a
             href="/business-diagnostic"
-            className="inline-block px-9 py-4 rounded-full bg-[#27ae60] hover:bg-[#2ecc71] transition font-semibold"
+            className="inline-block px-9 py-4 rounded-[10px] bg-[#22c55e] text-[#06190f] hover:bg-[#16a34a] hover:-translate-y-0.5 transition-all font-bold"
           >
             Get Your Free Diagnosis &rarr;
           </a>
