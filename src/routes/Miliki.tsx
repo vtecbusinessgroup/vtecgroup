@@ -1,7 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
-  ArrowLeft,
   Shield,
   Wallet,
   TrendingUp,
@@ -19,7 +18,9 @@ import {
   Rocket,
   Users,
   HelpCircle,
+  Menu,
 } from "lucide-react";
+import { Reveal } from "../components/Reveal";
 
 const PAGE_URL = "https://vtecgroup.co.ke/miliki";
 const OG_IMAGE = "https://www.vtecgroup.co.ke/og-image.png";
@@ -66,8 +67,18 @@ export const Route = createFileRoute("/miliki")({
 const GOLD = "#c9a227";
 const GOLD_LIGHT = "#f0d580";
 const BLACK = "#0a0a0a";
-const HEADING_FONT = "'DM Serif Display', 'Playfair Display', Georgia, serif";
-const BODY_FONT = "'Outfit', sans-serif";
+const HEADING_FONT = "'Playfair Display', 'DM Serif Display', Georgia, serif";
+const BODY_FONT = "'Outfit', system-ui, sans-serif";
+
+const NAV_LINKS = [
+  { href: "/", label: "Home" },
+  { href: "/about-us", label: "About Us" },
+  { href: "/services", label: "Our Services" },
+  { href: "/solutions", label: "Solutions" },
+  { href: "/leadership", label: "Leadership" },
+  { href: "/vision-2035", label: "Vision 2035" },
+  { href: "/blog", label: "Blog" },
+];
 
 const FEATURES = [
   {
@@ -155,7 +166,10 @@ const structuredData = {
 
 function SectionEyebrow({ children }: { children: ReactNode }) {
   return (
-    <span className="text-xs font-bold uppercase tracking-[0.2em]" style={{ color: GOLD, fontFamily: BODY_FONT }}>
+    <span
+      className="inline-block text-xs font-bold uppercase tracking-[0.18em] border-l-[3px] pl-[14px]"
+      style={{ color: GOLD, borderColor: GOLD, fontFamily: BODY_FONT }}
+    >
       {children}
     </span>
   );
@@ -175,7 +189,7 @@ function QABlock({
   children: ReactNode;
 }) {
   return (
-    <div className="relative border-l-2 pl-6" style={{ borderColor: "rgba(201,162,39,0.35)" }}>
+    <Reveal className="relative border-l-2 border-[rgba(201,162,39,0.35)] pl-6">
       <span
         aria-hidden="true"
         className="pointer-events-none absolute -top-6 right-0 select-none text-[6rem] font-black leading-none opacity-[0.04] sm:text-[8rem]"
@@ -192,20 +206,20 @@ function QABlock({
         </div>
         <SectionEyebrow>{eyebrow}</SectionEyebrow>
       </div>
-      <h2 className="relative mb-4 text-[clamp(1.5rem,4vw,2.2rem)] font-bold leading-tight" style={{ fontFamily: HEADING_FONT }}>
+      <h2 className="relative mb-4 text-[clamp(1.5rem,4vw,2.2rem)] font-extrabold leading-[1.2] tracking-[-0.01em]" style={{ fontFamily: HEADING_FONT }}>
         {title}
       </h2>
       <div className="relative space-y-3 text-[15px] leading-relaxed text-white/75" style={{ fontFamily: BODY_FONT }}>
         {children}
       </div>
-    </div>
+    </Reveal>
   );
 }
 
 function Verdict({ icon, title, children }: { icon: ReactNode; title: string; children: ReactNode }) {
   return (
     <div
-      className="rounded-xl border p-5 transition-colors hover:border-[rgba(201,162,39,0.45)]"
+      className="rounded-[18px] border p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)] hover:border-[rgba(201,162,39,0.45)]"
       style={{ backgroundColor: "rgba(255,255,255,0.02)", borderColor: "rgba(201,162,39,0.2)" }}
     >
       <div className="mb-2 flex items-center gap-2.5">
@@ -229,10 +243,10 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
       rel="noopener noreferrer"
       className={
         fixed
-          ? `fixed bottom-5 right-5 z-30 inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-bold shadow-2xl transition-all duration-300 hover:scale-105 ${
+          ? `fixed bottom-5 right-5 z-30 inline-flex items-center gap-2 rounded-[10px] px-5 py-3 text-sm font-bold shadow-2xl transition-all duration-300 hover:-translate-y-0.5 ${
               visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"
             }`
-          : "inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-bold transition-transform hover:scale-105"
+          : "inline-flex items-center gap-2 rounded-[10px] px-7 py-3.5 text-sm font-bold transition-all duration-300 hover:-translate-y-0.5"
       }
       style={{
         backgroundImage: `linear-gradient(135deg, ${GOLD}, ${GOLD_LIGHT})`,
@@ -243,6 +257,59 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
     >
       <Download className="h-4 w-4" /> {fixed ? "Install App" : "Open MILIKI App"}
     </a>
+  );
+}
+
+function MilikiNav() {
+  return (
+    <header
+      className="sticky top-0 z-50 border-b backdrop-blur-[10px]"
+      style={{ backgroundColor: "rgba(10,10,10,0.92)", borderColor: "rgba(201,162,39,0.25)" }}
+    >
+      <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3.5">
+        <Link to="/" className="flex items-center gap-2.5 group">
+          <img
+            src="/vtec-logo.png"
+            alt="VTEC Business Group"
+            className="h-8 w-8 rounded-full object-cover"
+          />
+          <span className="leading-tight">
+            <span className="block text-white font-bold text-sm tracking-wide" style={{ fontFamily: BODY_FONT }}>
+              MILIKI
+            </span>
+            <span className="block text-[10px] font-semibold tracking-[1.5px] uppercase" style={{ color: GOLD }}>
+              by VTEC Business Group
+            </span>
+          </span>
+        </Link>
+
+        <details className="relative">
+          <summary
+            className="list-none inline-flex items-center gap-1.5 px-4 py-2 rounded-[10px] border text-white/85 text-xs font-semibold cursor-pointer select-none transition-colors"
+            style={{ borderColor: "rgba(201,162,39,0.3)" }}
+          >
+            <Menu className="w-3.5 h-3.5" />
+            Menu
+          </summary>
+          <nav
+            aria-label="Site pages"
+            className="absolute right-0 mt-2 w-56 rounded-xl border shadow-xl overflow-hidden"
+            style={{ backgroundColor: "#0a0a0a", borderColor: "rgba(201,162,39,0.2)" }}
+          >
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                to={link.href}
+                className="block px-4 py-2.5 text-sm text-white/80 hover:text-white transition-colors"
+                style={{ fontFamily: BODY_FONT }}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+        </details>
+      </div>
+    </header>
   );
 }
 
@@ -262,77 +329,75 @@ function MilikiPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
-      {/* Top bar */}
-      <div
-        className="sticky top-0 z-20 border-b backdrop-blur"
-        style={{ backgroundColor: "rgba(10,10,10,0.85)", borderColor: "rgba(201,162,39,0.25)" }}
-      >
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4">
-          <Link to="/" className="flex items-center gap-2 text-sm font-medium text-white/70 transition-colors hover:text-white">
-            <ArrowLeft className="h-4 w-4" /> Back to VTEC Business Group
-          </Link>
-          <img src="/vtec-logo.png" alt="VTEC Business Group" className="h-8 w-8 rounded-full object-cover" />
-        </div>
-      </div>
+
+      <MilikiNav />
 
       {/* Hero */}
-      <section className="relative overflow-hidden px-5 py-20 text-center sm:py-28">
+      <section className="relative overflow-hidden px-5 pt-[64px] lg:pt-[88px] pb-16 text-center">
         <div
           className="pointer-events-none absolute inset-0"
-          style={{ background: "radial-gradient(ellipse at top, rgba(201,162,39,0.18) 0%, transparent 60%)" }}
+          style={{
+            background:
+              "radial-gradient(1000px 500px at 80% -10%, rgba(201,162,39,0.18), transparent 60%), radial-gradient(800px 400px at -10% 20%, rgba(201,162,39,0.10), transparent 60%)",
+          }}
         />
-        <img
-          src="/miliki-app-logo.jpg"
-          alt="MILIKI App"
-          className="relative mx-auto mb-8 h-28 w-28 rounded-2xl object-cover shadow-2xl sm:h-32 sm:w-32"
-          style={{ boxShadow: "0 0 60px rgba(201,162,39,0.35)" }}
-        />
-        <div
-          className="relative inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold uppercase tracking-widest"
-          style={{ borderColor: "rgba(34,197,94,0.4)", color: "#4ade80", backgroundColor: "rgba(34,197,94,0.08)" }}
-        >
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" /> Live Now
-        </div>
-        <h1
-          className="relative mt-6 text-[clamp(2.25rem,8vw,4rem)] font-black leading-[1.1]"
-          style={{ fontFamily: HEADING_FONT }}
-        >
-          Stop Managing Money.
-          <br />
-          <span style={{ color: GOLD_LIGHT }}>Start Owning It.</span>
-        </h1>
-        <p className="relative mx-auto mt-6 max-w-xl text-[clamp(0.95rem,2vw,1.15rem)] leading-relaxed text-white/70">
-          MILIKI is Kenya's first 2-in-1 financial co-pilot, one app that turns your everyday budget into your bridge
-          to the Nairobi Securities Exchange, Money Market Funds, and beyond.
-        </p>
-        <div className="relative mt-10 flex flex-wrap items-center justify-center gap-4">
-          <InstallButton />
-        </div>
+        <Reveal>
+          <img
+            src="/miliki-app-logo.jpg"
+            alt="MILIKI App"
+            className="relative mx-auto mb-8 h-28 w-28 rounded-2xl object-cover shadow-2xl sm:h-32 sm:w-32"
+            style={{ boxShadow: "0 0 60px rgba(201,162,39,0.35)" }}
+          />
+          <div
+            className="relative inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold uppercase tracking-widest"
+            style={{ borderColor: "rgba(34,197,94,0.4)", color: "#4ade80", backgroundColor: "rgba(34,197,94,0.08)" }}
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" /> Live Now
+          </div>
+          <h1
+            className="relative mt-6 text-[clamp(2.25rem,8vw,4rem)] font-extrabold leading-[1.1] tracking-[-0.01em]"
+            style={{ fontFamily: HEADING_FONT }}
+          >
+            Stop Managing Money.
+            <br />
+            <span style={{ color: GOLD_LIGHT }}>Start Owning It.</span>
+          </h1>
+          <p className="relative mx-auto mt-6 max-w-xl text-[clamp(0.95rem,2vw,1.15rem)] leading-relaxed text-white/70">
+            MILIKI is Kenya's first 2-in-1 financial co-pilot, one app that turns your everyday budget into your bridge
+            to the Nairobi Securities Exchange, Money Market Funds, and beyond.
+          </p>
+          <div className="relative mt-10 flex flex-wrap items-center justify-center gap-4">
+            <InstallButton />
+          </div>
 
-        {/* Trust badge row */}
-        <div className="relative mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs text-white/40">
-          <span className="flex items-center gap-1.5">
-            <Shield className="h-3.5 w-3.5" style={{ color: GOLD }} /> Built &amp; operated by VTEC Business Group
-          </span>
-          <span className="flex items-center gap-1.5">
-            <Lock className="h-3.5 w-3.5" style={{ color: GOLD }} /> Bank-grade encryption
-          </span>
-          <span className="flex items-center gap-1.5">
-            <Award className="h-3.5 w-3.5" style={{ color: GOLD }} /> Vetted investment partners only
-          </span>
-        </div>
+          {/* Trust badge row */}
+          <div className="relative mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs text-white/40">
+            <span className="flex items-center gap-1.5">
+              <Shield className="h-3.5 w-3.5" style={{ color: GOLD }} /> Built &amp; operated by VTEC Business Group
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Lock className="h-3.5 w-3.5" style={{ color: GOLD }} /> Bank-grade encryption
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Award className="h-3.5 w-3.5" style={{ color: GOLD }} /> Vetted investment partners only
+            </span>
+          </div>
+        </Reveal>
       </section>
 
       {/* Old way vs MILIKI way */}
       <section className="mx-auto max-w-4xl px-5 py-16">
-        <div className="mb-10 text-center">
+        <Reveal className="mb-10 text-center">
           <SectionEyebrow>The Shift</SectionEyebrow>
-          <h2 className="mt-3 text-[clamp(1.6rem,4.5vw,2.4rem)] font-bold" style={{ fontFamily: HEADING_FONT }}>
+          <h2 className="mt-3 text-[clamp(1.6rem,4.5vw,2.4rem)] font-extrabold leading-[1.2] tracking-[-0.01em]" style={{ fontFamily: HEADING_FONT }}>
             Five Apps. One Habit. <span style={{ color: GOLD_LIGHT }}>Now Just One.</span>
           </h2>
-        </div>
+        </Reveal>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="rounded-2xl border p-6" style={{ borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.015)" }}>
+          <div
+            className="rounded-[18px] border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)]"
+            style={{ borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.015)" }}
+          >
             <div className="mb-4 text-xs font-bold uppercase tracking-widest text-white/40">The Old Way</div>
             <ul className="space-y-3">
               {[
@@ -350,7 +415,7 @@ function MilikiPage() {
             </ul>
           </div>
           <div
-            className="rounded-2xl border p-6"
+            className="rounded-[18px] border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)]"
             style={{ borderColor: "rgba(201,162,39,0.35)", backgroundColor: "rgba(201,162,39,0.05)" }}
           >
             <div className="mb-4 text-xs font-bold uppercase tracking-widest" style={{ color: GOLD_LIGHT }}>
@@ -413,7 +478,7 @@ function MilikiPage() {
             {FEATURES.map((f) => (
               <div
                 key={f.title}
-                className="rounded-xl border p-4"
+                className="rounded-[18px] border p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)]"
                 style={{ borderColor: "rgba(201,162,39,0.18)", backgroundColor: "rgba(255,255,255,0.015)" }}
               >
                 <div className="mb-2 flex items-center gap-2.5">
@@ -456,17 +521,17 @@ function MilikiPage() {
 
       {/* Who it's for */}
       <section className="mx-auto max-w-4xl px-5 py-16">
-        <div className="mb-10 text-center">
+        <Reveal className="mb-10 text-center">
           <SectionEyebrow>Built For You, Specifically</SectionEyebrow>
-          <h2 className="mt-3 text-[clamp(1.6rem,4.5vw,2.4rem)] font-bold" style={{ fontFamily: HEADING_FONT }}>
+          <h2 className="mt-3 text-[clamp(1.6rem,4.5vw,2.4rem)] font-extrabold leading-[1.2] tracking-[-0.01em]" style={{ fontFamily: HEADING_FONT }}>
             Who Is MILIKI <span style={{ color: GOLD_LIGHT }}>Really</span> For?
           </h2>
-        </div>
+        </Reveal>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {PERSONAS.map((p) => (
             <div
               key={p.title}
-              className="rounded-xl border p-5"
+              className="rounded-[18px] border p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)]"
               style={{ borderColor: "rgba(201,162,39,0.2)", backgroundColor: "rgba(255,255,255,0.02)" }}
             >
               <div className="mb-2 flex items-center gap-2.5">
@@ -486,15 +551,19 @@ function MilikiPage() {
 
       {/* FAQ */}
       <section className="mx-auto max-w-3xl px-5 py-16">
-        <div className="mb-10 text-center">
+        <Reveal className="mb-10 text-center">
           <SectionEyebrow>Before You Ask</SectionEyebrow>
-          <h2 className="mt-3 text-[clamp(1.6rem,4.5vw,2.4rem)] font-bold" style={{ fontFamily: HEADING_FONT }}>
+          <h2 className="mt-3 text-[clamp(1.6rem,4.5vw,2.4rem)] font-extrabold leading-[1.2] tracking-[-0.01em]" style={{ fontFamily: HEADING_FONT }}>
             Straight Answers.
           </h2>
-        </div>
+        </Reveal>
         <div className="space-y-5">
           {FAQS.map((f) => (
-            <div key={f.q} className="rounded-xl border p-5" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+            <div
+              key={f.q}
+              className="rounded-[18px] border p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)]"
+              style={{ borderColor: "rgba(255,255,255,0.08)" }}
+            >
               <div className="mb-1.5 flex items-start gap-2.5">
                 <HelpCircle className="mt-0.5 h-4 w-4 shrink-0" style={{ color: GOLD }} />
                 <span className="font-semibold text-white">{f.q}</span>
@@ -506,23 +575,25 @@ function MilikiPage() {
       </section>
 
       {/* Final CTA */}
-      <section className="relative overflow-hidden px-5 py-20 text-center">
+      <section className="relative overflow-hidden px-5 pt-[64px] lg:pt-[88px] pb-20 text-center">
         <div
           className="pointer-events-none absolute inset-0"
           style={{ background: "radial-gradient(ellipse at bottom, rgba(201,162,39,0.14) 0%, transparent 60%)" }}
         />
-        <h2
-          className="relative text-[clamp(1.8rem,5vw,2.8rem)] font-black leading-tight"
-          style={{ fontFamily: HEADING_FONT }}
-        >
-          Your Money Is Already Moving.
-          <br />
-          <span style={{ color: GOLD_LIGHT }}>Decide Where It's Going.</span>
-        </h2>
-        <div className="relative mt-8">
-          <InstallButton />
-        </div>
-        <p className="relative mt-4 text-xs text-white/40">miliki.vtecgroup.co.ke · A VTEC Business Group product</p>
+        <Reveal>
+          <h2
+            className="relative text-[clamp(1.8rem,5vw,2.8rem)] font-extrabold leading-[1.2] tracking-[-0.01em]"
+            style={{ fontFamily: HEADING_FONT }}
+          >
+            Your Money Is Already Moving.
+            <br />
+            <span style={{ color: GOLD_LIGHT }}>Decide Where It's Going.</span>
+          </h2>
+          <div className="relative mt-8">
+            <InstallButton />
+          </div>
+          <p className="relative mt-4 text-xs text-white/40">miliki.vtecgroup.co.ke · A VTEC Business Group product</p>
+        </Reveal>
       </section>
 
       {/* Footer nav — keeps MILIKI connected to the rest of the site for navigation and crawl discovery */}
@@ -533,6 +604,8 @@ function MilikiPage() {
           <Link to="/services" className="hover:text-white transition-colors">Services</Link>
           <Link to="/solutions" className="hover:text-white transition-colors">Solutions</Link>
           <Link to="/leadership" className="hover:text-white transition-colors">Leadership</Link>
+          <Link to="/vision-2035" className="hover:text-white transition-colors">Vision 2035</Link>
+          <Link to="/blog" className="hover:text-white transition-colors">Blog</Link>
         </nav>
       </footer>
 
