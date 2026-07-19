@@ -222,8 +222,17 @@ function Verdict({ icon, title, children }: { icon: ReactNode; title: string; ch
       className="rounded-[18px] border p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)] hover:border-[rgba(201,162,39,0.45)]"
       style={{ backgroundColor: "rgba(255,255,255,0.02)", borderColor: "rgba(201,162,39,0.2)" }}
     >
-      <div className="mb-2 flex items-center gap-2.5">
-        <span style={{ color: GOLD }}>{icon}</span>
+      <div className="mb-2.5 flex items-center gap-2.5">
+        <span
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+          style={{
+            backgroundImage: "linear-gradient(135deg, rgba(201,162,39,0.22), rgba(201,162,39,0.06))",
+            color: GOLD_LIGHT,
+            boxShadow: "inset 0 0 0 1px rgba(201,162,39,0.25)",
+          }}
+        >
+          {icon}
+        </span>
         <div className="font-semibold text-white" style={{ fontFamily: BODY_FONT }}>
           {title}
         </div>
@@ -243,19 +252,23 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
       rel="noopener noreferrer"
       className={
         fixed
-          ? `fixed bottom-5 right-5 z-30 inline-flex items-center gap-2 rounded-[10px] px-5 py-3 text-sm font-bold shadow-2xl transition-all duration-300 hover:-translate-y-0.5 ${
+          ? `group fixed bottom-5 right-5 z-30 inline-flex items-center gap-2 overflow-hidden rounded-[10px] px-5 py-3 text-sm font-bold shadow-2xl transition-all duration-300 hover:-translate-y-0.5 ${
               visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"
             }`
-          : "inline-flex items-center gap-2 rounded-[10px] px-7 py-3.5 text-sm font-bold transition-all duration-300 hover:-translate-y-0.5"
+          : "group relative inline-flex items-center gap-2 overflow-hidden rounded-[10px] px-7 py-3.5 text-sm font-bold transition-all duration-300 hover:-translate-y-0.5"
       }
       style={{
         backgroundImage: `linear-gradient(135deg, ${GOLD}, ${GOLD_LIGHT})`,
         color: BLACK,
         fontFamily: BODY_FONT,
-        boxShadow: fixed ? "0 10px 30px rgba(201,162,39,0.45)" : undefined,
+        boxShadow: fixed ? "0 10px 30px rgba(201,162,39,0.45)" : "0 8px 24px rgba(201,162,39,0.3)",
       }}
     >
-      <Download className="h-4 w-4" /> {fixed ? "Install App" : "Open MILIKI App"}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-white/30 transition-transform duration-700 group-hover:translate-x-full"
+      />
+      <Download className="relative h-4 w-4" /> <span className="relative">{fixed ? "Install App" : "Open MILIKI App"}</span>
     </a>
   );
 }
@@ -269,9 +282,10 @@ function MilikiNav() {
       <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3.5">
         <Link to="/" className="flex items-center gap-2.5 group">
           <img
-            src="/vtec-logo.png"
-            alt="VTEC Business Group"
-            className="h-8 w-8 rounded-full object-cover"
+            src="/miliki-app-logo.jpg"
+            alt="MILIKI App"
+            className="h-9 w-9 rounded-xl object-cover"
+            style={{ boxShadow: "0 0 16px rgba(201,162,39,0.35)" }}
           />
           <span className="leading-tight">
             <span className="block text-white font-bold text-sm tracking-wide" style={{ fontFamily: BODY_FONT }}>
@@ -341,15 +355,38 @@ function MilikiPage() {
               "radial-gradient(1000px 500px at 80% -10%, rgba(201,162,39,0.18), transparent 60%), radial-gradient(800px 400px at -10% 20%, rgba(201,162,39,0.10), transparent 60%)",
           }}
         />
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.15]"
+          style={{
+            backgroundImage:
+              "radial-gradient(rgba(201,162,39,0.4) 1px, transparent 1px)",
+            backgroundSize: "28px 28px",
+            maskImage:
+              "radial-gradient(ellipse 500px 400px at 50% 15%, black 40%, transparent 80%)",
+          }}
+        />
         <Reveal>
-          <img
-            src="/miliki-app-logo.jpg"
-            alt="MILIKI App"
-            className="relative mx-auto mb-8 h-28 w-28 rounded-2xl object-cover shadow-2xl sm:h-32 sm:w-32"
-            style={{ boxShadow: "0 0 60px rgba(201,162,39,0.35)" }}
-          />
+          <div className="relative mx-auto mb-8 flex h-32 w-32 items-center justify-center sm:h-36 sm:w-36">
+            <div
+              className="absolute inset-0 rounded-[26px] animate-pulse"
+              style={{
+                background: `conic-gradient(from 0deg, ${GOLD}, transparent 30%, transparent 70%, ${GOLD})`,
+                opacity: 0.5,
+                filter: "blur(8px)",
+              }}
+            />
+            <img
+              src="/miliki-app-logo.jpg"
+              alt="MILIKI App"
+              className="relative h-28 w-28 rounded-2xl object-cover sm:h-32 sm:w-32"
+              style={{
+                boxShadow:
+                  "0 0 60px rgba(201,162,39,0.35), 0 20px 40px -12px rgba(0,0,0,0.7), inset 0 0 0 1px rgba(255,255,255,0.08)",
+              }}
+            />
+          </div>
           <div
-            className="relative inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold uppercase tracking-widest"
+            className="relative inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold uppercase tracking-widest backdrop-blur-sm"
             style={{ borderColor: "rgba(34,197,94,0.4)", color: "#4ade80", backgroundColor: "rgba(34,197,94,0.08)" }}
           >
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" /> Live Now
@@ -360,7 +397,16 @@ function MilikiPage() {
           >
             Stop Managing Money.
             <br />
-            <span style={{ color: GOLD_LIGHT }}>Start Owning It.</span>
+            <span
+              style={{
+                backgroundImage: `linear-gradient(135deg, ${GOLD_LIGHT}, ${GOLD})`,
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              Start Owning It.
+            </span>
           </h1>
           <p className="relative mx-auto mt-6 max-w-xl text-[clamp(0.95rem,2vw,1.15rem)] leading-relaxed text-white/70">
             MILIKI is Kenya's first 2-in-1 financial co-pilot, one app that turns your everyday budget into your bridge
@@ -386,6 +432,7 @@ function MilikiPage() {
       </section>
 
       {/* Old way vs MILIKI way */}
+      <div className="mx-auto max-w-4xl h-px" style={{ backgroundImage: 'linear-gradient(90deg, transparent, rgba(201,162,39,0.25), transparent)' }} />
       <section className="mx-auto max-w-4xl px-5 py-16">
         <Reveal className="mb-10 text-center">
           <SectionEyebrow>The Shift</SectionEyebrow>
@@ -395,10 +442,18 @@ function MilikiPage() {
         </Reveal>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div
-            className="rounded-[18px] border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)]"
+            className="relative overflow-hidden rounded-[18px] border p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)]"
             style={{ borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.015)" }}
           >
-            <div className="mb-4 text-xs font-bold uppercase tracking-widest text-white/40">The Old Way</div>
+            <div className="mb-4 flex items-center gap-2.5">
+              <span
+                className="flex h-7 w-7 items-center justify-center rounded-lg"
+                style={{ backgroundColor: "rgba(255,255,255,0.06)" }}
+              >
+                <X className="h-3.5 w-3.5 text-white/40" />
+              </span>
+              <div className="text-xs font-bold uppercase tracking-widest text-white/40">The Old Way</div>
+            </div>
             <ul className="space-y-3">
               {[
                 "M-Pesa for spending, no visibility beyond the transaction",
@@ -415,11 +470,23 @@ function MilikiPage() {
             </ul>
           </div>
           <div
-            className="rounded-[18px] border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)]"
+            className="relative overflow-hidden rounded-[18px] border p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(201,162,39,0.15)]"
             style={{ borderColor: "rgba(201,162,39,0.35)", backgroundColor: "rgba(201,162,39,0.05)" }}
           >
-            <div className="mb-4 text-xs font-bold uppercase tracking-widest" style={{ color: GOLD_LIGHT }}>
-              The MILIKI Way
+            <div
+              className="absolute inset-x-0 top-0 h-[2px]"
+              style={{ backgroundImage: `linear-gradient(90deg, transparent, ${GOLD}, transparent)` }}
+            />
+            <div className="mb-4 flex items-center gap-2.5">
+              <span
+                className="flex h-7 w-7 items-center justify-center rounded-lg"
+                style={{ backgroundColor: "rgba(201,162,39,0.15)" }}
+              >
+                <Check className="h-3.5 w-3.5" style={{ color: GOLD_LIGHT }} />
+              </span>
+              <div className="text-xs font-bold uppercase tracking-widest" style={{ color: GOLD_LIGHT }}>
+                The MILIKI Way
+              </div>
             </div>
             <ul className="space-y-3">
               {[
@@ -481,8 +548,17 @@ function MilikiPage() {
                 className="rounded-[18px] border p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)]"
                 style={{ borderColor: "rgba(201,162,39,0.18)", backgroundColor: "rgba(255,255,255,0.015)" }}
               >
-                <div className="mb-2 flex items-center gap-2.5">
-                  <span style={{ color: GOLD }}>{f.icon}</span>
+                <div className="mb-2.5 flex items-center gap-2.5">
+                  <span
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
+                    style={{
+                      backgroundImage: "linear-gradient(135deg, rgba(201,162,39,0.22), rgba(201,162,39,0.06))",
+                      color: GOLD_LIGHT,
+                      boxShadow: "inset 0 0 0 1px rgba(201,162,39,0.25)",
+                    }}
+                  >
+                    {f.icon}
+                  </span>
                   <span className="text-sm font-semibold text-white">{f.title}</span>
                 </div>
                 <p className="text-[13.5px] leading-relaxed text-white/60">{f.desc}</p>
@@ -520,6 +596,7 @@ function MilikiPage() {
       </section>
 
       {/* Who it's for */}
+      <div className="mx-auto max-w-4xl h-px" style={{ backgroundImage: 'linear-gradient(90deg, transparent, rgba(201,162,39,0.25), transparent)' }} />
       <section className="mx-auto max-w-4xl px-5 py-16">
         <Reveal className="mb-10 text-center">
           <SectionEyebrow>Built For You, Specifically</SectionEyebrow>
@@ -537,7 +614,11 @@ function MilikiPage() {
               <div className="mb-2 flex items-center gap-2.5">
                 <div
                   className="flex h-9 w-9 items-center justify-center rounded-lg"
-                  style={{ backgroundColor: "rgba(201,162,39,0.12)", color: GOLD_LIGHT }}
+                  style={{
+                    backgroundImage: "linear-gradient(135deg, rgba(201,162,39,0.22), rgba(201,162,39,0.06))",
+                    color: GOLD_LIGHT,
+                    boxShadow: "inset 0 0 0 1px rgba(201,162,39,0.25)",
+                  }}
                 >
                   {p.icon}
                 </div>
@@ -550,6 +631,7 @@ function MilikiPage() {
       </section>
 
       {/* FAQ */}
+      <div className="mx-auto max-w-3xl h-px" style={{ backgroundImage: 'linear-gradient(90deg, transparent, rgba(201,162,39,0.25), transparent)' }} />
       <section className="mx-auto max-w-3xl px-5 py-16">
         <Reveal className="mb-10 text-center">
           <SectionEyebrow>Before You Ask</SectionEyebrow>
@@ -557,19 +639,27 @@ function MilikiPage() {
             Straight Answers.
           </h2>
         </Reveal>
-        <div className="space-y-5">
+        <div className="space-y-3">
           {FAQS.map((f) => (
-            <div
+            <details
               key={f.q}
-              className="rounded-[18px] border p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)]"
-              style={{ borderColor: "rgba(255,255,255,0.08)" }}
+              className="group rounded-[18px] border px-5 py-4 transition-all duration-300 open:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)]"
+              style={{ borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.015)" }}
             >
-              <div className="mb-1.5 flex items-start gap-2.5">
-                <HelpCircle className="mt-0.5 h-4 w-4 shrink-0" style={{ color: GOLD }} />
-                <span className="font-semibold text-white">{f.q}</span>
-              </div>
-              <p className="pl-6 text-sm leading-relaxed text-white/65">{f.a}</p>
-            </div>
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-2.5">
+                <span className="flex items-start gap-2.5">
+                  <HelpCircle className="mt-0.5 h-4 w-4 shrink-0" style={{ color: GOLD }} />
+                  <span className="font-semibold text-white">{f.q}</span>
+                </span>
+                <span
+                  className="shrink-0 text-lg leading-none transition-transform duration-300 group-open:rotate-45"
+                  style={{ color: GOLD }}
+                >
+                  +
+                </span>
+              </summary>
+              <p className="mt-3 pl-6 text-sm leading-relaxed text-white/65">{f.a}</p>
+            </details>
           ))}
         </div>
       </section>
@@ -595,19 +685,6 @@ function MilikiPage() {
           <p className="relative mt-4 text-xs text-white/40">miliki.vtecgroup.co.ke · A VTEC Business Group product</p>
         </Reveal>
       </section>
-
-      {/* Footer nav — keeps MILIKI connected to the rest of the site for navigation and crawl discovery */}
-      <footer className="border-t px-5 py-8 text-center" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
-        <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-white/50">
-          <Link to="/" className="hover:text-white transition-colors">Home</Link>
-          <Link to="/about-us" className="hover:text-white transition-colors">About Us</Link>
-          <Link to="/services" className="hover:text-white transition-colors">Services</Link>
-          <Link to="/solutions" className="hover:text-white transition-colors">Solutions</Link>
-          <Link to="/leadership" className="hover:text-white transition-colors">Leadership</Link>
-          <Link to="/vision-2035" className="hover:text-white transition-colors">Vision 2035</Link>
-          <Link to="/blog" className="hover:text-white transition-colors">Blog</Link>
-        </nav>
-      </footer>
 
       <InstallButton fixed visible={scrolledPastHero} />
     </div>
