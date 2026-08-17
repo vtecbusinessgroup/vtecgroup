@@ -1,40 +1,27 @@
 import { createFileRoute } from "@tanstack/react-router";
-import React, { Suspense, useState, useEffect } from "react";
-
-// 1. DYNAMIC IMPORT: The server is now blind to this file. It will not crash.
-const ChatBot = React.lazy(() => 
-  import("../components/ChatBot").then((module) => ({ default: module.ChatBot }))
-);
+import { Navbar } from "@/components/Navbar";
+import { Hero } from "@/components/Hero";
+import { Services } from "@/components/Services"; // You will create these
+import { About } from "@/components/About";       // You will create these
+import { Ecosystem } from "@/components/Ecosystem"; // You will create these
 
 export const Route = createFileRoute("/")({
   component: HomeComponent,
 });
 
 function HomeComponent() {
-  const [isClient, setIsClient] = useState(false);
-
-  // 2. CLIENT GATE: Forces React to wait until it is safely in the browser
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) {
-    // Renders the institutional VTEC blue during the millisecond server load
-    return <div style={{ width: "100%", height: "100vh", backgroundColor: "#0D2149" }} />;
-  }
-
+  // We removed the isClient/useEffect gate and iframe because
+  // TanStack Router automatically handles SSR for us without blocking the UI.
   return (
-    <div style={{ width: "100%", height: "100vh", overflow: "hidden", position: "relative" }}>
-      <iframe 
-        src="/site.html" 
-        style={{ width: "100%", height: "100%", border: "none", display: "block" }} 
-        title="VTEC Business Group"
-      />
-      
-      {/* 3. SUSPENSE: Safely resolves the lazy import */}
-      <Suspense fallback={null}>
-        <ChatBot />
-      </Suspense>
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
+      <Navbar />
+      <main className="flex-grow">
+        <Hero />
+        <Services />
+        <About />
+        <Ecosystem />
+        {/* Add your Waitlist, Contact, and Footer components here */}
+      </main>
     </div>
   );
 }
