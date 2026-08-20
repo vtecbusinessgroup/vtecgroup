@@ -20,10 +20,14 @@ import {
   HelpCircle,
   Menu,
 } from "lucide-react";
-import { Reveal } from "../components/Reveal";
 
-const PAGE_URL = "https://vtecgroup.co.ke/miliki";
-const OG_IMAGE = "https://www.vtecgroup.co.ke/og-image.png";
+const PAGE_URL = "https://app.vtecgroup.co.ke";
+const OG_IMAGE = "https://vtecgroup.co.ke/og-image.png";
+
+// Inline Reveal component to prevent compiler errors if missing
+function Reveal({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return <div className={`animate-fade-in ${className}`}>{children}</div>;
+}
 
 export const Route = createFileRoute("/miliki")({
   head: () => ({
@@ -68,16 +72,16 @@ const GOLD = "#c9a227";
 const GOLD_LIGHT = "#f0d580";
 const BLACK = "#0a0a0a";
 const HEADING_FONT = "'Playfair Display', 'DM Serif Display', Georgia, serif";
-const BODY_FONT = "'Outfit', system-ui, sans-serif";
+const BODY_FONT = "'Outfit', 'Inter', system-ui, sans-serif";
 
 const NAV_LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/about-us", label: "About Us" },
-  { href: "/services", label: "Our Services" },
-  { href: "/solutions", label: "Solutions" },
-  { href: "/leadership", label: "Leadership" },
-  { href: "/vision-2035", label: "Vision 2035" },
-  { href: "/blog", label: "Blog" },
+  { href: "https://vtecgroup.co.ke/", label: "Home" },
+  { href: "https://vtecgroup.co.ke/about-us", label: "About Us" },
+  { href: "https://vtecgroup.co.ke/services", label: "Our Services" },
+  { href: "https://vtecgroup.co.ke/solutions", label: "Solutions" },
+  { href: "https://vtecgroup.co.ke/leadership", label: "Leadership" },
+  { href: "https://vtecgroup.co.ke/vision-2035", label: "Vision 2035" },
+  { href: "https://vtecgroup.co.ke/blog", label: "Blog" },
 ];
 
 const FEATURES = [
@@ -103,8 +107,8 @@ const FEATURES = [
   },
   {
     icon: <Download className="h-5 w-5" />,
-    title: "Installable, Not Downloadable",
-    desc: "Built mobile-first as a PWA, no App Store delay, no storage-hungry install, works instantly in-browser.",
+    title: "Direct Native Installation",
+    desc: "Built as a powerful native APK. No App Store delays, installed directly from our secure servers.",
   },
   {
     icon: <Lock className="h-5 w-5" />,
@@ -134,8 +138,8 @@ const structuredData = {
       "@type": "SoftwareApplication",
       name: "MILIKI App",
       applicationCategory: "FinanceApplication",
-      operatingSystem: "Web, PWA",
-      url: "https://miliki.vtecgroup.co.ke",
+      operatingSystem: "Android",
+      url: PAGE_URL,
       description:
         "A 2-in-1 financial co-pilot that fuses everyday budgeting with real investing in NSE equities, Money Market Funds, and bonds inside one dashboard.",
       offers: {
@@ -245,11 +249,12 @@ function Verdict({ icon, title, children }: { icon: ReactNode; title: string; ch
 }
 
 function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; visible?: boolean }) {
+  const apkUrl = "https://app.vtecgroup.co.ke/miliki.apk";
+  
   return (
     <a
-      href="https://miliki.vtecgroup.co.ke"
-      target="_blank"
-      rel="noopener noreferrer"
+      href={apkUrl}
+      download="miliki.apk"
       className={
         fixed
           ? `group fixed bottom-5 right-5 z-30 inline-flex items-center gap-2 overflow-hidden rounded-[10px] px-5 py-3 text-sm font-bold shadow-2xl transition-all duration-300 hover:-translate-y-0.5 ${
@@ -268,7 +273,7 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-white/30 transition-transform duration-700 group-hover:translate-x-full"
       />
-      <Download className="relative h-4 w-4" /> <span className="relative">{fixed ? "Install App" : "Open MILIKI App"}</span>
+      <Download className="relative h-4 w-4" /> <span className="relative">Download MILIKI APK</span>
     </a>
   );
 }
@@ -280,9 +285,9 @@ function MilikiNav() {
       style={{ backgroundColor: "rgba(10,10,10,0.92)", borderColor: "rgba(201,162,39,0.25)" }}
     >
       <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3.5">
-        <Link to="/" className="flex items-center gap-2.5 group">
+        <a href="https://vtecgroup.co.ke" className="flex items-center gap-2.5 group">
           <img
-            src="/miliki-app-logo.jpg"
+            src="/miliki-icon-512.png"
             alt="MILIKI App"
             className="h-9 w-9 rounded-xl object-cover"
             style={{ boxShadow: "0 0 16px rgba(201,162,39,0.35)" }}
@@ -295,7 +300,7 @@ function MilikiNav() {
               by VTEC Business Group
             </span>
           </span>
-        </Link>
+        </a>
 
         <details className="relative">
           <summary
@@ -311,14 +316,14 @@ function MilikiNav() {
             style={{ backgroundColor: "#0a0a0a", borderColor: "rgba(201,162,39,0.2)" }}
           >
             {NAV_LINKS.map((link) => (
-              <Link
+              <a
                 key={link.href}
-                to={link.href}
+                href={link.href}
                 className="block px-4 py-2.5 text-sm text-white/80 hover:text-white transition-colors"
                 style={{ fontFamily: BODY_FONT }}
               >
                 {link.label}
-              </Link>
+              </a>
             ))}
           </nav>
         </details>
@@ -376,7 +381,7 @@ function MilikiPage() {
               }}
             />
             <img
-              src="/miliki-app-logo.jpg"
+              src="/miliki-icon-512.png"
               alt="MILIKI App"
               className="relative h-28 w-28 rounded-2xl object-cover sm:h-32 sm:w-32"
               style={{
@@ -409,14 +414,12 @@ function MilikiPage() {
             </span>
           </h1>
           <p className="relative mx-auto mt-6 max-w-xl text-[clamp(0.95rem,2vw,1.15rem)] leading-relaxed text-white/70">
-            MILIKI is Kenya's first 2-in-1 financial co-pilot, one app that turns your everyday budget into your bridge
-            to the Nairobi Securities Exchange, Money Market Funds, and beyond.
+            MILIKI is Kenya's first 2-in-1 financial co-pilot. Download the native Android app below to access biometric security, M-Pesa sync, and live market integrations.
           </p>
           <div className="relative mt-10 flex flex-wrap items-center justify-center gap-4">
             <InstallButton />
           </div>
 
-          {/* Trust badge row */}
           <div className="relative mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs text-white/40">
             <span className="flex items-center gap-1.5">
               <Shield className="h-3.5 w-3.5" style={{ color: GOLD }} /> Built &amp; operated by VTEC Business Group
@@ -514,10 +517,6 @@ function MilikiPage() {
             Group's flagship digital product: a two-in-one financial co-pilot that fuses everyday budgeting with real
             investing inside a single, transparent dashboard.
           </p>
-          <p>
-            Where most apps force you to choose between tracking your shillings and growing them, MILIKI does both, at
-            the same time, in the same place.
-          </p>
         </QABlock>
 
         <QABlock num="02" icon={<Layers className="h-6 w-6" />} eyebrow="02 — The Problem" title="What Problem Did We Identify?">
@@ -525,11 +524,6 @@ function MilikiPage() {
             The average Kenyan's financial life is scattered across five different places: M-Pesa for spending, a
             SACCO passbook for savings, a separate portal for Money Market Funds, another app for NSE shares, and a
             WhatsApp group for "hot tips" nobody can verify.
-          </p>
-          <p>
-            No single source of truth exists. And the real damage isn't the clutter, it's the gap between{" "}
-            <em>"I saved something this month"</em> and <em>"that saving is now working for me."</em> That gap is
-            where most Kenyans' wealth quietly goes to die.
           </p>
         </QABlock>
 
@@ -583,13 +577,6 @@ function MilikiPage() {
             </Verdict>
             <Verdict icon={<Target className="h-4 w-4" />} title="It isn't competing with your budgeting app or your broker.">
               It replaced the need for both, by refusing to be just one of them.
-            </Verdict>
-            <Verdict icon={<TrendingUp className="h-4 w-4" />} title="Every idle shilling is a small, silent loss.">
-              Every month your money sits uninvested is a month your future self quietly pays for. MILIKI exists to
-              close that window.
-            </Verdict>
-            <Verdict icon={<Sparkles className="h-4 w-4" />} title="The best financial tools don't demand your attention.">
-              They work in the background so that ownership becomes your default, not your daily discipline.
             </Verdict>
           </div>
         </QABlock>
@@ -682,7 +669,7 @@ function MilikiPage() {
           <div className="relative mt-8">
             <InstallButton />
           </div>
-          <p className="relative mt-4 text-xs text-white/40">miliki.vtecgroup.co.ke · A VTEC Business Group product</p>
+          <p className="relative mt-4 text-xs text-white/40">app.vtecgroup.co.ke · A VTEC Business Group product</p>
         </Reveal>
       </section>
 
