@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import {
   Shield,
   Wallet,
@@ -75,13 +75,13 @@ const HEADING_FONT = "'Playfair Display', 'DM Serif Display', Georgia, serif";
 const BODY_FONT = "'Outfit', 'Inter', system-ui, sans-serif";
 
 const NAV_LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/about-us", label: "About Us" },
-  { href: "/services", label: "Our Services" },
-  { href: "/solutions", label: "Solutions" },
-  { href: "/leadership", label: "Leadership" },
-  { href: "/vision-2035", label: "Vision 2035" },
-  { href: "/blog", label: "Blog" },
+  { href: "https://vtecgroup.co.ke/", label: "Home" },
+  { href: "https://vtecgroup.co.ke/about-us", label: "About Us" },
+  { href: "https://vtecgroup.co.ke/services", label: "Our Services" },
+  { href: "https://vtecgroup.co.ke/solutions", label: "Solutions" },
+  { href: "https://vtecgroup.co.ke/leadership", label: "Leadership" },
+  { href: "https://vtecgroup.co.ke/vision-2035", label: "Vision 2035" },
+  { href: "https://vtecgroup.co.ke/blog", label: "Blog" },
 ];
 
 const FEATURES = [
@@ -258,13 +258,12 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
     
     setIsDownloading(true);
     
-    // Invisible iframe forces the background download without opening a new GitHub tab
+    // Background download using an invisible iframe
     const iframe = document.createElement('iframe');
     iframe.style.display = 'none';
     iframe.src = apkUrl;
     document.body.appendChild(iframe);
     
-    // Reset the button state and cleanup the iframe
     setTimeout(() => {
       setIsDownloading(false);
       if (document.body.contains(iframe)) {
@@ -427,8 +426,9 @@ function MilikiPage() {
                 filter: "blur(8px)",
               }}
             />
+            {/* Absolute URL to the working image on the app repo */}
             <img
-              src="https://app.vtecgroup.co.ke/miliki-app-logo.jpg"
+              src="https://app.vtecgroup.co.ke/miliki-icon-512.png"
               alt="MILIKI App"
               className="relative h-28 w-28 rounded-2xl object-cover sm:h-32 sm:w-32"
               style={{
