@@ -20,14 +20,10 @@ import {
   HelpCircle,
   Menu,
 } from "lucide-react";
+import { Reveal } from "../components/Reveal";
 
 const PAGE_URL = "https://app.vtecgroup.co.ke";
 const OG_IMAGE = "https://vtecgroup.co.ke/og-image.png";
-
-// Inline Reveal component to prevent compiler errors if missing
-function Reveal({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <div className={`animate-fade-in ${className}`}>{children}</div>;
-}
 
 export const Route = createFileRoute("/miliki")({
   head: () => ({
@@ -72,16 +68,16 @@ const GOLD = "#c9a227";
 const GOLD_LIGHT = "#f0d580";
 const BLACK = "#0a0a0a";
 const HEADING_FONT = "'Playfair Display', 'DM Serif Display', Georgia, serif";
-const BODY_FONT = "'Outfit', 'Inter', system-ui, sans-serif";
+const BODY_FONT = "'Outfit', system-ui, sans-serif";
 
 const NAV_LINKS = [
-  { href: "https://vtecgroup.co.ke/", label: "Home" },
-  { href: "https://vtecgroup.co.ke/about-us", label: "About Us" },
-  { href: "https://vtecgroup.co.ke/services", label: "Our Services" },
-  { href: "https://vtecgroup.co.ke/solutions", label: "Solutions" },
-  { href: "https://vtecgroup.co.ke/leadership", label: "Leadership" },
-  { href: "https://vtecgroup.co.ke/vision-2035", label: "Vision 2035" },
-  { href: "https://vtecgroup.co.ke/blog", label: "Blog" },
+  { href: "/", label: "Home" },
+  { href: "/about-us", label: "About Us" },
+  { href: "/services", label: "Our Services" },
+  { href: "/solutions", label: "Solutions" },
+  { href: "/leadership", label: "Leadership" },
+  { href: "/vision-2035", label: "Vision 2035" },
+  { href: "/blog", label: "Blog" },
 ];
 
 const FEATURES = [
@@ -287,10 +283,9 @@ function MilikiNav() {
       <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3.5">
         <a href="https://vtecgroup.co.ke" className="flex items-center gap-2.5 group">
           <img
-            src="/miliki-icon-512.png"
-            alt="MILIKI App"
-            className="h-9 w-9 rounded-xl object-cover"
-            style={{ boxShadow: "0 0 16px rgba(201,162,39,0.35)" }}
+            src="/vtec-logo.png"
+            alt="VTEC Business Group"
+            className="h-9 w-9 object-contain"
           />
           <span className="leading-tight">
             <span className="block text-white font-bold text-sm tracking-wide" style={{ fontFamily: BODY_FONT }}>
@@ -343,7 +338,7 @@ function MilikiPage() {
   }, []);
 
   return (
-    <div style={{ backgroundColor: BLACK, minHeight: "100vh", fontFamily: BODY_FONT }} className="text-white">
+    <div style={{ backgroundColor: BLACK, minHeight: "100vh", fontFamily: BODY_FONT }} className="text-white w-full overflow-x-hidden">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -381,7 +376,7 @@ function MilikiPage() {
               }}
             />
             <img
-              src="/miliki-icon-512.png"
+              src="/miliki-app-logo.jpg"
               alt="MILIKI App"
               className="relative h-28 w-28 rounded-2xl object-cover sm:h-32 sm:w-32"
               style={{
