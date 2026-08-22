@@ -214,28 +214,14 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
   const [isDownloading, setIsDownloading] = useState(false);
   const apkUrl = "https://github.com/vtecbusinessgroup/miliki-wealth-guard/releases/latest/download/miliki.apk";
   
-  const handleDownload = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (isDownloading) return;
-    
-    setIsDownloading(true);
-    
-    // Create a hidden anchor tag to trigger Android's native download manager
-    const a = document.createElement("a");
-    a.href = apkUrl;
-    a.download = "miliki.apk";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    
-    setTimeout(() => {
-      setIsDownloading(false);
-    }, 3500);
-  };
-
   return (
-    <button
-      onClick={handleDownload}
+    <a
+      href={apkUrl}
+      download="miliki.apk"
+      onClick={() => {
+        setIsDownloading(true);
+        setTimeout(() => setIsDownloading(false), 4000);
+      }}
       className={
         fixed
           ? `group fixed bottom-5 right-5 z-30 inline-flex items-center gap-2 overflow-hidden rounded-[10px] px-5 py-3 text-sm font-bold shadow-2xl transition-all duration-300 hover:-translate-y-0.5 ${
@@ -248,8 +234,7 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
         color: BLACK,
         fontFamily: BODY_FONT,
         boxShadow: fixed ? "0 10px 30px rgba(201,162,39,0.45)" : "0 8px 24px rgba(201,162,39,0.3)",
-        border: "none",
-        cursor: isDownloading ? "default" : "pointer"
+        textDecoration: "none"
       }}
     >
       <style>{`@keyframes miliki-spin { 100% { transform: rotate(360deg); } }`}</style>
@@ -260,15 +245,15 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
       {isDownloading ? (
         <>
           <div style={{ width: 15, height: 15, border: '2px solid #0A0A0A', borderTopColor: 'transparent', borderRadius: '50%', animation: 'miliki-spin 1s linear infinite' }} />
-          <span className="relative">Downloading...</span>
+          <span className="relative" style={{ color: "#0A0A0A" }}>Downloading...</span>
         </>
       ) : (
         <>
-          <Download className="relative h-4 w-4" /> 
-          <span className="relative">Download MILIKI APK</span>
+          <Download className="relative h-4 w-4" style={{ color: "#0A0A0A" }} /> 
+          <span className="relative" style={{ color: "#0A0A0A" }}>Download MILIKI APK</span>
         </>
       )}
-    </button>
+    </a>
   );
 }
 
@@ -279,7 +264,7 @@ function MilikiNav() {
       style={{ backgroundColor: "rgba(10,10,10,0.92)", borderColor: "rgba(201,162,39,0.25)" }}
     >
       <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3.5">
-        <a href="https://vtecgroup.co.ke" className="flex items-center gap-2.5 group">
+        <a href="https://vtecgroup.co.ke" className="flex items-center gap-2.5 group" style={{ textDecoration: "none" }}>
           <div 
             style={{ 
               width: 36, 
@@ -293,6 +278,7 @@ function MilikiNav() {
               padding: 2
             }}
           >
+            {/* Local VTEC logo in parent repo */}
             <img
               src="/vtec-logo.png"
               alt="VTEC Business Group"
@@ -327,7 +313,7 @@ function MilikiNav() {
                 key={link.href}
                 href={link.href}
                 className="block px-4 py-2.5 text-sm text-white/80 hover:text-white transition-colors"
-                style={{ fontFamily: BODY_FONT }}
+                style={{ fontFamily: BODY_FONT, textDecoration: "none" }}
               >
                 {link.label}
               </a>
@@ -351,11 +337,6 @@ function MilikiPage() {
 
   return (
     <div style={{ backgroundColor: BLACK, minHeight: "100vh", fontFamily: BODY_FONT }} className="text-white w-full overflow-x-hidden">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
-
       <MilikiNav />
 
       {/* Hero */}
@@ -387,6 +368,7 @@ function MilikiPage() {
                 filter: "blur(8px)",
               }}
             />
+            {/* Fetches the golden shield directly from your app server */}
             <img
               src="https://app.vtecgroup.co.ke/miliki-icon-512.png"
               alt="MILIKI App"
