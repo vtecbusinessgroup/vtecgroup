@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Shield,
   Wallet,
@@ -24,7 +24,6 @@ import {
 const PAGE_URL = "https://app.vtecgroup.co.ke";
 const OG_IMAGE = "https://vtecgroup.co.ke/og-image.png";
 
-// Inline Reveal component
 function Reveal({ children, className = "" }: { children: ReactNode; className?: string }) {
   return <div className={`animate-fade-in ${className}`}>{children}</div>;
 }
@@ -75,13 +74,13 @@ const HEADING_FONT = "'Playfair Display', 'DM Serif Display', Georgia, serif";
 const BODY_FONT = "'Outfit', 'Inter', system-ui, sans-serif";
 
 const NAV_LINKS = [
-  { href: "https://vtecgroup.co.ke/", label: "Home" },
-  { href: "https://vtecgroup.co.ke/about-us", label: "About Us" },
-  { href: "https://vtecgroup.co.ke/services", label: "Our Services" },
-  { href: "https://vtecgroup.co.ke/solutions", label: "Solutions" },
-  { href: "https://vtecgroup.co.ke/leadership", label: "Leadership" },
-  { href: "https://vtecgroup.co.ke/vision-2035", label: "Vision 2035" },
-  { href: "https://vtecgroup.co.ke/blog", label: "Blog" },
+  { href: "/", label: "Home" },
+  { href: "/about-us", label: "About Us" },
+  { href: "/services", label: "Our Services" },
+  { href: "/solutions", label: "Solutions" },
+  { href: "/leadership", label: "Leadership" },
+  { href: "/vision-2035", label: "Vision 2035" },
+  { href: "/blog", label: "Blog" },
 ];
 
 const FEATURES = [
@@ -130,43 +129,6 @@ const FAQS = [
   { q: "What does MILIKI cost?", a: "MILIKI has a free Starter tier to begin budgeting and exploring investments today, with Premium and Pro tiers for deeper tools as your portfolio grows." },
   { q: "Can I withdraw my money anytime?", a: "Yes. MILIKI is built on ownership, your assets and your access are always yours, on your terms." },
 ];
-
-const structuredData = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "SoftwareApplication",
-      name: "MILIKI App",
-      applicationCategory: "FinanceApplication",
-      operatingSystem: "Android",
-      url: PAGE_URL,
-      description:
-        "A 2-in-1 financial co-pilot that fuses everyday budgeting with real investing in NSE equities, Money Market Funds, and bonds inside one dashboard.",
-      offers: {
-        "@type": "Offer",
-        price: "0",
-        priceCurrency: "KES",
-        description: "Free Starter tier, with Premium and Pro tiers available.",
-      },
-      publisher: { "@id": "https://vtecgroup.co.ke/#organization" },
-    },
-    {
-      "@type": "FAQPage",
-      mainEntity: FAQS.map((f) => ({
-        "@type": "Question",
-        name: f.q,
-        acceptedAnswer: { "@type": "Answer", text: f.a },
-      })),
-    },
-    {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: "https://vtecgroup.co.ke/" },
-        { "@type": "ListItem", position: 2, name: "MILIKI App", item: PAGE_URL },
-      ],
-    },
-  ],
-};
 
 function SectionEyebrow({ children }: { children: ReactNode }) {
   return (
@@ -258,17 +220,16 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
     
     setIsDownloading(true);
     
-    // Background download using an invisible iframe
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = apkUrl;
-    document.body.appendChild(iframe);
+    // Create a hidden anchor tag to trigger Android's native download manager
+    const a = document.createElement("a");
+    a.href = apkUrl;
+    a.download = "miliki.apk";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
     
     setTimeout(() => {
       setIsDownloading(false);
-      if (document.body.contains(iframe)) {
-        document.body.removeChild(iframe);
-      }
     }, 3500);
   };
 
@@ -426,7 +387,6 @@ function MilikiPage() {
                 filter: "blur(8px)",
               }}
             />
-            {/* Absolute URL to the working image on the app repo */}
             <img
               src="https://app.vtecgroup.co.ke/miliki-icon-512.png"
               alt="MILIKI App"
