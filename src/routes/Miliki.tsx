@@ -24,7 +24,7 @@ import {
 const PAGE_URL = "https://app.vtecgroup.co.ke";
 const OG_IMAGE = "https://vtecgroup.co.ke/og-image.png";
 
-// Inline Reveal component (The import at the top has been removed to fix the build crash)
+// Inline Reveal component
 function Reveal({ children, className = "" }: { children: ReactNode; className?: string }) {
   return <div className={`animate-fade-in ${className}`}>{children}</div>;
 }
@@ -75,13 +75,13 @@ const HEADING_FONT = "'Playfair Display', 'DM Serif Display', Georgia, serif";
 const BODY_FONT = "'Outfit', 'Inter', system-ui, sans-serif";
 
 const NAV_LINKS = [
-  { href: "https://vtecgroup.co.ke/", label: "Home" },
-  { href: "https://vtecgroup.co.ke/about-us", label: "About Us" },
-  { href: "https://vtecgroup.co.ke/services", label: "Our Services" },
-  { href: "https://vtecgroup.co.ke/solutions", label: "Solutions" },
-  { href: "https://vtecgroup.co.ke/leadership", label: "Leadership" },
-  { href: "https://vtecgroup.co.ke/vision-2035", label: "Vision 2035" },
-  { href: "https://vtecgroup.co.ke/blog", label: "Blog" },
+  { href: "/", label: "Home" },
+  { href: "/about-us", label: "About Us" },
+  { href: "/services", label: "Our Services" },
+  { href: "/solutions", label: "Solutions" },
+  { href: "/leadership", label: "Leadership" },
+  { href: "/vision-2035", label: "Vision 2035" },
+  { href: "/blog", label: "Blog" },
 ];
 
 const FEATURES = [
@@ -249,16 +249,33 @@ function Verdict({ icon, title, children }: { icon: ReactNode; title: string; ch
 }
 
 function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; visible?: boolean }) {
+  const [isDownloading, setIsDownloading] = useState(false);
   const apkUrl = "https://github.com/vtecbusinessgroup/miliki-wealth-guard/releases/latest/download/miliki.apk";
   
+  const handleDownload = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (isDownloading) return;
+    
+    setIsDownloading(true);
+    
+    // Invisible iframe forces the background download without opening a new GitHub tab
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = apkUrl;
+    document.body.appendChild(iframe);
+    
+    // Reset the button state and cleanup the iframe
+    setTimeout(() => {
+      setIsDownloading(false);
+      if (document.body.contains(iframe)) {
+        document.body.removeChild(iframe);
+      }
+    }, 3500);
+  };
+
   return (
-    <a
-      href={apkUrl}
-      onClick={(e) => {
-        // Prevents opening a new tab and forces background download
-        e.preventDefault();
-        window.location.href = apkUrl;
-      }}
+    <button
+      onClick={handleDownload}
       className={
         fixed
           ? `group fixed bottom-5 right-5 z-30 inline-flex items-center gap-2 overflow-hidden rounded-[10px] px-5 py-3 text-sm font-bold shadow-2xl transition-all duration-300 hover:-translate-y-0.5 ${
@@ -271,15 +288,27 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
         color: BLACK,
         fontFamily: BODY_FONT,
         boxShadow: fixed ? "0 10px 30px rgba(201,162,39,0.45)" : "0 8px 24px rgba(201,162,39,0.3)",
-        cursor: "pointer"
+        border: "none",
+        cursor: isDownloading ? "default" : "pointer"
       }}
     >
+      <style>{`@keyframes miliki-spin { 100% { transform: rotate(360deg); } }`}</style>
       <span
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-white/30 transition-transform duration-700 group-hover:translate-x-full"
       />
-      <Download className="relative h-4 w-4" /> <span className="relative">Download MILIKI APK</span>
-    </a>
+      {isDownloading ? (
+        <>
+          <div style={{ width: 15, height: 15, border: '2px solid #0A0A0A', borderTopColor: 'transparent', borderRadius: '50%', animation: 'miliki-spin 1s linear infinite' }} />
+          <span className="relative">Downloading...</span>
+        </>
+      ) : (
+        <>
+          <Download className="relative h-4 w-4" /> 
+          <span className="relative">Download MILIKI APK</span>
+        </>
+      )}
+    </button>
   );
 }
 
