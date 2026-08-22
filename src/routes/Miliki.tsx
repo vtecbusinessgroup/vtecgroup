@@ -20,12 +20,11 @@ import {
   HelpCircle,
   Menu,
 } from "lucide-react";
-import { Reveal } from "../components/Reveal";
 
 const PAGE_URL = "https://app.vtecgroup.co.ke";
 const OG_IMAGE = "https://vtecgroup.co.ke/og-image.png";
 
-// Inline Reveal component to prevent compiler errors if missing
+// Inline Reveal component (The import at the top has been removed to fix the build crash)
 function Reveal({ children, className = "" }: { children: ReactNode; className?: string }) {
   return <div className={`animate-fade-in ${className}`}>{children}</div>;
 }
@@ -255,7 +254,11 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
   return (
     <a
       href={apkUrl}
-      download="miliki.apk"
+      onClick={(e) => {
+        // Prevents opening a new tab and forces background download
+        e.preventDefault();
+        window.location.href = apkUrl;
+      }}
       className={
         fixed
           ? `group fixed bottom-5 right-5 z-30 inline-flex items-center gap-2 overflow-hidden rounded-[10px] px-5 py-3 text-sm font-bold shadow-2xl transition-all duration-300 hover:-translate-y-0.5 ${
@@ -268,6 +271,7 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
         color: BLACK,
         fontFamily: BODY_FONT,
         boxShadow: fixed ? "0 10px 30px rgba(201,162,39,0.45)" : "0 8px 24px rgba(201,162,39,0.3)",
+        cursor: "pointer"
       }}
     >
       <span
