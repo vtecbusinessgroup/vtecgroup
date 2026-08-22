@@ -245,12 +245,11 @@ function Verdict({ icon, title, children }: { icon: ReactNode; title: string; ch
 }
 
 function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; visible?: boolean }) {
-  const apkUrl = "https://app.vtecgroup.co.ke/miliki.apk";
+  const apkUrl = "https://github.com/vtecbusinessgroup/miliki-wealth-guard/releases/latest/download/miliki.apk";
   
   return (
     <a
       href={apkUrl}
-      download="miliki.apk"
       className={
         fixed
           ? `group fixed bottom-5 right-5 z-30 inline-flex items-center gap-2 overflow-hidden rounded-[10px] px-5 py-3 text-sm font-bold shadow-2xl transition-all duration-300 hover:-translate-y-0.5 ${
@@ -281,12 +280,27 @@ function MilikiNav() {
       style={{ backgroundColor: "rgba(10,10,10,0.92)", borderColor: "rgba(201,162,39,0.25)" }}
     >
       <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3.5">
-        <a href="https://vtecgroup.co.ke" className="flex items-center gap-2.5 group">
-          <img
-            src="/vtec-logo.png"
-            alt="VTEC Business Group"
-            className="h-9 w-9 object-contain"
-          />
+        <Link to="/" className="flex items-center gap-2.5 group">
+          {/* White circular container for the VTEC logo */}
+          <div 
+            style={{ 
+              width: 36, 
+              height: 36, 
+              backgroundColor: "#FFFFFF", 
+              borderRadius: "50%", 
+              display: "flex", 
+              alignItems: "center", 
+              justifyContent: "center", 
+              overflow: "hidden",
+              padding: 2
+            }}
+          >
+            <img
+              src="/vtec-logo.png"
+              alt="VTEC Business Group"
+              style={{ width: "100%", height: "100%", objectFit: "contain" }}
+            />
+          </div>
           <span className="leading-tight">
             <span className="block text-white font-bold text-sm tracking-wide" style={{ fontFamily: BODY_FONT }}>
               MILIKI
@@ -295,7 +309,7 @@ function MilikiNav() {
               by VTEC Business Group
             </span>
           </span>
-        </a>
+        </Link>
 
         <details className="relative">
           <summary
@@ -311,14 +325,14 @@ function MilikiNav() {
             style={{ backgroundColor: "#0a0a0a", borderColor: "rgba(201,162,39,0.2)" }}
           >
             {NAV_LINKS.map((link) => (
-              <a
+              <Link
                 key={link.href}
-                href={link.href}
+                to={link.href}
                 className="block px-4 py-2.5 text-sm text-white/80 hover:text-white transition-colors"
                 style={{ fontFamily: BODY_FONT }}
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </nav>
         </details>
@@ -338,7 +352,7 @@ function MilikiPage() {
   }, []);
 
   return (
-    <div style={{ backgroundColor: BLACK, minHeight: "100vh", fontFamily: BODY_FONT }} className="text-white w-full overflow-x-hidden">
+    <div style={{ backgroundColor: BLACK, minHeight: "100vh", fontFamily: BODY_FONT }} className="text-white">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
