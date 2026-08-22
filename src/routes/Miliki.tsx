@@ -25,6 +25,11 @@ import { Reveal } from "../components/Reveal";
 const PAGE_URL = "https://app.vtecgroup.co.ke";
 const OG_IMAGE = "https://vtecgroup.co.ke/og-image.png";
 
+// Inline Reveal component to prevent compiler errors if missing
+function Reveal({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return <div className={`animate-fade-in ${className}`}>{children}</div>;
+}
+
 export const Route = createFileRoute("/miliki")({
   head: () => ({
     meta: [
@@ -68,16 +73,16 @@ const GOLD = "#c9a227";
 const GOLD_LIGHT = "#f0d580";
 const BLACK = "#0a0a0a";
 const HEADING_FONT = "'Playfair Display', 'DM Serif Display', Georgia, serif";
-const BODY_FONT = "'Outfit', system-ui, sans-serif";
+const BODY_FONT = "'Outfit', 'Inter', system-ui, sans-serif";
 
 const NAV_LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/about-us", label: "About Us" },
-  { href: "/services", label: "Our Services" },
-  { href: "/solutions", label: "Solutions" },
-  { href: "/leadership", label: "Leadership" },
-  { href: "/vision-2035", label: "Vision 2035" },
-  { href: "/blog", label: "Blog" },
+  { href: "https://vtecgroup.co.ke/", label: "Home" },
+  { href: "https://vtecgroup.co.ke/about-us", label: "About Us" },
+  { href: "https://vtecgroup.co.ke/services", label: "Our Services" },
+  { href: "https://vtecgroup.co.ke/solutions", label: "Solutions" },
+  { href: "https://vtecgroup.co.ke/leadership", label: "Leadership" },
+  { href: "https://vtecgroup.co.ke/vision-2035", label: "Vision 2035" },
+  { href: "https://vtecgroup.co.ke/blog", label: "Blog" },
 ];
 
 const FEATURES = [
@@ -250,6 +255,7 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
   return (
     <a
       href={apkUrl}
+      download="miliki.apk"
       className={
         fixed
           ? `group fixed bottom-5 right-5 z-30 inline-flex items-center gap-2 overflow-hidden rounded-[10px] px-5 py-3 text-sm font-bold shadow-2xl transition-all duration-300 hover:-translate-y-0.5 ${
@@ -280,8 +286,7 @@ function MilikiNav() {
       style={{ backgroundColor: "rgba(10,10,10,0.92)", borderColor: "rgba(201,162,39,0.25)" }}
     >
       <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3.5">
-        <Link to="/" className="flex items-center gap-2.5 group">
-          {/* White circular container for the VTEC logo */}
+        <a href="https://vtecgroup.co.ke" className="flex items-center gap-2.5 group">
           <div 
             style={{ 
               width: 36, 
@@ -309,7 +314,7 @@ function MilikiNav() {
               by VTEC Business Group
             </span>
           </span>
-        </Link>
+        </a>
 
         <details className="relative">
           <summary
@@ -325,14 +330,14 @@ function MilikiNav() {
             style={{ backgroundColor: "#0a0a0a", borderColor: "rgba(201,162,39,0.2)" }}
           >
             {NAV_LINKS.map((link) => (
-              <Link
+              <a
                 key={link.href}
-                to={link.href}
+                href={link.href}
                 className="block px-4 py-2.5 text-sm text-white/80 hover:text-white transition-colors"
                 style={{ fontFamily: BODY_FONT }}
               >
                 {link.label}
-              </Link>
+              </a>
             ))}
           </nav>
         </details>
@@ -352,7 +357,7 @@ function MilikiPage() {
   }, []);
 
   return (
-    <div style={{ backgroundColor: BLACK, minHeight: "100vh", fontFamily: BODY_FONT }} className="text-white">
+    <div style={{ backgroundColor: BLACK, minHeight: "100vh", fontFamily: BODY_FONT }} className="text-white w-full overflow-x-hidden">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -390,7 +395,7 @@ function MilikiPage() {
               }}
             />
             <img
-              src="/miliki-app-logo.jpg"
+              src="https://app.vtecgroup.co.ke/miliki-app-logo.jpg"
               alt="MILIKI App"
               className="relative h-28 w-28 rounded-2xl object-cover sm:h-32 sm:w-32"
               style={{
