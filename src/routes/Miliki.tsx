@@ -213,60 +213,45 @@ function Verdict({ icon, title, children }: { icon: ReactNode; title: string; ch
 function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; visible?: boolean }) {
   const [isDownloading, setIsDownloading] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [mbDownloaded, setMbDownloaded] = useState("0.00");
   
-  // The exact updated link you provided
-  const apkUrl = "https://release-assets.githubusercontent.com/github-production-release-asset/1264472098/a1f435c4-2314-41b5-9a0f-3f9df12238d0?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-08-22T07%3A27%3A57Z&rscd=attachment%3B+filename%3Dmiliki.apk&rsct=application%2Fvnd.android.package-archive&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-08-22T06%3A27%3A34Z&ske=2026-08-22T07%3A27%3A57Z&sks=b&skv=2018-11-09&sig=FTMxh%2FGtLU90dBlfNxkDJtcFFbrjF3AQi9Gh8CgVdaw%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc4NzM4MTg1NCwibmJmIjoxNzg3MzgwMDU0LCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.gQa02nrEePeWpMM7Z9vnEupGLb0EtxilI-4z5sDIY5c";
+  const apkUrl = "https://release-assets.githubusercontent.com/github-production-release-asset/1264472098/a1f435c4-2314-41b5-9a0f-3f9df12238d0?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-08-22T07%3A27%3A57Z&rscd=attachment%3B+filename%3Dmiliki.apk&rsct=application%2Fvnd.android.package-archive&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-08-22T06%3A27%3A34Z&ske=2026-08-22T07%3A27%3A57Z&sks=b&skv=2018-11-09&sig=FTMxh%2FGtLU90dBlfNxkDJtcFFbrjF3AQi9Gh8CgVdaw%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc4NzM4MTg1NCwibmJmIjoxNzg3MzgwMDU0LCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.gQa02nrEePeWpMM7Z9vnEupGLb0EtxilI-4z5sDIY5c&response-content-disposition=attachment%3B%20filename%3Dmiliki.apk&response-content-type=application%2Fvnd.android.package-archive";
   
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isDownloading) {
+      setProgress(0);
+      interval = setInterval(() => {
+        setProgress((p) => {
+          if (p >= 92) return 92; // Holds near end until completion
+          return p + Math.floor(Math.random() * 8) + 2;
+        });
+      }, 250);
+    }
+    return () => clearInterval(interval);
+  }, [isDownloading]);
+
   const handleDownload = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (isDownloading) return;
+    if (isDownloading) {
+      e.preventDefault(); // Prevent duplicate clicks
+      return;
+    }
     
+    // We let the natural `href` navigation happen to bypass Chrome's block.
+    // The OS download manager takes over instantly while we run the UI simulation.
     setIsDownloading(true);
-    setProgress(0);
-    setMbDownloaded("0.00");
     
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', apkUrl, true);
-    xhr.responseType = 'blob';
-
-    xhr.onprogress = (event) => {
-      if (event.lengthComputable) {
-        setProgress(Math.round((event.loaded / event.total) * 100));
-        setMbDownloaded((event.loaded / (1024 * 1024)).toFixed(2));
-      }
-    };
-
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        const blobUrl = window.URL.createObjectURL(xhr.response);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = blobUrl;
-        a.download = 'miliki.apk';
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(blobUrl);
-        document.body.removeChild(a);
-      } else {
-        // Fallback if CORS blocks the XHR
-        window.location.assign(apkUrl);
-      }
-      setTimeout(() => setIsDownloading(false), 1500);
-    };
-
-    xhr.onerror = () => {
-      // Fallback if CORS blocks the XHR
-      window.location.assign(apkUrl);
-      setIsDownloading(false);
-    };
-
-    xhr.send();
+    setTimeout(() => {
+      setProgress(100);
+      setTimeout(() => setIsDownloading(false), 1200);
+    }, 4500);
   };
+
+  const simulatedMb = ((progress / 100) * 10.69).toFixed(2);
 
   return (
     <>
-      <button
+      <a
+        href={apkUrl}
         onClick={handleDownload}
         className={
           fixed
@@ -280,8 +265,7 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
           color: BLACK,
           fontFamily: BODY_FONT,
           boxShadow: fixed ? "0 10px 30px rgba(201,162,39,0.45)" : "0 8px 24px rgba(201,162,39,0.3)",
-          border: "none",
-          cursor: isDownloading ? "default" : "pointer"
+          textDecoration: "none"
         }}
       >
         <span
@@ -292,7 +276,7 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
         <span className="relative" style={{ color: BLACK }}>
           {isDownloading ? "Downloading..." : "Download MILIKI APK"}
         </span>
-      </button>
+      </a>
 
       {/* Floating VidMate-Style Download Card */}
       {isDownloading && (
@@ -313,7 +297,7 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
           </div>
           <div style={{ flex: 1, textAlign: "left" }}>
             <p style={{ fontFamily: "Inter", fontSize: 14, fontWeight: 700, color: "#FFFFFF", margin: "0 0 4px 0" }}>Downloading MILIKI...</p>
-            <p style={{ fontFamily: "Inter", fontSize: 12, color: "#A0A0A0", margin: 0 }}>{mbDownloaded} MB / 10.69 MB • {progress}%</p>
+            <p style={{ fontFamily: "Inter", fontSize: 12, color: "#A0A0A0", margin: 0 }}>{simulatedMb} MB / 10.69 MB • {progress}%</p>
           </div>
         </div>
       )}
@@ -343,7 +327,7 @@ function MilikiNav() {
             }}
           >
             <img
-              src="https://vtecgroup.co.ke/vtec-logo.png"
+              src="/vtec-logo.png"
               alt="VTEC Business Group"
               style={{ width: "100%", height: "100%", objectFit: "contain" }}
             />
