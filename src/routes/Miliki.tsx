@@ -212,48 +212,112 @@ function Verdict({ icon, title, children }: { icon: ReactNode; title: string; ch
 
 function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; visible?: boolean }) {
   const [isDownloading, setIsDownloading] = useState(false);
-  const apkUrl = "https://github.com/vtecbusinessgroup/miliki-wealth-guard/releases/latest/download/miliki.apk";
+  const [progress, setProgress] = useState(0);
+  const [mbDownloaded, setMbDownloaded] = useState("0.00");
   
-  return (
-    <a
-      href={apkUrl}
-      download="miliki.apk"
-      onClick={() => {
-        setIsDownloading(true);
-        setTimeout(() => setIsDownloading(false), 4000);
-      }}
-      className={
-        fixed
-          ? `group fixed bottom-5 right-5 z-30 inline-flex items-center gap-2 overflow-hidden rounded-[10px] px-5 py-3 text-sm font-bold shadow-2xl transition-all duration-300 hover:-translate-y-0.5 ${
-              visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"
-            }`
-          : "group relative inline-flex items-center gap-2 overflow-hidden rounded-[10px] px-7 py-3.5 text-sm font-bold transition-all duration-300 hover:-translate-y-0.5"
+  // The exact updated link you provided
+  const apkUrl = "https://release-assets.githubusercontent.com/github-production-release-asset/1264472098/a1f435c4-2314-41b5-9a0f-3f9df12238d0?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-08-22T07%3A27%3A57Z&rscd=attachment%3B+filename%3Dmiliki.apk&rsct=application%2Fvnd.android.package-archive&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-08-22T06%3A27%3A34Z&ske=2026-08-22T07%3A27%3A57Z&sks=b&skv=2018-11-09&sig=FTMxh%2FGtLU90dBlfNxkDJtcFFbrjF3AQi9Gh8CgVdaw%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc4NzM4MTg1NCwibmJmIjoxNzg3MzgwMDU0LCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.gQa02nrEePeWpMM7Z9vnEupGLb0EtxilI-4z5sDIY5c";
+  
+  const handleDownload = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (isDownloading) return;
+    
+    setIsDownloading(true);
+    setProgress(0);
+    setMbDownloaded("0.00");
+    
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', apkUrl, true);
+    xhr.responseType = 'blob';
+
+    xhr.onprogress = (event) => {
+      if (event.lengthComputable) {
+        setProgress(Math.round((event.loaded / event.total) * 100));
+        setMbDownloaded((event.loaded / (1024 * 1024)).toFixed(2));
       }
-      style={{
-        backgroundImage: `linear-gradient(135deg, ${GOLD}, ${GOLD_LIGHT})`,
-        color: BLACK,
-        fontFamily: BODY_FONT,
-        boxShadow: fixed ? "0 10px 30px rgba(201,162,39,0.45)" : "0 8px 24px rgba(201,162,39,0.3)",
-        textDecoration: "none"
-      }}
-    >
-      <style>{`@keyframes miliki-spin { 100% { transform: rotate(360deg); } }`}</style>
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-white/30 transition-transform duration-700 group-hover:translate-x-full"
-      />
-      {isDownloading ? (
-        <>
-          <div style={{ width: 15, height: 15, border: '2px solid #0A0A0A', borderTopColor: 'transparent', borderRadius: '50%', animation: 'miliki-spin 1s linear infinite' }} />
-          <span className="relative" style={{ color: "#0A0A0A" }}>Downloading...</span>
-        </>
-      ) : (
-        <>
-          <Download className="relative h-4 w-4" style={{ color: "#0A0A0A" }} /> 
-          <span className="relative" style={{ color: "#0A0A0A" }}>Download MILIKI APK</span>
-        </>
+    };
+
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        const blobUrl = window.URL.createObjectURL(xhr.response);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = blobUrl;
+        a.download = 'miliki.apk';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(blobUrl);
+        document.body.removeChild(a);
+      } else {
+        // Fallback if CORS blocks the XHR
+        window.location.assign(apkUrl);
+      }
+      setTimeout(() => setIsDownloading(false), 1500);
+    };
+
+    xhr.onerror = () => {
+      // Fallback if CORS blocks the XHR
+      window.location.assign(apkUrl);
+      setIsDownloading(false);
+    };
+
+    xhr.send();
+  };
+
+  return (
+    <>
+      <button
+        onClick={handleDownload}
+        className={
+          fixed
+            ? `group fixed bottom-5 right-5 z-30 inline-flex items-center gap-2 overflow-hidden rounded-[10px] px-5 py-3 text-sm font-bold shadow-2xl transition-all duration-300 hover:-translate-y-0.5 ${
+                visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"
+              }`
+            : "group relative inline-flex items-center gap-2 overflow-hidden rounded-[10px] px-7 py-3.5 text-sm font-bold transition-all duration-300 hover:-translate-y-0.5"
+        }
+        style={{
+          backgroundImage: `linear-gradient(135deg, ${GOLD}, ${GOLD_LIGHT})`,
+          color: BLACK,
+          fontFamily: BODY_FONT,
+          boxShadow: fixed ? "0 10px 30px rgba(201,162,39,0.45)" : "0 8px 24px rgba(201,162,39,0.3)",
+          border: "none",
+          cursor: isDownloading ? "default" : "pointer"
+        }}
+      >
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-white/30 transition-transform duration-700 group-hover:translate-x-full"
+        />
+        <Download className="relative h-4 w-4" style={{ color: BLACK }} /> 
+        <span className="relative" style={{ color: BLACK }}>
+          {isDownloading ? "Downloading..." : "Download MILIKI APK"}
+        </span>
+      </button>
+
+      {/* Floating VidMate-Style Download Card */}
+      {isDownloading && (
+        <div style={{
+          position: "fixed", bottom: 24, left: "50%", transform: "translateX(-50%)", zIndex: 999999,
+          background: "#161616", borderRadius: 16, padding: "16px 20px", width: "calc(100% - 48px)", maxWidth: 400,
+          boxShadow: "0 10px 40px rgba(0,0,0,0.8)", border: "1px solid rgba(255,255,255,0.1)",
+          display: "flex", alignItems: "center", gap: 16
+        }}>
+          <div style={{ position: "relative", width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <svg width="40" height="40" viewBox="0 0 40 40" style={{ transform: "rotate(-90deg)" }}>
+              <circle cx="20" cy="20" r="16" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="4" />
+              <circle cx="20" cy="20" r="16" fill="none" stroke="#D4AF37" strokeWidth="4" 
+                      strokeDasharray="100.5" strokeDashoffset={100.5 - (progress / 100) * 100.5} 
+                      strokeLinecap="round" style={{ transition: "stroke-dashoffset 0.2s ease" }} />
+            </svg>
+            <Download size={14} color="#D4AF37" style={{ position: "absolute" }} />
+          </div>
+          <div style={{ flex: 1, textAlign: "left" }}>
+            <p style={{ fontFamily: "Inter", fontSize: 14, fontWeight: 700, color: "#FFFFFF", margin: "0 0 4px 0" }}>Downloading MILIKI...</p>
+            <p style={{ fontFamily: "Inter", fontSize: 12, color: "#A0A0A0", margin: 0 }}>{mbDownloaded} MB / 10.69 MB • {progress}%</p>
+          </div>
+        </div>
       )}
-    </a>
+    </>
   );
 }
 
@@ -278,9 +342,8 @@ function MilikiNav() {
               padding: 2
             }}
           >
-            {/* Local VTEC logo in parent repo */}
             <img
-              src="/vtec-logo.png"
+              src="https://vtecgroup.co.ke/vtec-logo.png"
               alt="VTEC Business Group"
               style={{ width: "100%", height: "100%", objectFit: "contain" }}
             />
@@ -337,6 +400,11 @@ function MilikiPage() {
 
   return (
     <div style={{ backgroundColor: BLACK, minHeight: "100vh", fontFamily: BODY_FONT }} className="text-white w-full overflow-x-hidden">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+
       <MilikiNav />
 
       {/* Hero */}
@@ -368,7 +436,6 @@ function MilikiPage() {
                 filter: "blur(8px)",
               }}
             />
-            {/* Fetches the golden shield directly from your app server */}
             <img
               src="https://app.vtecgroup.co.ke/miliki-icon-512.png"
               alt="MILIKI App"
