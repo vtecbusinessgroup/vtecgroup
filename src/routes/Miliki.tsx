@@ -23,7 +23,7 @@ import {
 
 const PAGE_URL = "https://app.vtecgroup.co.ke";
 const OG_IMAGE = "https://vtecgroup.co.ke/og-image.png";
-const APK_DOWNLOAD_URL = "https://github.com/vtecbusinessgroup/miliki-wealth-guard/releases/latest/download/miliki.apk";
+const APK_DOWNLOAD_URL = "https://bqeffpcdryvdurfzkjyu.supabase.co/storage/v1/object/public/apk/miliki.apk";
 
 function Reveal({ children, className = "" }: { children: ReactNode; className?: string }) {
   return <div className={`animate-fade-in ${className}`}>{children}</div>;
@@ -214,31 +214,51 @@ function Verdict({ icon, title, children }: { icon: ReactNode; title: string; ch
 function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; visible?: boolean }) {
   const [isDownloading, setIsDownloading] = useState(false);
   const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    let interval: ReturnType<typeof setInterval>;
-    if (isDownloading) {
-      interval = setInterval(() => {
-        setProgress((prev) => {
-          if (prev >= 92) return 92;
-          return prev + Math.floor(Math.random() * 8) + 4;
-        });
-      }, 200);
-    }
-    return () => clearInterval(interval);
-  }, [isDownloading]);
-
-  const handleDownload = () => {
+  const [mbDownloaded, setMbDownloaded] = useState("0.00");
+  
+  const handleDownload = (e: React.MouseEvent) => {
+    e.preventDefault();
     if (isDownloading) return;
+    
     setIsDownloading(true);
-    setProgress(15);
-    setTimeout(() => {
-      setProgress(100);
-      setTimeout(() => setIsDownloading(false), 1200);
-    }, 3800);
-  };
+    setProgress(0);
+    setMbDownloaded("0.00");
+    
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', APK_DOWNLOAD_URL, true);
+    xhr.responseType = 'blob';
 
-  const simulatedMb = ((progress / 100) * 10.69).toFixed(2);
+    xhr.onprogress = (event) => {
+      if (event.lengthComputable) {
+        setProgress(Math.round((event.loaded / event.total) * 100));
+        setMbDownloaded((event.loaded / (1024 * 1024)).toFixed(2));
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        const blobUrl = window.URL.createObjectURL(xhr.response);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = blobUrl;
+        a.download = 'miliki.apk';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(blobUrl);
+        document.body.removeChild(a);
+      } else {
+        window.location.assign(APK_DOWNLOAD_URL);
+      }
+      setTimeout(() => setIsDownloading(false), 1500);
+    };
+
+    xhr.onerror = () => {
+      window.location.assign(APK_DOWNLOAD_URL);
+      setIsDownloading(false);
+    };
+
+    xhr.send();
+  };
 
   return (
     <>
@@ -257,17 +277,25 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
           color: BLACK,
           fontFamily: BODY_FONT,
           boxShadow: fixed ? "0 10px 30px rgba(201,162,39,0.45)" : "0 8px 24px rgba(201,162,39,0.3)",
-          textDecoration: "none",
+          textDecoration: "none"
         }}
       >
+        <style>{`@keyframes miliki-spin { 100% { transform: rotate(360deg); } }`}</style>
         <span
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-white/30 transition-transform duration-700 group-hover:translate-x-full"
         />
-        <Download className="relative h-4 w-4" style={{ color: BLACK }} /> 
-        <span className="relative" style={{ color: BLACK }}>
-          {isDownloading ? "Downloading..." : "Download MILIKI APK"}
-        </span>
+        {isDownloading ? (
+          <>
+            <div style={{ width: 15, height: 15, border: '2px solid #0A0A0A', borderTopColor: 'transparent', borderRadius: '50%', animation: 'miliki-spin 1s linear infinite' }} />
+            <span className="relative" style={{ color: "#0A0A0A" }}>Downloading...</span>
+          </>
+        ) : (
+          <>
+            <Download className="relative h-4 w-4" style={{ color: "#0A0A0A" }} /> 
+            <span className="relative" style={{ color: "#0A0A0A" }}>Download MILIKI APK</span>
+          </>
+        )}
       </a>
 
       {isDownloading && (
@@ -288,7 +316,7 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
           </div>
           <div style={{ flex: 1, textAlign: "left" }}>
             <p style={{ fontFamily: "Inter", fontSize: 14, fontWeight: 700, color: "#FFFFFF", margin: "0 0 4px 0" }}>Downloading MILIKI...</p>
-            <p style={{ fontFamily: "Inter", fontSize: 12, color: "#A0A0A0", margin: 0 }}>{simulatedMb} MB / 10.69 MB • {progress}%</p>
+            <p style={{ fontFamily: "Inter", fontSize: 12, color: "#A0A0A0", margin: 0 }}>{mbDownloaded} MB / 10.69 MB • {progress}%</p>
           </div>
         </div>
       )}
@@ -318,7 +346,7 @@ function MilikiNav() {
             }}
           >
             <img
-              src="https://vtecgroup.co.ke/vtec-logo.png"
+              src="/vtec-logo.png"
               alt="VTEC Business Group"
               style={{ width: "100%", height: "100%", objectFit: "contain" }}
             />
