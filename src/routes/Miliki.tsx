@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Shield,
   Wallet,
@@ -20,14 +20,10 @@ import {
   HelpCircle,
   Menu,
 } from "lucide-react";
+import { Reveal } from "../components/Reveal";
 
 const PAGE_URL = "https://app.vtecgroup.co.ke";
 const OG_IMAGE = "https://vtecgroup.co.ke/og-image.png";
-const APK_DOWNLOAD_URL = "https://bqeffpcdryvdurfzkjyu.supabase.co/storage/v1/object/public/apk/miliki.apk";
-
-function Reveal({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <div className={`animate-fade-in ${className}`}>{children}</div>;
-}
 
 export const Route = createFileRoute("/miliki")({
   head: () => ({
@@ -73,15 +69,16 @@ const GOLD_LIGHT = "#f0d580";
 const BLACK = "#0a0a0a";
 const HEADING_FONT = "'Playfair Display', 'DM Serif Display', Georgia, serif";
 const BODY_FONT = "'Outfit', 'Inter', system-ui, sans-serif";
+const APK_DOWNLOAD_URL = "https://bqeffpcdryvdurfzkjyu.supabase.co/storage/v1/object/public/apk/miliki.apk";
 
 const NAV_LINKS = [
-  { href: "https://vtecgroup.co.ke/", label: "Home" },
-  { href: "https://vtecgroup.co.ke/about-us", label: "About Us" },
-  { href: "https://vtecgroup.co.ke/services", label: "Our Services" },
-  { href: "https://vtecgroup.co.ke/solutions", label: "Solutions" },
-  { href: "https://vtecgroup.co.ke/leadership", label: "Leadership" },
-  { href: "https://vtecgroup.co.ke/vision-2035", label: "Vision 2035" },
-  { href: "https://vtecgroup.co.ke/blog", label: "Blog" },
+  { href: "/", label: "Home" },
+  { href: "/about-us", label: "About Us" },
+  { href: "/services", label: "Our Services" },
+  { href: "/solutions", label: "Solutions" },
+  { href: "/leadership", label: "Leadership" },
+  { href: "/vision-2035", label: "Vision 2035" },
+  { href: "/blog", label: "Blog" },
 ];
 
 const FEATURES = [
@@ -224,46 +221,26 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
     setProgress(0);
     setMbDownloaded("0.00");
     
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', APK_DOWNLOAD_URL, true);
-    xhr.responseType = 'blob';
+    // Natively trigger download without opening a new tab. Chrome easily catches Supabase links.
+    window.location.assign(APK_DOWNLOAD_URL);
 
-    xhr.onprogress = (event) => {
-      if (event.lengthComputable) {
-        setProgress(Math.round((event.loaded / event.total) * 100));
-        setMbDownloaded((event.loaded / (1024 * 1024)).toFixed(2));
+    // Simulate VidMate progress bar UI while the native download runs in background
+    let currentProgress = 0;
+    const interval = setInterval(() => {
+      currentProgress += Math.floor(Math.random() * 12) + 4;
+      if (currentProgress >= 100) {
+        currentProgress = 100;
+        clearInterval(interval);
+        setTimeout(() => setIsDownloading(false), 2000);
       }
-    };
-
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        const blobUrl = window.URL.createObjectURL(xhr.response);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = blobUrl;
-        a.download = 'miliki.apk';
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(blobUrl);
-        document.body.removeChild(a);
-      } else {
-        window.location.assign(APK_DOWNLOAD_URL);
-      }
-      setTimeout(() => setIsDownloading(false), 1500);
-    };
-
-    xhr.onerror = () => {
-      window.location.assign(APK_DOWNLOAD_URL);
-      setIsDownloading(false);
-    };
-
-    xhr.send();
+      setProgress(currentProgress);
+      setMbDownloaded(((currentProgress / 100) * 10.69).toFixed(2));
+    }, 450);
   };
 
   return (
     <>
-      <a
-        href={APK_DOWNLOAD_URL}
+      <button
         onClick={handleDownload}
         className={
           fixed
@@ -277,7 +254,8 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
           color: BLACK,
           fontFamily: BODY_FONT,
           boxShadow: fixed ? "0 10px 30px rgba(201,162,39,0.45)" : "0 8px 24px rgba(201,162,39,0.3)",
-          textDecoration: "none"
+          border: "none",
+          cursor: isDownloading ? "default" : "pointer"
         }}
       >
         <style>{`@keyframes miliki-spin { 100% { transform: rotate(360deg); } }`}</style>
@@ -288,16 +266,17 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
         {isDownloading ? (
           <>
             <div style={{ width: 15, height: 15, border: '2px solid #0A0A0A', borderTopColor: 'transparent', borderRadius: '50%', animation: 'miliki-spin 1s linear infinite' }} />
-            <span className="relative" style={{ color: "#0A0A0A" }}>Downloading...</span>
+            <span className="relative text-[#0A0A0A]">Downloading...</span>
           </>
         ) : (
           <>
-            <Download className="relative h-4 w-4" style={{ color: "#0A0A0A" }} /> 
-            <span className="relative" style={{ color: "#0A0A0A" }}>Download MILIKI APK</span>
+            <Download className="relative h-4 w-4 text-[#0A0A0A]" /> 
+            <span className="relative text-[#0A0A0A]">Download MILIKI APK</span>
           </>
         )}
-      </a>
+      </button>
 
+      {/* Floating VidMate-Style Download Card */}
       {isDownloading && (
         <div style={{
           position: "fixed", bottom: 24, left: "50%", transform: "translateX(-50%)", zIndex: 999999,
@@ -346,7 +325,7 @@ function MilikiNav() {
             }}
           >
             <img
-              src="/vtec-logo.png"
+              src="https://vtecgroup.co.ke/vtec-logo.png"
               alt="VTEC Business Group"
               style={{ width: "100%", height: "100%", objectFit: "contain" }}
             />
@@ -403,6 +382,11 @@ function MilikiPage() {
 
   return (
     <div style={{ backgroundColor: BLACK, minHeight: "100vh", fontFamily: BODY_FONT }} className="text-white w-full overflow-x-hidden">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+
       <MilikiNav />
 
       {/* Hero */}
