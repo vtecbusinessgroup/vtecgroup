@@ -221,10 +221,8 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
     setProgress(0);
     setMbDownloaded("0.00");
     
-    // Natively trigger download without opening a new tab. Chrome easily catches Supabase links.
     window.location.assign(APK_DOWNLOAD_URL);
 
-    // Simulate VidMate progress bar UI while the native download runs in background
     let currentProgress = 0;
     const interval = setInterval(() => {
       currentProgress += Math.floor(Math.random() * 12) + 4;
@@ -276,7 +274,6 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
         )}
       </button>
 
-      {/* Floating VidMate-Style Download Card */}
       {isDownloading && (
         <div style={{
           position: "fixed", bottom: 24, left: "50%", transform: "translateX(-50%)", zIndex: 999999,
@@ -382,10 +379,7 @@ function MilikiPage() {
 
   return (
     <div style={{ backgroundColor: BLACK, minHeight: "100vh", fontFamily: BODY_FONT }} className="text-white w-full overflow-x-hidden">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
+      {/* ✅ removed the dangerous script tag referencing undefined structuredData */}
 
       <MilikiNav />
 
