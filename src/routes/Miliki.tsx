@@ -127,6 +127,7 @@ const FAQS = [
   { q: "Can I withdraw my money anytime?", a: "Yes. MILIKI is built on ownership, your assets and your access are always yours, on your terms." },
 ];
 
+// INLINED REVEAL COMPONENT TO FIX THE WEB CRASH
 function Reveal({ children, className = "" }: { children: ReactNode; className?: string }) {
   return <div className={`animate-fade-in ${className}`}>{children}</div>;
 }
