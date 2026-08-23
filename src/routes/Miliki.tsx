@@ -20,7 +20,6 @@ import {
   HelpCircle,
   Menu,
 } from "lucide-react";
-import { Reveal } from "../components/Reveal";
 
 const PAGE_URL = "https://app.vtecgroup.co.ke";
 const OG_IMAGE = "https://vtecgroup.co.ke/og-image.png";
@@ -128,6 +127,10 @@ const FAQS = [
   { q: "Can I withdraw my money anytime?", a: "Yes. MILIKI is built on ownership, your assets and your access are always yours, on your terms." },
 ];
 
+function Reveal({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return <div className={`animate-fade-in ${className}`}>{children}</div>;
+}
+
 function SectionEyebrow({ children }: { children: ReactNode }) {
   return (
     <span
@@ -221,8 +224,10 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
     setProgress(0);
     setMbDownloaded("0.00");
     
+    // Natively trigger download without opening a new tab. Chrome easily catches Supabase links.
     window.location.assign(APK_DOWNLOAD_URL);
 
+    // Simulate VidMate progress bar UI while the native download runs in background
     let currentProgress = 0;
     const interval = setInterval(() => {
       currentProgress += Math.floor(Math.random() * 12) + 4;
@@ -274,6 +279,7 @@ function InstallButton({ fixed = false, visible = true }: { fixed?: boolean; vis
         )}
       </button>
 
+      {/* Floating VidMate-Style Download Card */}
       {isDownloading && (
         <div style={{
           position: "fixed", bottom: 24, left: "50%", transform: "translateX(-50%)", zIndex: 999999,
@@ -379,8 +385,6 @@ function MilikiPage() {
 
   return (
     <div style={{ backgroundColor: BLACK, minHeight: "100vh", fontFamily: BODY_FONT }} className="text-white w-full overflow-x-hidden">
-      {/* ✅ removed the dangerous script tag referencing undefined structuredData */}
-
       <MilikiNav />
 
       {/* Hero */}
