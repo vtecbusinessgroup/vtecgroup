@@ -68,7 +68,7 @@ const GOLD_LIGHT = "#f0d580";
 const BLACK = "#0a0a0a";
 const HEADING_FONT = "'Playfair Display', 'DM Serif Display', Georgia, serif";
 const BODY_FONT = "'Outfit', 'Inter', system-ui, sans-serif";
-const APK_DOWNLOAD_URL = "https://bqeffpcdryvdurfzkjyu.supabase.co/storage/v1/object/public/apk/miliki.apk";
+const APK_DOWNLOAD_URL = "https://cdn.vtecgroup.co.ke/miliki.apk";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
