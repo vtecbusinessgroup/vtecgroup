@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Our Story | VTEC Business Group</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --navy:#0a1628;--navy-2:#0D2149;--navy-3:#163272;
+    --green:#22c55e;--green-2:#1f8c3b;--green-3:#27ae60;
+    --gold:#c9a227;--gold-light:#f0d580;
+    --white:#fff;--muted:rgba(255,255,255,0.72);--muted-2:rgba(255,255,255,0.55);
+    --card:#0f1f3a;--card-2:#13284c;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Outfit',system-ui,sans-serif;background:var(--navy);color:var(--white);line-height:1.65;font-size:15px;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,h4{font-family:'Playfair Display','DM Serif Display',Georgia,serif;font-weight:800;line-height:1.2;letter-spacing:-0.01em}
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+
+  /* NAV */
+  .os-nav{position:sticky;top:0;z-index:50;background:rgba(10,22,40,.92);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.08)}
+  .os-nav-inner{max-width:1140px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+  .os-logo{display:flex;align-items:center;gap:10px;font-weight:700;font-family:'Playfair Display',serif;font-size:20px}
+  .os-logo .badge{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,var(--navy-2),var(--navy-3));display:grid;place-items:center;color:var(--green);font-family:Georgia,serif;font-size:22px;font-weight:900;border:1px solid rgba(255,255,255,.1)}
+  .os-logo span{color:#fff}
+  .os-logo em{color:var(--green);font-style:normal}
+  .os-nav-links{display:flex;gap:24px;font-size:14px;color:var(--muted)}
+  .os-nav-links a:hover{color:var(--green)}
+  @media (max-width:768px){.os-nav-links{display:none}}
+
+  /* Back link */
+  .back-link{max-width:1140px;margin:0 auto;padding:18px 20px 0;display:flex;align-items:center;gap:8px;color:var(--green);font-weight:600;font-size:14px}
+  .back-link:hover{color:#86efac}
+
+  .container{max-width:1140px;margin:0 auto;padding:0 20px}
+  section{padding:64px 0;position:relative}
+  @media (min-width:1024px){section{padding:88px 0}}
+
+  .section-label{display:inline-block;color:var(--green);font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;padding-left:14px;border-left:3px solid var(--green);margin-bottom:16px}
+  .section-title{font-size:clamp(28px,4vw,44px);margin-bottom:14px;color:#fff}
+  .section-desc{color:var(--muted);max-width:780px;margin-bottom:36px;font-size:16px}
+
+  /* Hero */
+  .os-hero{padding:72px 0 48px;background:radial-gradient(1000px 500px at 80% -10%,rgba(34,197,94,.18),transparent 60%),radial-gradient(800px 400px at -10% 20%,rgba(201,162,39,.12),transparent 60%)}
+  .os-hero h1{font-size:clamp(36px,6vw,64px);color:#fff}
+  .os-hero h1 em{color:var(--green);font-style:normal}
+  .os-hero p{color:var(--muted);font-size:17px;margin-top:18px;max-width:720px}
+
+  /* Cards */
+  .card{background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:28px;transition:transform .3s,border-color .3s,box-shadow .3s}
+  .card:hover{transform:translateY(-4px);border-color:rgba(34,197,94,.25);box-shadow:0 18px 40px -20px rgba(0,0,0,.6)}
+
+  /* VTEC acronym card */
+  .vtec-card{background:linear-gradient(135deg,#0f1f3a,#13284c);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:32px}
+  .vtec-card h3{font-size:22px;margin-bottom:22px;color:#fff}
+  .vtec-card h3 em{color:var(--green);font-style:normal}
+  .meaning-row{display:flex;gap:18px;align-items:flex-start;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+  .meaning-row:last-child{border-bottom:0}
+  .meaning-letter{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;font-family:'Playfair Display',serif;font-weight:900;font-size:22px;color:var(--navy);background:var(--green);flex-shrink:0}
+  .meaning-text strong{display:block;color:#fff;font-weight:800;font-size:17px;margin-bottom:2px;font-family:'Playfair Display',serif}
+  .meaning-text span{color:var(--muted);font-size:14.5px}
+
+  .two-col{display:grid;grid-template-columns:1fr;gap:32px;align-items:start}
+  @media (min-width:1024px){.two-col{grid-template-columns:1.1fr 1fr;gap:48px}}
+
+  /* Founders */
+  .founders-grid{display:grid;grid-template-columns:1fr;gap:22px}
+  @media (min-width:768px){.founders-grid{grid-template-columns:repeat(3,1fr)}}
+  .founder{background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:26px;text-align:center}
+  .founder .photo{width:96px;height:96px;border-radius:50%;margin:0 auto 14px;overflow:hidden;border:3px solid rgba(34,197,94,.4);box-shadow:0 0 24px rgba(34,197,94,.15)}
+  .founder .photo img{width:100%;height:100%;object-fit:cover}
+  .founder h4{font-size:18px;color:#fff;margin-bottom:4px}
+  .founder .role{color:var(--green);font-size:13px;font-weight:600;margin-bottom:10px;letter-spacing:.02em}
+  .founder p{color:var(--muted);font-size:14.5px}
+
+  /* Journey */
+  .journey-grid{display:grid;grid-template-columns:1fr;gap:18px}
+  @media (min-width:768px){.journey-grid{grid-template-columns:repeat(2,1fr);gap:22px}}
+  .journey-card{background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:24px}
+  .journey-card .num{font-family:'Playfair Display',serif;font-size:34px;font-weight:900;color:var(--green);margin-bottom:8px;line-height:1}
+  .journey-card h4{color:#fff;font-size:18px;margin-bottom:8px}
+  .journey-card p{color:var(--muted);font-size:14.5px}
+
+  /* Business arms */
+  .arms-grid{display:grid;grid-template-columns:1fr;gap:20px}
+  @media (min-width:768px){.arms-grid{grid-template-columns:repeat(2,1fr)}}
+  @media (min-width:1280px){.arms-grid{grid-template-columns:repeat(4,1fr)}}
+  .arm{position:relative;border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:var(--card);display:flex;flex-direction:column}
+  .arm .head{padding:30px 24px;color:#fff;position:relative}
+  .arm .badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.15);color:#fff;margin-bottom:14px}
+  .arm h3{font-size:22px;margin-bottom:6px;color:#fff}
+  .arm .body{padding:22px 24px 26px;background:#0c1a30;flex:1;display:flex;flex-direction:column;gap:14px}
+  .arm .body p{color:var(--muted);font-size:14.5px}
+  .pills{display:flex;flex-wrap:wrap;gap:8px}
+  .pill{font-size:12px;padding:5px 11px;border-radius:999px;background:rgba(34,197,94,.12);color:#86efac;border:1px solid rgba(34,197,94,.25);font-weight:600}
+  .arm-academy .head{background:linear-gradient(135deg,#0D2149,#1e4080)}
+  .arm-consult .head{background:linear-gradient(135deg,#15803d,#22c55e)}
+  .arm-retail .head{background:linear-gradient(135deg,#a16207,#c9a227)}
+  .arm-miliki .head{background:linear-gradient(135deg,#0a0a0a,#1a1400);background-image:linear-gradient(135deg,#0a0a0a,#1a1400),repeating-linear-gradient(45deg,rgba(201,162,39,.06) 0 2px,transparent 2px 8px)}
+  .ribbon{position:absolute;top:14px;right:-44px;transform:rotate(35deg);background:#fff;color:#a16207;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:5px 50px;box-shadow:0 4px 10px rgba(0,0,0,.3)}
+  .arm-miliki .ribbon{background:#0a0a0a;color:var(--green);border:1px solid var(--green)}
+
+  /* Vision milestones */
+  .vision-block{background:linear-gradient(135deg,#0a1024,#0f1f3a);border:1px solid rgba(34,197,94,.18);border-radius:22px;padding:36px}
+  .milestones{display:flex;flex-direction:column;gap:18px;margin-top:8px}
+  .milestone{display:flex;align-items:center;gap:14px}
+  .milestone-year{width:64px;font-family:'Playfair Display',serif;font-weight:900;color:var(--gold);font-size:18px;flex-shrink:0}
+  .milestone-bar{flex:1;height:10px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden}
+  .milestone-bar-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:999px;transition:width 1.4s ease}
+  .milestone-label{width:170px;text-align:right;color:var(--muted);font-size:13px;font-weight:500}
+  @media (max-width:640px){.milestone-label{width:auto;font-size:12px}}
+
+  /* Quotes */
+  .quotes-grid{display:grid;grid-template-columns:1fr;gap:22px}
+  @media (min-width:1024px){.quotes-grid{grid-template-columns:repeat(3,1fr)}}
+  .quote{background:linear-gradient(135deg,#0f1f3a,#0c1a30);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:28px;position:relative}
+  .quote::before{content:'"';position:absolute;top:8px;left:18px;font-family:'Playfair Display',serif;font-size:80px;color:rgba(34,197,94,.18);line-height:1}
+  .quote .who{display:flex;align-items:center;gap:12px;margin-bottom:14px;position:relative}
+  .quote .who img{width:54px;height:54px;border-radius:50%;object-fit:cover;border:2px solid rgba(34,197,94,.35)}
+  .quote .who h5{font-size:16px;color:#fff;margin-bottom:2px}
+  .quote .who span{color:var(--green);font-size:12px;font-weight:600}
+  .quote blockquote{color:#fff;font-style:italic;font-size:15.5px;line-height:1.7;position:relative;font-family:'Playfair Display',serif;font-weight:400}
+
+  /* CTA */
+  .cta{background:linear-gradient(135deg,#070f1f,#0a1628 50%,#0d1d3d);text-align:center;border-top:1px solid rgba(255,255,255,.06)}
+  .cta h2{font-size:clamp(28px,4vw,42px);margin-bottom:14px}
+  .cta p{color:var(--muted);max-width:600px;margin:0 auto 28px}
+  .btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  @media (max-width:640px){.btns{flex-direction:column;align-items:stretch}.btns a{width:100%}}
+  .btn{display:inline-flex;align-items:center;justify-content:center;padding:14px 26px;border-radius:10px;font-weight:700;font-size:15px;transition:transform .2s,background .2s,color .2s;border:2px solid transparent}
+  .btn-green{background:var(--green);color:#06190f}
+  .btn-green:hover{background:#16a34a;transform:translateY(-2px)}
+  .btn-outline{border-color:#fff;color:#fff}
+  .btn-outline:hover{background:#fff;color:var(--navy);transform:translateY(-2px)}
+
+  /* Reveal */
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s ease}
+  .reveal.visible{opacity:1;transform:none}
+
+  footer.os-foot{padding:32px 20px;text-align:center;color:var(--muted-2);font-size:13px;border-top:1px solid rgba(255,255,255,.06)}
+</style>
+</head>
+<body>
+
+<nav class="os-nav">
+  <div class="os-nav-inner">
+    <a href="/" target="_top" class="os-logo">
+      <div class="badge">V</div>
+      <div><span>VTEC</span> <em>Business Group</em></div>
+    </a>
+    <div class="os-nav-links">
+      <a target="_top" href="#services">Services</a>
+      <a target="_top" href="/leadership">Team</a>
+      <a href="/our-story">Our Story</a>
+      <a target="_top" href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<a href="/" class="back-link" target="_top">← Back to Home</a>
+
+<!-- HERO -->
+<section class="os-hero">
+  <div class="container">
+    <div class="section-label reveal">Our Story</div>
+    <h1 class="reveal">From a Single Idea<br/>to <em>An Empire in Motion</em>.</h1>
+    <p class="reveal">The story of VTEC Business Group, how a shared vision in Nairobi became a structured multi-service brand with a ten year roadmap to redefine commerce, capital, and consultancy in East Africa.</p>
+  </div>
+</section>
+
+<!-- WHERE IT BEGAN -->
+<section>
+  <div class="container">
+    <div class="section-label reveal">Chapter 01</div>
+    <h2 class="section-title reveal">Where It All Began</h2>
+    <p class="section-desc reveal">VTEC Business Group was officially founded in <strong style="color:#fff">October 2025</strong>, in <strong style="color:#fff">Nairobi, Kenya</strong>, born out of countless late night conversations between three young Kenyans who refused to accept that financial empowerment, strategic thinking, and serious commerce had to remain reserved for the privileged few.</p>
+
+    <div class="two-col">
+      <div class="card reveal">
+        <p style="color:var(--muted);font-size:15.5px;margin-bottom:14px">What started as a structured plan on paper quickly evolved into a registered multi-service brand with a clear mission: build Kenyan businesses that compete on merit, educate Kenyans on real wealth building, and deliver consultancy that translates ambition into outcomes.</p>
+        <p style="color:var(--muted);font-size:15.5px">The name itself, <strong style="color:var(--green)">VTEC</strong>, was deliberate. Each letter is a pillar, a promise, and a discipline.</p>
+      </div>
+      <div class="vtec-card reveal">
+        <h3>What Does <em>VTEC</em> Stand For?</h3>
+        <div class="meaning-row"><div class="meaning-letter">V</div><div class="meaning-text"><strong>Visionary</strong><span>Forward-thinking strategy built for where Kenya's economy is heading.</span></div></div>
+        <div class="meaning-row"><div class="meaning-letter">T</div><div class="meaning-text"><strong>Trade</strong><span>The commercial backbone, movement of goods, services, and ideas.</span></div></div>
+        <div class="meaning-row"><div class="meaning-letter">E</div><div class="meaning-text"><strong>Empowerment</strong><span>Raising people before profits, through knowledge and opportunity.</span></div></div>
+        <div class="meaning-row"><div class="meaning-letter">C</div><div class="meaning-text"><strong>Consultancy</strong><span>The intellectual engine guiding strategic decisions that shape futures.</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDATION -->
+<section>
+  <div class="container">
+    <div class="section-label reveal">Chapter 02</div>
+    <h2 class="section-title reveal">The Foundation</h2>
+    <p class="section-desc reveal">Three complementary co-founders, bringing vision, operations, and growth expertise together under one disciplined leadership team.</p>
+
+    <div class="founders-grid">
+      <div class="founder reveal">
+        <div class="photo"><img src="kevin-inyangala.jpg" alt="Kevin Inyangala"/></div>
+        <h4>Kevin Inyangala</h4>
+        <div class="role">Group CEO &amp; Co-Founder</div>
+        <p>Architect of VTEC's long term strategy and brand narrative. Kevin sets the vision and ensures every business arm aligns with the 2035 empire roadmap.</p>
+      </div>
+      <div class="founder reveal">
+        <div class="photo" style="border-color:rgba(201,162,39,.5);box-shadow:0 0 24px rgba(201,162,39,.18)"><img src="allan-andati.jpg" alt="Allan Andati"/></div>
+        <h4>Allan Andati</h4>
+        <div class="role">Chief Operation Officer &amp; Co-Founder</div>
+        <p>The execution engine of the group. Allan designs the systems, workflows, and infrastructure that turn strategy into consistent onsite delivery.</p>
+      </div>
+      <div class="founder reveal">
+        <div class="photo"><img src="chrisantus-khaemba.jpg" alt="Chrisantus Khaemba"/></div>
+        <h4>Chrisantus Khaemba</h4>
+        <div class="role">Chief Growth Officer &amp; Co-Founder</div>
+        <p>The commercial driver. Chrisantus leads client acquisition, brand expansion, and the high value partnerships that fuel VTEC's revenue and reach.</p>
+      </div>
+    </div>
+
+    <h3 style="font-family:'Playfair Display',serif;font-size:1.3rem;color:#fff;margin:44px 0 8px;text-align:center;">Our Business Partners</h3>
+    <p class="section-desc reveal" style="margin-bottom:22px;">Trusted partners extending VTEC's reach and strengthening the group's network.</p>
+    <div class="founders-grid">
+      <div class="founder reveal">
+        <div class="photo"><img src="pride-andaye.jpg" alt="Pride Andaye"/></div>
+        <h4>Pride Andaye</h4>
+        <div class="role">Business Partner</div>
+        <p>A strategic partner to VTEC Business Group, supporting the network of relationships and collaborations that extend the group's reach across new markets and opportunities.</p>
+      </div>
+      <div class="founder reveal">
+        <div class="photo"><img src="joel-odongo.jpg" alt="Joel Odongo"/></div>
+        <h4>Joel Odongo</h4>
+        <div class="role">Business Partner</div>
+        <p>A strategic partner to VTEC Business Group, contributing to the partnerships and business development efforts that strengthen the group's footprint in Kenya's market.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- JOURNEY -->
+<section>
+  <div class="container">
+    <div class="section-label reveal">Chapter 03</div>
+    <h2 class="section-title reveal">The Journey So Far</h2>
+    <p class="section-desc reveal">Months in, the group has already laid the foundations of a business built to last.</p>
+
+    <div class="journey-grid">
+      <div class="journey-card reveal"><div class="num">01</div><h4>Strategy</h4><p>A ten year roadmap to 2035 was structured, with measurable milestones across each business arm and a clear capital allocation logic.</p></div>
+      <div class="journey-card reveal"><div class="num">02</div><h4>Brand Identity</h4><p>VTEC Business Group launched with a unified visual identity, web presence, and positioning that signals seriousness and intent in every touchpoint.</p></div>
+      <div class="journey-card reveal"><div class="num">03</div><h4>Operations</h4><p>Internal workflows, governance norms, and a leadership cadence were established, turning a startup into a functioning, structured multi-service brand.</p></div>
+      <div class="journey-card reveal"><div class="num">04</div><h4>Growth</h4><p>Early client engagements, partnership conversations, and InvestorMind Academy waitlist traction validated the demand we set out to serve.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- BUSINESS ARMS -->
+<section>
+  <div class="container">
+    <div class="section-label reveal">Chapter 04</div>
+    <h2 class="section-title reveal">Our Business Arms</h2>
+    <p class="section-desc reveal">Four strategically positioned sub-brands, unified under one multi-service brand.</p>
+
+    <div class="arms-grid">
+      <div class="arm arm-academy reveal">
+        <div class="head"><div class="badge">Education</div><h3>InvestorMind Academy</h3></div>
+        <div class="body"><p>Kenya's modern financial literacy academy, teaching everyday Kenyans how investing, the NSE, and long term wealth building actually work.</p><div class="pills"><span class="pill">Financial Literacy</span><span class="pill">NSE</span><span class="pill">Cohorts</span></div></div>
+      </div>
+      <div class="arm arm-consult reveal">
+        <div class="head"><div class="badge">Consultancy</div><h3>VTEC Consultancy</h3></div>
+        <div class="body"><p>Strategic advisory for founders, SMEs, and institutions, bridging vision and execution with sharp, onsite expertise.</p><div class="pills"><span class="pill">Strategy</span><span class="pill">Operations</span><span class="pill">Growth</span></div></div>
+      </div>
+      <div class="arm arm-retail reveal">
+        <div class="ribbon">Coming Soon</div>
+        <div class="head"><div class="badge">Commerce</div><h3>VTEC Retail Services</h3></div>
+        <div class="body"><p>The commercial arm, bringing curated goods and services to the Kenyan market with the discipline of a multi-service brand behind every shelf.</p><div class="pills"><span class="pill">Retail</span><span class="pill">Distribution</span><span class="pill">2027</span></div></div>
+      </div>
+      <div class="arm arm-miliki reveal">
+        <div class="ribbon">Live Now</div>
+        <div class="head"><div class="badge" style="background:rgba(201,162,39,.18);color:var(--gold);border:1px solid rgba(201,162,39,.4)">Fintech</div><h3 style="color:#f5e9c1">MILIKI App</h3></div>
+        <div class="body" style="background:#070707"><p>A premium digital ownership platform under VTEC, putting control of property, assets, and contracts directly into Kenyans' hands.</p><div class="pills"><span class="pill" style="background:rgba(201,162,39,.12);color:var(--gold-light);border-color:rgba(201,162,39,.3)">Ownership</span><span class="pill" style="background:rgba(201,162,39,.12);color:var(--gold-light);border-color:rgba(201,162,39,.3)">Mobile</span><span class="pill" style="background:rgba(201,162,39,.12);color:var(--gold-light);border-color:rgba(201,162,39,.3)">Live</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VISION 2035 -->
+<section>
+  <div class="container">
+    <div class="section-label reveal">Chapter 05</div>
+    <h2 class="section-title reveal">Our Vision: The 2035 Empire</h2>
+    <p class="section-desc reveal">Every great empire begins with a clear destination. VTEC is building purposefully toward 2035, not in a hurry, but with intention.</p>
+
+    <div class="vision-block reveal">
+      <div class="milestones">
+        <div class="milestone"><div class="milestone-year">2025</div><div class="milestone-bar"><div class="milestone-bar-fill" style="width:100%"></div></div><div class="milestone-label">Founded ✅</div></div>
+        <div class="milestone"><div class="milestone-year">2026</div><div class="milestone-bar"><div class="milestone-bar-fill" style="width:60%"></div></div><div class="milestone-label">Digital Launch</div></div>
+        <div class="milestone"><div class="milestone-year">2027</div><div class="milestone-bar"><div class="milestone-bar-fill" style="width:30%"></div></div><div class="milestone-label">Retail Launch</div></div>
+        <div class="milestone"><div class="milestone-year">2030</div><div class="milestone-bar"><div class="milestone-bar-fill" style="width:10%"></div></div><div class="milestone-label">Regional Expansion</div></div>
+        <div class="milestone"><div class="milestone-year">2035</div><div class="milestone-bar"><div class="milestone-bar-fill" style="width:5%"></div></div><div class="milestone-label">Empire Status</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTES -->
+<section>
+  <div class="container">
+    <div class="section-label reveal">Chapter 06</div>
+    <h2 class="section-title reveal">A Word From Our Leaders</h2>
+    <p class="section-desc reveal">In their own words.</p>
+
+    <div class="quotes-grid">
+      <div class="quote reveal">
+        <div class="who"><img src="kevin-inyangala.jpg" alt="Kevin"/><div><h5>Kevin Inyangala</h5><span>Group CEO &amp; Co-Founder</span></div></div>
+        <blockquote>We are not building a company that survives. We are building an institution that compounds, every year, every decade, every generation.</blockquote>
+      </div>
+      <div class="quote reveal">
+        <div class="who"><img src="allan-andati.jpg" alt="Allan"/><div><h5>Allan Andati</h5><span>Chief Operation Officer &amp; Co-Founder</span></div></div>
+        <blockquote>Vision without execution is wishful thinking. My job is to make sure VTEC delivers, quietly, consistently, and at the highest standard, every single time.</blockquote>
+      </div>
+      <div class="quote reveal">
+        <div class="who"><img src="chrisantus-khaemba.jpg" alt="Chrisantus"/><div><h5>Chrisantus Khaemba</h5><span>Chief Growth Officer &amp; Co-Founder</span></div></div>
+        <blockquote>Growth is earned, not announced. Every client we serve, every market we enter, must walk away convinced that VTEC was the right call.</blockquote>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="container">
+    <div class="section-label reveal" style="margin-left:auto;margin-right:auto">Join Us</div>
+    <h2 class="reveal">Be Part of the Journey</h2>
+    <p class="reveal">From a Nairobi office to a regional empire, the story is still being written. Find your way in.</p>
+    <div class="btns reveal">
+      <a target="_top" href="#services" class="btn btn-green">Explore Our Services</a>
+      <a target="_top" href="#academy" class="btn btn-outline">Join InvestorMind Academy</a>
+      <a target="_top" href="#contact" class="btn btn-outline">Request a Consultation</a>
+    </div>
+  </div>
+</section>
+
+<footer class="os-foot">© 2026 VTEC Business Group. Empowering Kenya. One Venture at a Time.</footer>
+
+<script>
+  (function(){
+    var els=document.querySelectorAll('.reveal');
+    if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('visible')});return}
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){if(en.isIntersecting){en.target.classList.add('visible');io.unobserve(en.target)}})
+    },{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
+    els.forEach(function(e){io.observe(e)});
+  })();
+</script>
+</body>
+</html>
