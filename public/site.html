@@ -55,7 +55,7 @@
 </script>
 
 <link rel="icon" type="image/png" href="/vtec-logo.png" />
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet"/>
 
 <!-- ═══ EXTERNAL STYLESHEET (offloaded from site.html) ═══ -->
 <link rel="stylesheet" href="/vtec-styles.css"/>
@@ -106,14 +106,11 @@
 </nav>
 
 <div class="mm-backdrop" id="mmBackdrop" onclick="toggleMenu()"></div>
-<div class="mobile-menu" id="mobileMenu" role="dialog" aria-label="Navigation menu" aria-modal="true">
+<aside class="mobile-menu" id="mobileMenu" role="dialog" aria-label="Navigation menu" aria-modal="true" aria-hidden="true">
 
-  <!-- Panel header with logo + close -->
   <div class="mm-header">
     <a href="#" class="mm-header-logo" onclick="toggleMenu()">
-      <div class="mm-header-logo-icon">
-        <img src="vtec-logo.png" alt="VTEC"/>
-      </div>
+      <div class="mm-header-logo-icon"><img src="vtec-logo.png" alt="VTEC"/></div>
       <div class="mm-header-logo-text">
         <strong>VTEC</strong>
         <span>Business Group</span>
@@ -122,80 +119,67 @@
     <button class="mm-close-btn" onclick="toggleMenu()" aria-label="Close navigation">&#x2715;</button>
   </div>
 
-  <!-- Scrollable nav links -->
-  <div class="mm-scroll">
+  <nav class="mm-scroll" aria-label="Main">
 
-    <div class="mm-label">Explore</div>
-
-    <a href="#home" onclick="toggleMenu()">
-      <span class="mm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9v11a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9"/></svg></span>
-      <span class="mm-label-text">Home</span>
-      <span class="mm-arrow">›</span>
-    </a>
-
-    <a href="/miliki" target="_parent" class="mm-gold" onclick="toggleMenu()">
-      <span class="mm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 9.5 8 11 4.5-1.5 8-6 8-11V5l-8-3z"/></svg></span>
-      <span class="mm-label-text">MILIKI App</span>
+    <!-- MILIKI stays outside any dropdown -->
+    <a class="mm-row mm-gold" href="/miliki" target="_parent" onclick="toggleMenu()">
+      <span class="mm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 9.5 8 11 4.5-1.5 8-6 8-11V5l-8-3z"/></svg></span>
+      <span class="mm-text">MILIKI App</span>
       <span class="mm-live-badge">Live</span>
-      <span class="mm-arrow">›</span>
     </a>
 
-    <a href="/services" target="_parent" onclick="toggleMenu()">
-      <span class="mm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>
-      <span class="mm-label-text">Our Services</span>
-      <span class="mm-arrow">›</span>
+    <!-- Our Services (dropdown) -->
+    <div class="mm-item">
+      <button class="mm-row mm-toggle" type="button" aria-expanded="false" aria-controls="mmSub-services" onclick="toggleSub(this)">
+        <span class="mm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>
+        <span class="mm-text">Our Services</span><svg class="mm-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="mm-sub" id="mmSub-services"><div class="mm-sub-inner">
+        <a href="/services" target="_parent" onclick="toggleMenu()">All Services</a>
+        <a href="#investormind-academy" onclick="toggleMenu()">InvestorMind Academy</a>
+        <a href="/services" target="_parent" onclick="toggleMenu()">VTEC Consultancy</a>
+        <a href="/services" target="_parent" onclick="toggleMenu()">VTEC Retail</a>
+        <a href="/business-diagnostic" target="_parent" data-diagnostic-link onclick="toggleMenu()">VTEC Intelligence<span class="mm-dot"></span></a>
+      </div></div>
+    </div>
+
+    <!-- Solutions -->
+    <a class="mm-row" href="/solutions" target="_parent" onclick="toggleMenu()">
+      <span class="mm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg></span>
+      <span class="mm-text">Solutions</span>
     </a>
 
-    <a href="/solutions" target="_parent" onclick="toggleMenu()">
-      <span class="mm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg></span>
-      <span class="mm-label-text">Solutions</span>
-      <span class="mm-arrow">›</span>
+    <!-- Vision -->
+    <a class="mm-row" href="/vision-2035" target="_parent" onclick="toggleMenu()">
+      <span class="mm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>
+      <span class="mm-text">Vision 2035</span>
     </a>
 
-    <div class="mm-label">Company</div>
+    <!-- About Us (dropdown) -->
+    <div class="mm-item">
+      <button class="mm-row mm-toggle" type="button" aria-expanded="false" aria-controls="mmSub-about" onclick="toggleSub(this)">
+        <span class="mm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+        <span class="mm-text">About Us</span><svg class="mm-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="mm-sub" id="mmSub-about"><div class="mm-sub-inner">
+        <a href="/about-us" target="_parent" onclick="toggleMenu()">Our Story</a>
+        <a href="/leadership" target="_parent" onclick="toggleMenu()">Leadership</a>
+      </div></div>
+    </div>
 
-    <a href="/leadership" target="_parent" onclick="toggleMenu()">
-      <span class="mm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
-      <span class="mm-label-text">Leadership</span>
-      <span class="mm-arrow">›</span>
+    <!-- Blog -->
+    <a class="mm-row" href="/blog" target="_parent" onclick="toggleMenu()">
+      <span class="mm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg></span>
+      <span class="mm-text">Blog</span>
     </a>
 
-    <a href="/business-diagnostic" target="_parent" class="mm-gold" data-diagnostic-link onclick="toggleMenu()">
-      <span class="mm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 4.8L5 9.5l4.8 1.9L12 16l1.9-4.6L19 9.5l-4.8-1.7L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg></span>
-      <span class="mm-label-text">VTEC Intelligence</span>
-      <span class="mm-dot"></span>
-      <span class="mm-arrow">›</span>
-    </a>
+  </nav>
 
-    <a href="/vision-2035" target="_parent" onclick="toggleMenu()">
-      <span class="mm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>
-      <span class="mm-label-text">Vision 2035</span>
-      <span class="mm-arrow">›</span>
-    </a>
-
-    <a href="/about-us" target="_parent" onclick="toggleMenu()">
-      <span class="mm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
-      <span class="mm-label-text">About Us</span>
-      <span class="mm-arrow">›</span>
-    </a>
-
-    <a href="/blog" target="_parent" onclick="toggleMenu()">
-      <span class="mm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg></span>
-      <span class="mm-label-text">Blog</span>
-      <span class="mm-arrow">›</span>
-    </a>
-
-  </div>
-
-  <!-- Sticky Contact CTA -->
   <div class="mob-cta-dock">
-    <a href="#contact" class="mob-cta" onclick="toggleMenu()">
-      <span class="mm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg></span>
-      <span class="mm-label-text">Contact Us</span>
-    </a>
+    <a href="#contact" class="mob-cta" onclick="toggleMenu()">Contact Us</a>
   </div>
 
-</div>
+</aside>
 
 <!-- HERO -->
 <section class="hero" id="home">
