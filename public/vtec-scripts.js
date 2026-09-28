@@ -1,4 +1,4 @@
-  // WhatsApp/Call choice popover
+// WhatsApp/Call choice popover
   function toggleWaPopover(e) {
     e.preventDefault();
     e.stopPropagation();
