@@ -561,3 +561,20 @@
     apply();
     window.addEventListener('scroll', onScroll, { passive: true });
   })();
+
+// Footer link card — automatic entrance when it scrolls into view (no tap needed)
+(function () {
+  const card = document.querySelector('.footer-links');
+  if (!card) return;
+  if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  card.classList.add('fl-armed');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((en) => {
+      if (en.isIntersecting) {
+        card.classList.add('fl-in');
+        io.disconnect();
+      }
+    });
+  }, { threshold: 0.15 });
+  io.observe(card);
+})();
