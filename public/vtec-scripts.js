@@ -435,12 +435,24 @@
   (function(){
     var overlay = document.getElementById('our-story-overlay');
     function openStory(){
-      overlay.classList.add('open');
+      if(overlay) {
+        overlay.classList.add('open');
+        overlay.style.display = 'block';
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.zIndex = '100000';
+      }
       document.body.classList.add('os-open');
       window.scrollTo(0,0);
     }
     function closeStory(){
-      overlay.classList.remove('open');
+      if(overlay) {
+        overlay.classList.remove('open');
+        overlay.style.display = 'none';
+      }
       document.body.classList.remove('os-open');
     }
     function syncFromHash(){
@@ -666,13 +678,25 @@
     var overlay = document.getElementById('legal-overlay');
     var content = document.getElementById('legalContent');
     function openLegal(html){
-      content.innerHTML = html;
-      overlay.classList.add('open');
+      if(content) content.innerHTML = html;
+      if(overlay) {
+        overlay.classList.add('open');
+        overlay.style.display = 'block';
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.zIndex = '100000';
+      }
       document.body.classList.add('legal-open');
-      overlay.scrollTop = 0;
+      if(overlay) overlay.scrollTop = 0;
     }
     function closeLegal(){
-      overlay.classList.remove('open');
+      if(overlay) {
+        overlay.classList.remove('open');
+        overlay.style.display = 'none';
+      }
       document.body.classList.remove('legal-open');
     }
     function syncFromHash(){
