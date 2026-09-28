@@ -502,7 +502,6 @@ nav.nav-scrolled .nav-clock { opacity: 0; transform: translateY(-6px) scale(0.9)
 }
 .hero-arm-card:hover { background: rgba(13, 59, 56, 0.75); border-color: rgba(13,148,136,0.9); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
 
-.hero, .hero > * { }
 .hero > *:not(.hero-overlay):not(.hero-grid):not(.hero-particles) { position: relative; z-index: 2; }
 
 .hero-arm-icon {
@@ -560,9 +559,6 @@ nav.nav-scrolled .nav-clock { opacity: 0; transform: translateY(-6px) scale(0.9)
   position: relative; z-index: 1;
 }
 
-/* Light touch only — trims the whitespace between hero blocks on
-   phones (not the text size, icons, cards, or buttons themselves) just
-   enough to bring the CTA buttons closer to the first viewport. */
 @media (max-width: 640px) {
   .hero { padding: 78px 20px 32px; justify-content: flex-start; min-height: auto; }
   .hero-badge { margin-bottom: 14px; }
