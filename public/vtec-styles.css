@@ -476,6 +476,7 @@ nav.nav-scrolled .nav-clock { opacity: 0; transform: translateY(-6px) scale(0.9)
   margin-bottom: 24px;
   animation: fadeUp 0.9s 0.35s ease both;
   position: relative; z-index: 1;
+  grid-auto-rows: 1fr; /* CRITICAL: Ensures all rows have equal height */
 }
 @media (min-width: 768px) {
   .hero-arms { grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
@@ -499,6 +500,7 @@ nav.nav-scrolled .nav-clock { opacity: 0; transform: translateY(-6px) scale(0.9)
   transition: background 0.2s, border-color 0.2s, transform 0.25s ease, box-shadow 0.25s ease;
   text-decoration: none;
   color: inherit;
+  height: 100%; /* CRITICAL: Ensures the card fills the grid cell height */
 }
 .hero-arm-card:hover { background: rgba(13, 59, 56, 0.75); border-color: rgba(13,148,136,0.9); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
 
@@ -535,6 +537,9 @@ nav.nav-scrolled .nav-clock { opacity: 0; transform: translateY(-6px) scale(0.9)
   padding: 2px 6px;
   border-radius: 4px;
   margin-top: 3px;
+  width: fit-content;
+  min-width: 85px; /* CRITICAL: Forces uniform width for all badges */
+  text-align: center;
 }
 
 /* Live Now Badge (MILIKI) */
