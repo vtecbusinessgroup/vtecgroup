@@ -171,7 +171,7 @@ nav.nav-scrolled .nav-clock { opacity: 0; transform: translateY(-6px) scale(0.9)
   --mm-font: 'Plus Jakarta Sans', 'Outfit', system-ui, sans-serif;
   --mm-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
   position: fixed; top: 0; bottom: 0; left: 0;
-  width: 50vw;
+  width: min(86vw, 420px);
   background: #ffffff;
   z-index: 9999;
   display: flex; flex-direction: column;
@@ -189,40 +189,40 @@ nav.nav-scrolled .nav-clock { opacity: 0; transform: translateY(-6px) scale(0.9)
 /* Header: logo tile, brand name, mono tagline, close */
 .mm-header {
   display: flex; align-items: center; justify-content: space-between; gap: 6px;
-  padding: 14px 10px 12px 12px;
+  padding: 20px 20px 18px 22px;
   border-bottom: 1px solid #eceff3;
   flex-shrink: 0;
 }
-.mm-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; min-width: 0; }
+.mm-brand { display: flex; align-items: center; gap: 14px; text-decoration: none; min-width: 0; }
 .mm-brand-logo {
-  width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0;
+  width: 46px; height: 46px; border-radius: 13px; flex-shrink: 0;
   overflow: hidden; background: #e8f7ee;
 }
 .mm-brand-logo img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
 .mm-brand-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.1; }
-.mm-brand-text strong { font-size: 17px; font-weight: 700; color: #0b1220; letter-spacing: 0.5px; }
+.mm-brand-text strong { font-size: 24px; font-weight: 700; color: #0b1220; letter-spacing: 1px; }
 .mm-brand-text em {
   font-style: normal; font-family: var(--mm-mono);
-  font-size: 6.5px; letter-spacing: 1px; text-transform: uppercase; color: #8a94a6; white-space: nowrap;
-  margin-top: 3px;
+  font-size: 9.5px; letter-spacing: 2.2px; text-transform: uppercase; color: #8a94a6; white-space: nowrap;
+  margin-top: 4px;
 }
 .mm-close-btn {
-  width: 28px; height: 28px; flex-shrink: 0; padding: 0;
+  width: 36px; height: 36px; flex-shrink: 0; padding: 0;
   background: none; border: none; cursor: pointer; color: #3a4252;
   display: flex; align-items: center; justify-content: center;
   -webkit-tap-highlight-color: transparent;
 }
-.mm-close-btn svg { width: 20px; height: 20px; }
+.mm-close-btn svg { width: 24px; height: 24px; }
 
 /* Rows */
 .mm-scroll { overflow-y: auto; flex: 1 1 auto; min-height: 0; padding: 0; }
 .mm-row {
   width: 100%;
-  display: flex; align-items: center; gap: 9px;
-  padding: 13px 8px 13px 10px;
+  display: flex; align-items: center; gap: 16px;
+  padding: 15px 20px 15px 22px;
   background: none; border: none; border-bottom: 1px solid #eef0f4; border-radius: 0;
   cursor: pointer; text-align: left; text-decoration: none;
-  font-family: var(--mm-font); font-size: 14px; font-weight: 500; color: #0b1220;
+  font-family: var(--mm-font); font-size: 17px; font-weight: 600; color: #0b1220; letter-spacing: -0.1px;
   -webkit-tap-highlight-color: transparent;
   transition: background 0.18s ease;
 }
@@ -230,23 +230,23 @@ nav.nav-scrolled .nav-clock { opacity: 0; transform: translateY(-6px) scale(0.9)
 .mm-text { flex: 1; min-width: 0; line-height: 1.25; }
 .mm-text small {
   display: block; margin-top: 2px;
-  font-family: var(--mm-mono); font-size: 7.5px; font-weight: 500;
-  letter-spacing: 0.9px; text-transform: uppercase; color: #1f8c3b;
+  font-family: var(--mm-mono); font-size: 9.5px; font-weight: 500;
+  letter-spacing: 1.6px; text-transform: uppercase; color: #1f8c3b;
 }
 
 /* Pastel icon tiles */
 .mm-icon {
-  width: 34px; height: 34px; flex-shrink: 0; border-radius: 10px;
+  width: 42px; height: 42px; flex-shrink: 0; border-radius: 12px;
   display: flex; align-items: center; justify-content: center;
 }
-.mm-icon svg { width: 17px; height: 17px; }
+.mm-icon svg { width: 21px; height: 21px; }
 .t-green  { background: #e6f7ec; color: #1f9d4a; }
 .t-blue   { background: #e3f3fc; color: #1591d6; }
 .t-gold   { background: #fdf5dc; color: #d9a514; }
 .t-purple { background: #eee9fd; color: #7c5ce0; }
 .t-gray   { background: #f0f2f5; color: #6a7383; }
 
-.mm-chev { width: 14px; height: 14px; flex-shrink: 0; color: #b3bac6; transition: transform 0.3s ease, color 0.2s ease; }
+.mm-chev { width: 18px; height: 18px; flex-shrink: 0; color: #b3bac6; transition: transform 0.3s ease, color 0.2s ease; }
 .mm-toggle[aria-expanded="true"] .mm-chev { transform: rotate(90deg); color: #1f8c3b; }
 
 /* Dropdown */
@@ -255,8 +255,8 @@ nav.nav-scrolled .nav-clock { opacity: 0; transform: translateY(-6px) scale(0.9)
 .mm-sub-inner { overflow: hidden; min-height: 0; }
 .mm-sub-inner a {
   display: flex; align-items: center; gap: 6px;
-  padding: 11px 10px 11px 53px;
-  font-size: 13px; font-weight: 500; color: #4a5468; text-decoration: none;
+  padding: 14px 20px 14px 80px;
+  font-size: 15.5px; font-weight: 600; color: #4a5468; text-decoration: none;
   border-bottom: 1px solid #eef0f4;
   -webkit-tap-highlight-color: transparent;
 }
@@ -267,14 +267,14 @@ nav.nav-scrolled .nav-clock { opacity: 0; transform: translateY(-6px) scale(0.9)
   animation: vtecDot 1.8s ease-in-out infinite;
 }
 
-.mm-divider { height: 14px; background: #f7f8fa; border-bottom: 1px solid #eef0f4; }
+.mm-divider { height: 18px; background: #f7f8fa; border-bottom: 1px solid #eef0f4; }
 
 /* Footer legal links */
 .mm-legal {
-  flex-shrink: 0; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 6px;
-  padding: 12px 8px calc(14px + env(safe-area-inset-bottom, 0px));
+  flex-shrink: 0; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 10px;
+  padding: 16px 20px calc(18px + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid #eceff3;
-  font-size: 11px; color: #a0a8b6;
+  font-size: 13px; font-weight: 500; color: #a0a8b6;
 }
 .mm-legal a { color: #a0a8b6; text-decoration: none; }
 .mm-legal a:hover { color: #1f8c3b; }
