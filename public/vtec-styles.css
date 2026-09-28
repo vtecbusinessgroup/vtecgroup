@@ -166,7 +166,7 @@ nav.nav-scrolled .nav-clock { opacity: 0; transform: translateY(-6px) scale(0.9)
 }
 .mm-backdrop.open { opacity: 1; pointer-events: auto; }
 
-/* ── LEFT DRAWER — Odds Bora style, 50% width ── */
+/* ── LEFT DRAWER — SoftCr8ors style with curved edges ── */
 .mobile-menu {
   --mm-font: 'Plus Jakarta Sans', 'Outfit', system-ui, sans-serif;
   --mm-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
@@ -180,8 +180,11 @@ nav.nav-scrolled .nav-clock { opacity: 0; transform: translateY(-6px) scale(0.9)
   padding-top: env(safe-area-inset-top, 0px);
   transform: translateX(-104%);
   visibility: hidden;
-  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), visibility 0s linear 0.4s;
+  transition: transform 0.45s cubic-bezier(0.16,1,0.3,1), visibility 0s linear 0.45s;
   overflow: hidden;
+  /* Curved edges to mimic SoftCr8ors design */
+  border-top-right-radius: 32px;
+  border-bottom-right-radius: 32px;
 }
 .mobile-menu.open { transform: translateX(0); visibility: visible; transition-delay: 0s; }
 .mobile-menu * { box-sizing: border-box; }
@@ -200,10 +203,11 @@ nav.nav-scrolled .nav-clock { opacity: 0; transform: translateY(-6px) scale(0.9)
 }
 .mm-brand-logo img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
 .mm-brand-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.1; }
-.mm-brand-text strong { font-size: 24px; font-weight: 700; color: #0b1220; letter-spacing: 1px; }
+.mm-brand-text strong { font-size: 24px; font-weight: 700; color: #0b1220; letter-spacing: 1px; font-family: var(--mm-font); }
 .mm-brand-text em {
-  font-style: normal; font-family: var(--mm-mono);
-  font-size: 9.5px; letter-spacing: 2.2px; text-transform: uppercase; color: #8a94a6; white-space: nowrap;
+  font-style: normal; 
+  font-family: 'DM Serif Display', 'Playfair Display', serif; /* Serif for Business Group */
+  font-size: 10px; letter-spacing: 1.8px; text-transform: uppercase; color: #8a94a6; white-space: nowrap;
   margin-top: 4px;
 }
 .mm-close-btn {
@@ -230,8 +234,10 @@ nav.nav-scrolled .nav-clock { opacity: 0; transform: translateY(-6px) scale(0.9)
 .mm-text { flex: 1; min-width: 0; line-height: 1.25; }
 .mm-text small {
   display: block; margin-top: 2px;
-  font-family: var(--mm-mono); font-size: 9.5px; font-weight: 500;
-  letter-spacing: 1.6px; text-transform: uppercase; color: #1f8c3b;
+  font-family: 'DM Serif Display', 'Playfair Display', serif; /* Serif for Live Now */
+  font-style: normal;
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 1px; text-transform: none; color: #1f8c3b;
 }
 
 /* Pastel icon tiles */
@@ -276,8 +282,13 @@ nav.nav-scrolled .nav-clock { opacity: 0; transform: translateY(-6px) scale(0.9)
   border-top: 1px solid #eceff3;
   font-size: 13px; font-weight: 500; color: #a0a8b6;
 }
-.mm-legal a { color: #a0a8b6; text-decoration: none; }
-.mm-legal a:hover { color: #1f8c3b; }
+.mm-legal a { 
+  color: var(--green); /* Green requested */
+  font-weight: 600; 
+  font-size: 12.5px;
+  text-decoration: none; 
+}
+.mm-legal a:hover { color: var(--green-bright); }
 .mm-legal i { font-style: normal; opacity: 0.6; }
 
 /* ═══════════════════════════════════════
@@ -485,9 +496,11 @@ nav.nav-scrolled .nav-clock { opacity: 0; transform: translateY(-6px) scale(0.9)
   align-items: flex-start;
   gap: 10px;
   will-change: auto;
-  transition: background 0.2s, border-color 0.2s;
+  transition: background 0.2s, border-color 0.2s, transform 0.25s ease, box-shadow 0.25s ease;
+  text-decoration: none;
+  color: inherit;
 }
-.hero-arm-card:hover { background: rgba(13, 59, 56, 0.75); border-color: rgba(13,148,136,0.9); }
+.hero-arm-card:hover { background: rgba(13, 59, 56, 0.75); border-color: rgba(13,148,136,0.9); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
 
 .hero, .hero > * { }
 .hero > *:not(.hero-overlay):not(.hero-grid):not(.hero-particles) { position: relative; z-index: 2; }
@@ -516,8 +529,6 @@ nav.nav-scrolled .nav-clock { opacity: 0; transform: translateY(-6px) scale(0.9)
 
 .hero-arm-badge {
   display: inline-block;
-  background: rgba(201,162,39,0.18);
-  color: #c9a227;
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.8px;
@@ -525,7 +536,20 @@ nav.nav-scrolled .nav-clock { opacity: 0; transform: translateY(-6px) scale(0.9)
   padding: 2px 6px;
   border-radius: 4px;
   margin-top: 3px;
-  border: 1px solid rgba(201,162,39,0.35);
+}
+
+/* Live Now Badge (MILIKI) */
+.hero-arm-badge.live-badge {
+  background: rgba(39,174,96,0.18);
+  color: var(--green-bright);
+  border: 1px solid rgba(39,174,96,0.4);
+}
+
+/* Coming Soon Badge (VTEC Retail & Consultancy) */
+.hero-arm-badge.coming-soon-badge {
+  background: rgba(230, 126, 34, 0.15);
+  color: #e67e22;
+  border: 1px solid rgba(230, 126, 34, 0.3);
 }
 
 .hero-btn-sub {
@@ -1036,6 +1060,15 @@ footer { background: #060f22; padding: 56px 20px 28px; }
   text-decoration: none; transition: color 0.2s;
 }
 .footer-col ul a:hover { color: var(--green-bright); }
+
+/* Style for legal links to make them stand out in green */
+.footer-col ul a[href^="#/"] {
+  color: var(--green);
+  font-weight: 600;
+}
+.footer-col ul a[href^="#/"]:hover {
+  color: var(--green-bright);
+}
 
 .footer-bottom {
   max-width: var(--container); margin: 0 auto;
