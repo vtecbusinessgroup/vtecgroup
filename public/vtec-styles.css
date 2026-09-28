@@ -2255,3 +2255,50 @@ footer {
   .hero-arms .hero-arm-card, .hero-arm-card::after, .hero-arm-badge i::after,
   .hero-btns .btn-primary::after { animation: none !important; }
 }
+
+
+/* ═══════════════════════════════════════════════════════════
+   HERO CARDS v6 — translucent glass + purposeful particles
+   Live cards: bubbles rise and grow left→right (momentum, growth).
+   Coming-soon cards: stars climb a diagonal (something rising on the horizon).
+═══════════════════════════════════════════════════════════ */
+.hero-arms .hero-arm-card,
+.hero-arms .hero-arm-card:hover {
+  background: linear-gradient(160deg, rgba(22,50,114,0.20) 0%, rgba(13,33,73,0.22) 55%, rgba(8,20,45,0.30) 100%);
+  -webkit-backdrop-filter: blur(8px) saturate(120%); backdrop-filter: blur(8px) saturate(120%);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+.hc-fx { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; border-radius: inherit; }
+
+.hc-fx .b {
+  position: absolute; bottom: -20px; left: var(--x); width: var(--s); height: var(--s);
+  border-radius: 50%; opacity: 0;
+  border: 1px solid rgba(140,255,190,0.35);
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.35), rgba(39,174,96,0.10) 55%, transparent 72%);
+  animation: hcBubble var(--t) ease-in-out infinite; animation-delay: var(--d);
+  will-change: transform, opacity;
+}
+@keyframes hcBubble {
+  0%   { transform: translate3d(0, 0, 0); opacity: 0; }
+  12%  { opacity: 0.7; }
+  50%  { transform: translate3d(5px, -110px, 0); }
+  85%  { opacity: 0.45; }
+  100% { transform: translate3d(-4px, -240px, 0); opacity: 0; }
+}
+
+.hc-fx .s {
+  position: absolute; left: var(--x); top: var(--y); width: var(--s); height: var(--s);
+  background: #f0d580; opacity: 0.15;
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  animation: hcTwinkle var(--t) ease-in-out infinite; animation-delay: var(--d);
+}
+@keyframes hcTwinkle {
+  0%, 100% { opacity: 0.12; transform: scale(0.7); }
+  50%      { opacity: 0.75; transform: scale(1.1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hc-fx .b { display: none; }
+  .hc-fx .s { animation: none !important; opacity: 0.45; }
+}
