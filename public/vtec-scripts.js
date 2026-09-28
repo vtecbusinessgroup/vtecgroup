@@ -13,16 +13,34 @@
     }
   });
 
-  // Mobile menu
-  function toggleMenu() {
+  // Mobile menu (left drawer)
+  function toggleMenu(force) {
     const menu = document.getElementById('mobileMenu');
     const ham  = document.getElementById('hamburger');
     const backdrop = document.getElementById('mmBackdrop');
-    menu.classList.toggle('open');
-    ham.classList.toggle('open');
-    backdrop.classList.toggle('open');
-    document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+    const open = typeof force === 'boolean' ? force : !menu.classList.contains('open');
+    menu.classList.toggle('open', open);
+    ham.classList.toggle('open', open);
+    backdrop.classList.toggle('open', open);
+    menu.setAttribute('aria-hidden', String(!open));
+    document.body.style.overflow = open ? 'hidden' : '';
+    if (!open) closeAllSubs();
   }
+
+  // Dropdown rows inside the drawer (one open at a time)
+  function closeAllSubs() {
+    document.querySelectorAll('#mobileMenu .mm-toggle[aria-expanded="true"]')
+      .forEach(b => b.setAttribute('aria-expanded', 'false'));
+  }
+  function toggleSub(btn) {
+    const willOpen = btn.getAttribute('aria-expanded') !== 'true';
+    closeAllSubs();
+    btn.setAttribute('aria-expanded', String(willOpen));
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') toggleMenu(false);
+  });
 
   // ====== PRELOADER FIREWORKS ======
   (function plFireworksInit(){
@@ -297,12 +315,12 @@
     }
   }
 
-  // Smooth nav hide on mobile menu outside click
+  // Close drawer on outside click
   document.addEventListener('click', (e) => {
     const menu = document.getElementById('mobileMenu');
     const ham = document.getElementById('hamburger');
-    if (!menu.contains(e.target) && !ham.contains(e.target)) {
-      menu.classList.remove('open');
+    if (menu.classList.contains('open') && !menu.contains(e.target) && !ham.contains(e.target)) {
+      toggleMenu(false);
     }
   });
 
