@@ -578,3 +578,4 @@
   }, { threshold: 0.15 });
   io.observe(card);
 })();
+
