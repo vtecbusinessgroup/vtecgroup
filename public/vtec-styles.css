@@ -2540,4 +2540,6 @@ nav::after {
   0%   { opacity: 0; transform: rotateY(66deg) rotateX(12deg) rotateZ(0deg) scale(0.05); }
   6%   { opacity: 1; }
   55%  { opacity: 0.6; }
-  78%, 100% { opacity: 0; trans
+  78%, 100% { opacity: 0; transform: rotateY(66deg) rotateX(12deg) rotateZ(-300deg) scale(0.9); }
+}
+@media (prefers-reduced-motion: reduce) { .hc-fx .orb { display: none; } }
