@@ -526,20 +526,20 @@
 
 /* ─────────────────────────────────── */
 
-  // Live Nairobi (EAT, fixed UTC+3, no DST) clock badge in nav
+  // Vision 2035 progress ring in nav (company founded Oct 2025 -> target end of 2035)
   (function () {
-    const el = document.getElementById('navClockTime');
-    if (!el) return;
-    function update() {
-      const now = new Date();
-      const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
-      const nairobi = new Date(utcMs + 3 * 3600000);
-      const h = String(nairobi.getHours()).padStart(2, '0');
-      const m = String(nairobi.getMinutes()).padStart(2, '0');
-      el.textContent = h + ':' + m + ' EAT';
-    }
-    update();
-    setInterval(update, 30000);
+    const bar = document.getElementById('navVisionBar');
+    const pct = document.getElementById('navVisionPct');
+    const link = document.getElementById('navVision');
+    if (!bar || !pct) return;
+    const start = Date.UTC(2025, 9, 1), end = Date.UTC(2035, 11, 31);
+    const p = Math.max(0, Math.min(100, (Date.now() - start) / (end - start) * 100));
+    const shown = p < 10 ? p.toFixed(1) : Math.round(p);
+    pct.textContent = shown + '%';
+    if (link) link.title = shown + '% of the journey to 2035';
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { bar.style.strokeDashoffset = String(100 - p); });
+    });
   })();
 
   // Nav condenses on scroll — premium SaaS pattern
@@ -578,4 +578,3 @@
   }, { threshold: 0.15 });
   io.observe(card);
 })();
-
