@@ -611,3 +611,35 @@
   }, { threshold: 0.15 });
   io.observe(card);
 })();
+
+
+// Menu: scroll progress bar + "Partnerships" pre-selects the matching interest in the contact form
+(function () {
+  const sc = document.querySelector('#mobileMenu .mm-scroll');
+  const menu = document.getElementById('mobileMenu');
+  if (sc && menu) {
+    const bar = document.createElement('div');
+    bar.className = 'mm-progress';
+    bar.innerHTML = '<i></i>';
+    const header = menu.querySelector('.mm-header');
+    if (header) header.appendChild(bar);
+    const fill = bar.firstChild;
+    function upd() {
+      const max = sc.scrollHeight - sc.clientHeight;
+      fill.style.transform = 'scaleX(' + (max > 2 ? Math.min(1, sc.scrollTop / max) : 0) + ')';
+      sc.classList.toggle('at-top', sc.scrollTop < 4);
+      sc.classList.toggle('at-end', sc.scrollTop > max - 4);
+    }
+    sc.addEventListener('scroll', upd, { passive: true });
+    window.addEventListener('resize', upd);
+    upd();
+  }
+  document.querySelectorAll('[data-topic]').forEach(function (a) {
+    a.addEventListener('click', function () {
+      const sel = document.querySelector('select[name="interest"]');
+      if (!sel) return;
+      const t = a.getAttribute('data-topic');
+      Array.prototype.forEach.call(sel.options, function (o) { if (o.text === t) sel.value = o.value || o.text; });
+    });
+  });
+})();
