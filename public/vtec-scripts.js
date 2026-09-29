@@ -526,20 +526,53 @@
 
 /* ─────────────────────────────────── */
 
-  // Vision 2035 progress ring in nav (company founded Oct 2025 -> target end of 2035)
+  // Vision 2035 ticker in nav (Oct 2025 -> end of 2035): live percentage, day count, growth bars
   (function () {
-    const bar = document.getElementById('navVisionBar');
-    const pct = document.getElementById('navVisionPct');
-    const link = document.getElementById('navVision');
-    if (!bar || !pct) return;
-    const start = Date.UTC(2025, 9, 1), end = Date.UTC(2035, 11, 31);
-    const p = Math.max(0, Math.min(100, (Date.now() - start) / (end - start) * 100));
-    const shown = p < 10 ? p.toFixed(1) : Math.round(p);
-    pct.textContent = shown + '%';
-    if (link) link.title = shown + '% of the journey to 2035';
-    requestAnimationFrame(function () {
-      requestAnimationFrame(function () { bar.style.strokeDashoffset = String(100 - p); });
-    });
+    const pctEl = document.getElementById('nvPct');
+    const dayEl = document.getElementById('nvDay');
+    const chart = document.getElementById('nvChart');
+    if (!pctEl || !dayEl) return;
+    const DAY = 86400000, start = Date.UTC(2025, 9, 1), end = Date.UTC(2035, 11, 31);
+    const now = Date.now();
+    const p = Math.max(0, Math.min(100, (now - start) / (end - start) * 100));
+    const day = Math.max(1, Math.floor((now - start) / DAY) + 1);
+    const total = Math.round((end - start) / DAY) + 1;
+    pctEl.textContent = (p < 10 ? p.toFixed(1) : Math.round(p)) + '% complete';
+    dayEl.textContent = 'Day ' + day.toLocaleString('en-US') + ' / ' + total.toLocaleString('en-US');
+    if (chart) {
+      const bars = chart.children, on = Math.max(1, Math.round(p / 100 * bars.length));
+      for (let i = 0; i < bars.length; i++) if (i < on) bars[i].classList.add('on');
+    }
+  })();
+
+  // Hero stats: numbers keep rolling in a staggered loop (arms build up, rank climbs to #1, year counts to 2035)
+  (function () {
+    const nums = Array.prototype.slice.call(document.querySelectorAll('.hero-stat .cycle'));
+    const box = document.querySelector('.hero-stats');
+    if (!nums.length || !box) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    function roll(el, delay) {
+      const from = +el.dataset.from, to = +el.dataset.to, dur = +(el.dataset.dur || 1600);
+      setTimeout(function () {
+        const t0 = performance.now();
+        (function step(now) {
+          const t = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - t, 4);
+          el.textContent = Math.round(from + (to - from) * e);
+          if (t < 1) requestAnimationFrame(step);
+          else {
+            const s = el.closest('.hero-stat');
+            s.classList.remove('landed'); void s.offsetWidth; s.classList.add('landed');
+          }
+        })(t0);
+      }, delay);
+    }
+    function play() { nums.forEach(function (el, i) { roll(el, i * 380); }); }
+    let timer = null;
+    const io = new IntersectionObserver(function (en) {
+      if (en[0].isIntersecting) { if (!timer) { play(); timer = setInterval(play, 7500); } }
+      else if (timer) { clearInterval(timer); timer = null; }
+    }, { threshold: 0.3 });
+    io.observe(box);
   })();
 
   // Nav condenses on scroll — premium SaaS pattern
