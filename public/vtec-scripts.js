@@ -643,3 +643,17 @@
     });
   });
 })();
+
+
+// Menu: show the scroll-progress line only while the list is being scrolled
+(function () {
+  const sc = document.querySelector('#mobileMenu .mm-scroll');
+  const menu = document.getElementById('mobileMenu');
+  if (!sc || !menu) return;
+  let t;
+  sc.addEventListener('scroll', function () {
+    menu.classList.add('scrolling');
+    clearTimeout(t);
+    t = setTimeout(function () { menu.classList.remove('scrolling'); }, 800);
+  }, { passive: true });
+})();
