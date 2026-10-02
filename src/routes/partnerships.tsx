@@ -4,7 +4,7 @@
 // Submits to /api/partnership (src/routes/api/partnership.ts).
 
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import {
   AlertCircle,
   ArrowLeft,
@@ -127,7 +127,7 @@ const INDUSTRIES = ["Finance and investing", "Education", "Technology", "Retail 
 const EXPERIENCE = ["Just starting", "1 to 3 years", "4 to 7 years", "8+ years"];
 const HOURS = ["1 to 3 hours", "4 to 8 hours", "9 to 15 hours", "Full-time"];
 const HEARD = ["Instagram", "LinkedIn", "TikTok", "Facebook", "WhatsApp", "Referral", "Event or campus", "Other"];
-const TOWNS = ["Nairobi", "Mombasa", "Kisumu", "Nakuru", "Eldoret", "Thika", "Kiambu", "Machakos", "Kajiado", "Nyeri", "Meru", "Kakamega", "Kisii", "Naivasha", "Malindi"];
+const COUNTIES = ["Mombasa", "Kwale", "Kilifi", "Tana River", "Lamu", "Taita-Taveta", "Garissa", "Wajir", "Mandera", "Marsabit", "Isiolo", "Meru", "Tharaka-Nithi", "Embu", "Kitui", "Machakos", "Makueni", "Nyandarua", "Nyeri", "Kirinyaga", "Murang'a", "Kiambu", "Turkana", "West Pokot", "Samburu", "Trans Nzoia", "Uasin Gishu", "Elgeyo-Marakwet", "Nandi", "Baringo", "Laikipia", "Nakuru", "Narok", "Kajiado", "Kericho", "Bomet", "Kakamega", "Vihiga", "Bungoma", "Busia", "Siaya", "Kisumu", "Homa Bay", "Migori", "Kisii", "Nyamira", "Nairobi"];
 
 const TRAITS: { icon: LucideIcon; title: string; text: string }[] = [
   { icon: Target, title: "Visionary", text: "You think in ten-year roadmaps and still ship something this week." },
@@ -204,7 +204,7 @@ function validate(step: number, f: FormState, hasPhoto: boolean): Errors {
     if (f.fullName.trim().split(/\s+/).filter(Boolean).length < 2) e.fullName = "Enter your first and last name.";
     if (!/^\+?[0-9\s-]{9,16}$/.test(f.phone.trim())) e.phone = "Enter a valid phone number, for example +254 7XX XXX XXX.";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.email.trim())) e.email = "Enter a valid email address.";
-    if (f.location.trim().length < 2) e.location = "Enter the town or city you are in now.";
+    if (f.location.trim().length < 2) e.location = "Select the county you are in now.";
     const age = Number(f.age);
     if (!f.age || !Number.isInteger(age)) e.age = "Enter your age in years.";
     else if (age < 18) e.age = "Partners must be 18 or older.";
@@ -309,6 +309,60 @@ function Tilt({ className = "", children }: { className?: string; children: Reac
 }
 
 /* ───────────────────────────── 3D network globe (canvas) ───────────────────────────── */
+
+/* Draws the photo onto a canvas so the preview never depends on blob:/data: image rules (CSP). */
+function PhotoThumb({ blob, label }: { blob: Blob; label: string }) {
+  const ref = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    let off = false;
+    (async () => {
+      try {
+        const bmp = await createImageBitmap(blob);
+        const c = ref.current;
+        if (off || !c) return;
+        c.width = bmp.width;
+        c.height = bmp.height;
+        c.getContext("2d")?.drawImage(bmp, 0, 0);
+        bmp.close?.();
+      } catch {
+        /* leave the empty frame */
+      }
+    })();
+    return () => {
+      off = true;
+    };
+  }, [blob]);
+  return <canvas ref={ref} role="img" aria-label={label} />;
+}
+
+function HeroParticles() {
+  const [dots, setDots] = useState<CSSProperties[]>([]);
+  useEffect(() => {
+    if (prefersReducedMotion()) return;
+    setDots(
+      Array.from({ length: 22 }, () => {
+        const size = 3 + Math.random() * 6;
+        return {
+          width: size,
+          height: size,
+          background: Math.random() > 0.5 ? "rgba(39,174,96,.55)" : "rgba(120,160,255,.5)",
+          animationDuration: `${12 + Math.random() * 14}s`,
+          animationDelay: `${-Math.random() * 20}s`,
+          ["--x" as string]: `${Math.random() * 100}vw`,
+          ["--dx" as string]: `${(Math.random() - 0.5) * 120}px`,
+          ["--op" as string]: 0.2 + Math.random() * 0.3,
+        } as CSSProperties;
+      }),
+    );
+  }, []);
+  return (
+    <div className="pt-particles" aria-hidden="true">
+      {dots.map((d, i) => (
+        <span key={i} style={d} />
+      ))}
+    </div>
+  );
+}
 
 function NetworkGlobe() {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -684,6 +738,21 @@ function PartnershipsPage() {
     setSending(true);
     setSendError("");
     try {
+      const normPhone = (p: string) => {
+        const d = p.replace(/\D/g, "");
+        return d.startsWith("0") ? "254" + d.slice(1) : d.length === 9 ? "254" + d : d;
+      };
+      const mine = { e: form.email.trim().toLowerCase(), p: normPhone(form.phone) };
+      try {
+        const seen = JSON.parse(localStorage.getItem("vtec-partner-submitted") || "[]") as { e: string; p: string }[];
+        if (seen.some((x) => x.e === mine.e || x.p === mine.p)) {
+          setSendError("An application with this email address or phone number has already been received. Our team will be in touch.");
+          setSending(false);
+          return;
+        }
+      } catch {
+        /* ignore */
+      }
       const fd = new FormData();
       const { consent: _c, pledge: _p, ...payload } = form;
       fd.append("payload", JSON.stringify(payload));
@@ -691,6 +760,12 @@ function PartnershipsPage() {
       const res = await fetch("/api/partnership", { method: "POST", body: fd });
       const data = (await res.json().catch(() => null)) as { ok?: boolean; ref?: string; error?: string } | null;
       if (!res.ok || !data?.ok) throw new Error(data?.error || "Request failed");
+      try {
+        const seen = JSON.parse(localStorage.getItem("vtec-partner-submitted") || "[]");
+        localStorage.setItem("vtec-partner-submitted", JSON.stringify([...seen, mine]));
+      } catch {
+        /* ignore */
+      }
       try {
         sessionStorage.removeItem("vtec-partner-draft");
       } catch {
@@ -748,13 +823,15 @@ function PartnershipsPage() {
       <main>
         {/* ── hero ── */}
         <section className="pt-hero">
+          <div className="pt-hero-gridlines" aria-hidden="true" />
+          <HeroParticles />
           <NetworkGlobe />
           <div className="pt-wrap pt-hero-grid">
             <div>
               <p className="pt-pill">
                 <span className="pt-dot" /> Partnership onboarding is open
               </p>
-              <h1 className="pt-serif pt-h1">Build the next venture with VTEC.</h1>
+              <h1 className="pt-serif pt-h1">Build the next <span className="pt-hl">venture</span> with VTEC.</h1>
               <p className="pt-lead">
                 VTEC Business Group is a Nairobi holding company across financial education, consultancy, retail and wealth technology.
                 We are onboarding partners who plan in decades, not quarters.
@@ -895,7 +972,7 @@ function PartnershipsPage() {
 
             <div className="pt-card" ref={cardRef}>
               {done ? (
-                <SuccessView done={done} photoUrl={photo?.url} />
+                <SuccessView done={done} photoBlob={photo?.blob} />
               ) : (
                 <>
                   {/* progress */}
@@ -927,12 +1004,12 @@ function PartnershipsPage() {
                           <input className="pt-input" id="email" name="email" type="email" inputMode="email" autoComplete="email" placeholder="you@example.com" value={form.email} onChange={(e) => set("email", e.target.value)} {...aria("email")} />
                         </Field>
                         <Field id="location" label="Current location" icon={MapPin} error={err("location")}>
-                          <input className="pt-input" id="location" name="location" list="pt-towns" autoComplete="address-level2" placeholder="Town or city, country" value={form.location} onChange={(e) => set("location", e.target.value)} {...aria("location")} />
-                          <datalist id="pt-towns">
-                            {TOWNS.map((t) => (
-                              <option key={t} value={`${t}, Kenya`} />
+                          <select className="pt-input" id="location" name="location" autoComplete="address-level1" value={form.location} onChange={(e) => set("location", e.target.value)} {...aria("location")}>
+                            <option value="" disabled>Select your county</option>
+                            {COUNTIES.map((c) => (
+                              <option key={c} value={`${c} County`}>{c}</option>
                             ))}
-                          </datalist>
+                          </select>
                         </Field>
                         <Field id="age" label="Age" hint="18 or older. Helps us build the right cohort." icon={Clock3} error={err("age")}>
                           <input className="pt-input" id="age" name="age" type="number" inputMode="numeric" min={18} max={80} placeholder="e.g. 24" value={form.age} onChange={(e) => set("age", e.target.value)} {...aria("age")} />
@@ -945,7 +1022,7 @@ function PartnershipsPage() {
                           <div className={`pt-drop ${err("photo") ? "bad" : ""} ${photo ? "has" : ""}`}>
                             {photo ? (
                               <>
-                                <img src={photo.url} alt="Your passport photo preview" />
+                                <PhotoThumb blob={photo.blob} label="Your passport photo preview" />
                                 <div className="pt-drop-meta">
                                   <strong>Photo added</strong>
                                   <span>{Math.max(1, Math.round(photo.blob.size / 1024))} KB, ready to send</span>
@@ -1109,7 +1186,7 @@ function PartnershipsPage() {
                     {step === 3 && (
                       <div>
                         <div className="pt-review">
-                          {photo && <img src={photo.url} alt="Your passport photo" />}
+                          {photo && <PhotoThumb blob={photo.blob} label="Your passport photo" />}
                           <dl>
                             <div><dt>Name</dt><dd>{form.fullName}</dd></div>
                             <div><dt>Phone</dt><dd>{form.phone}</dd></div>
@@ -1214,7 +1291,7 @@ function PartnershipsPage() {
 
 /* ───────────────────────────── success view ───────────────────────────── */
 
-function SuccessView({ done, photoUrl }: { done: Done; photoUrl?: string }) {
+function SuccessView({ done, photoBlob }: { done: Done; photoBlob?: Blob }) {
   return (
     <div className="pt-done" aria-live="polite">
       <Confetti />
@@ -1241,7 +1318,7 @@ function SuccessView({ done, photoUrl }: { done: Done; photoUrl?: string }) {
           </span>
         </div>
         <div className="pt-pass-body">
-          {photoUrl && <img src={photoUrl} alt={`Passport photo of ${done.fullName}`} />}
+          {photoBlob && <PhotoThumb blob={photoBlob} label={`Passport photo of ${done.fullName}`} />}
           <div>
             <h3>{done.fullName}</h3>
             <p>
@@ -1310,18 +1387,19 @@ function SuccessView({ done, photoUrl }: { done: Done; photoUrl?: string }) {
 /* ───────────────────────────── styles ───────────────────────────── */
 
 const CSS = `
-.pt-root{--navy:#0D2149;--deep:#07122b;--mid:#163272;--green:#1f8c3b;--gb:#27ae60;--teal:#1aa39a;--gold:#c9a227;--gl:#f0d580;--off:#f4f7fc;--ink:#1a1a2e;--gray:#4a5568;--line:#d5deee;--err:#c0392b;
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Playfair+Display:wght@700;900&family=Outfit:wght@400;500;600;700&family=Caveat:wght@600&display=swap");
+.pt-root{--navy:#0D2149;--deep:#050b16;--mid:#163272;--green:#1f8c3b;--gb:#27ae60;--teal:#1aa39a;--gold:#c9a227;--gl:#f0d580;--off:#f4f7fc;--ink:#1a1a2e;--gray:#4a5568;--line:#d5deee;--err:#c0392b;
 font-family:'Outfit',system-ui,sans-serif;color:var(--ink);background:var(--off);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;line-height:1.5}
 .pt-root *,.pt-root *::before,.pt-root *::after{box-sizing:border-box}
 .pt-root h1,.pt-root h2,.pt-root h3,.pt-root p,.pt-root ul,.pt-root ol,.pt-root dl,.pt-root dd{margin:0;padding:0}
 .pt-root ul,.pt-root ol{list-style:none}
 .pt-root a{color:inherit}
 .pt-root :focus-visible{outline:3px solid var(--gl);outline-offset:2px}
-.pt-serif{font-family:'DM Serif Display','Playfair Display',serif;font-weight:400}
+.pt-serif{font-family:'DM Serif Display','Playfair Display',serif;font-weight:900}
 .pt-wrap{width:min(1140px,100% - 40px);margin-inline:auto}
 
 /* nav */
-.pt-nav{position:sticky;top:0;z-index:50;background:rgba(7,18,43,.8);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
+.pt-nav{position:sticky;top:0;z-index:50;background:rgba(13,33,73,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
 .pt-nav-in{display:flex;align-items:center;justify-content:space-between;height:68px}
 .pt-brand{display:flex;align-items:center;gap:12px;color:#fff;text-decoration:none}
 .pt-brand b{display:block;letter-spacing:.18em;font-size:15px;font-weight:700}
@@ -1346,11 +1424,19 @@ font-family:'Outfit',system-ui,sans-serif;color:var(--ink);background:var(--off)
 @keyframes ptSpin{to{transform:rotate(360deg)}}
 
 /* hero */
-.pt-hero{position:relative;background:radial-gradient(120% 90% at 78% 8%,#1d418c 0%,var(--navy) 46%,var(--deep) 100%);color:#fff;overflow:hidden;padding:44px 0 96px}
+.pt-hero{position:relative;background:linear-gradient(180deg,rgba(6,14,28,.58) 0%,rgba(8,17,32,.72) 45%,rgba(5,11,22,.94) 88%,#050b16 100%),radial-gradient(ellipse at 20% 60%,rgba(31,140,59,.18) 0%,transparent 55%),radial-gradient(ellipse at 80% 20%,rgba(22,50,114,.4) 0%,transparent 55%),url(/1000100227.jpg) center/cover no-repeat,#050b16;color:#fff;overflow:hidden;padding:44px 0 96px}
+.pt-hero-gridlines{position:absolute;inset:0;opacity:.05;background-image:linear-gradient(var(--green) 1px,transparent 1px),linear-gradient(90deg,var(--green) 1px,transparent 1px);background-size:44px 44px;pointer-events:none}
+.pt-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.pt-particles span{position:absolute;top:100%;left:0;border-radius:50%;will-change:transform,opacity;animation:ptFloat linear infinite}
+@keyframes ptFloat{0%{transform:translate3d(var(--x,0),0,0);opacity:0}10%,90%{opacity:var(--op,.25)}100%{transform:translate3d(calc(var(--x,0) + var(--dx,0)),-110vh,0);opacity:0}}
+.pt-hl{background:linear-gradient(120deg,#27ae60,#5b8cff 85%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.pt-hero .pt-wrap>div{animation:ptUp .9s ease both}
+@keyframes ptUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.pt-particles,.pt-hero .pt-wrap>div{display:none;animation:none}}
 .pt-hero canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.5;pointer-events:none}
 .pt-hero-grid{position:relative;display:grid;gap:28px;align-items:center}
 @media(min-width:900px){.pt-hero{padding:92px 0 130px}.pt-hero-grid{grid-template-columns:1.1fr .9fr;gap:40px}}
-.pt-pill{display:inline-flex;align-items:center;gap:10px;padding:8px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);font-size:.9rem;color:#dbe6ff;margin-bottom:22px}
+.pt-pill{display:inline-flex;align-items:center;gap:10px;padding:6px 16px;border-radius:999px;border:1px solid rgba(39,174,96,.4);background:rgba(39,174,96,.12);font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#27ae60;margin-bottom:22px}
 .pt-dot{width:8px;height:8px;border-radius:50%;background:var(--gb);box-shadow:0 0 0 0 rgba(39,174,96,.7);animation:ptPulse 2s infinite;flex:none;display:inline-block}
 @keyframes ptPulse{70%{box-shadow:0 0 0 9px rgba(39,174,96,0)}100%{box-shadow:0 0 0 0 rgba(39,174,96,0)}}
 .pt-h1{font-size:clamp(2.5rem,8vw,4.6rem);line-height:1.03;margin-bottom:18px;letter-spacing:-.01em}
@@ -1477,7 +1563,7 @@ textarea.pt-input{resize:vertical;min-height:112px;line-height:1.55}
 .pt-drop-empty{display:grid;justify-items:center;gap:6px;padding:26px 16px;cursor:pointer;color:var(--navy);text-align:center}
 .pt-drop-empty span{color:#6b7a93;font-size:.88rem}
 .pt-drop.has{display:flex;gap:16px;align-items:center;padding:14px}
-.pt-drop.has>img{width:96px;height:120px;object-fit:cover;border-radius:12px;border:2px solid #fff;box-shadow:0 8px 20px -8px rgba(13,33,73,.5);flex:none}
+.pt-drop.has>img,.pt-drop.has>canvas{width:96px;height:120px;object-fit:cover;border-radius:12px;border:2px solid #fff;box-shadow:0 8px 20px -8px rgba(13,33,73,.5);flex:none}
 .pt-drop-meta{display:grid;gap:3px;color:var(--navy)}
 .pt-drop-meta span{color:#6b7a93;font-size:.88rem}
 .pt-drop-actions{display:flex;gap:16px;margin-top:8px}
@@ -1497,7 +1583,7 @@ textarea.pt-input{resize:vertical;min-height:112px;line-height:1.55}
 
 /* review */
 .pt-review{display:grid;gap:16px;padding:18px;border-radius:18px;background:#f4f7fc;border:1px solid #e3eaf6;position:relative}
-.pt-review>img{width:84px;height:104px;object-fit:cover;border-radius:12px;border:2px solid #fff;box-shadow:0 8px 20px -10px rgba(13,33,73,.5)}
+.pt-review>img,.pt-review>canvas{width:84px;height:104px;object-fit:cover;border-radius:12px;border:2px solid #fff;box-shadow:0 8px 20px -10px rgba(13,33,73,.5)}
 .pt-review dl{display:grid;gap:10px}
 .pt-review dl div{display:grid;gap:1px}
 .pt-review dt{font-size:.8rem;color:#6b7a93}
@@ -1535,7 +1621,7 @@ textarea.pt-input{resize:vertical;min-height:112px;line-height:1.55}
 .pt-pass-state{margin-left:auto;display:inline-flex;align-items:center;gap:8px;font-size:.8rem;font-weight:600;padding:6px 12px;border-radius:999px;background:rgba(240,213,128,.14);color:var(--gl)}
 .pt-pass-state .pt-dot{background:var(--gl)}
 .pt-pass-body{display:flex;gap:16px;align-items:center;padding:18px 0}
-.pt-pass-body>img{width:84px;height:104px;object-fit:cover;border-radius:12px;border:2px solid rgba(255,255,255,.7);flex:none}
+.pt-pass-body>img,.pt-pass-body>canvas{width:84px;height:104px;object-fit:cover;border-radius:12px;border:2px solid rgba(255,255,255,.7);flex:none}
 .pt-pass-body h3{font-size:1.3rem;font-weight:600;overflow-wrap:anywhere}
 .pt-pass-body p{display:flex;align-items:center;gap:6px;color:#b7c6e6;font-size:.92rem;margin:3px 0 10px}
 .pt-pass-tags{display:flex;flex-wrap:wrap;gap:6px}
