@@ -55,7 +55,13 @@
 </script>
 
 <link rel="icon" type="image/png" href="/vtec-logo.png" />
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&family=JetBrains+Mono:wght@500&family=Michroma&display=swap" rel="stylesheet"/>
+<script>try{if(sessionStorage.getItem('vtecSeen'))document.documentElement.classList.add('pl-skip')}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="preload" as="image" href="/1000100227.jpg" fetchpriority="high"/>
+<!-- fonts load without blocking first paint -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Playfair+Display:wght@700;900&family=Outfit:wght@400;500;600;700&family=Michroma&display=swap" onload="this.onload=null;this.rel='stylesheet'"/>
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Playfair+Display:wght@700;900&family=Outfit:wght@400;500;600;700&family=Michroma&display=swap"/></noscript>
 
 <!-- ═══ EXTERNAL STYLESHEET ═══ -->
 <link rel="stylesheet" href="/vtec-styles.css"/>
@@ -177,7 +183,7 @@
       <span class="mm-text">VTEC Community</span>
     </a>
 
-    <a class="mm-row" href="#contact" data-topic="Partnership / Collaboration" onclick="toggleMenu()">
+    <a class="mm-row" href="/partnerships" target="_parent" onclick="toggleMenu()">
       <span class="mm-icon t-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 17a2 2 0 0 1-2-2l-3.5-3.5a2 2 0 0 1 0-2.8L8 6"/><path d="m14 7 3 3"/><path d="M3 12l3 3M21 12l-3 3"/><path d="M8 6l3-2 6 4.5a2 2 0 0 1 0 2.8L13 16"/><path d="m11 17 2 2a1.4 1.4 0 0 0 2 0l1-1"/></svg></span>
       <span class="mm-text">Partnerships</span>
     </a>
@@ -306,16 +312,19 @@
 <!-- ABOUT / WHO WE ARE -->
 <section id="about">
   <div class="container">
-    <div class="wu-intro reveal">
+    <div class="wu-intro reveal" id="wuIntro">
       <div class="section-label">Who We Are</div>
       <h2 class="section-title"><span class="wu-ln"><span>Built on Vision.</span></span><span class="wu-ln"><span class="wu-hl">Driven by Purpose.</span></span></h2>
       <p class="section-desc">VTEC Business Group is a modern, multi-service brand founded in October 2025 with the vision of building a dynamic platform that connects education, trade, empowerment, and professional consultancy within Kenya's growing economy.</p>
     </div>
 
     <!-- The VTEC code: animated acronym -->
+    <div class="wu-ticker" aria-hidden="true"><div class="wu-ticker-in"><span>Vision</span><i></i><span>Trade</span><i></i><span>Empowerment</span><i></i><span>Consultancy</span><i></i><span>Vision</span><i></i><span>Trade</span><i></i><span>Empowerment</span><i></i><span>Consultancy</span><i></i></div></div>
+
     <div class="wu-stage reveal" id="wuStage" aria-label="What VTEC stands for">
       <span class="wu-stage-fx" aria-hidden="true"><i class="g"></i><i class="a"></i></span>
       <div class="wu-head"><span class="wu-kicker"><i></i>What does VTEC stand for?</span><span class="wu-hint">Tap a letter</span></div>
+      <span class="wu-ghost" id="wuGhost" aria-hidden="true">V</span>
       <div class="wu-main">
         <div class="wu-rail" role="tablist" aria-label="VTEC letters">
           <button class="wu-key on" type="button" role="tab" aria-selected="true" aria-controls="wuPane0" data-i="0"><b>V</b><em>01</em></button><button class="wu-key" type="button" role="tab" aria-selected="false" aria-controls="wuPane1" data-i="1"><b>T</b><em>02</em></button><button class="wu-key" type="button" role="tab" aria-selected="false" aria-controls="wuPane2" data-i="2"><b>E</b><em>03</em></button><button class="wu-key" type="button" role="tab" aria-selected="false" aria-controls="wuPane3" data-i="3"><b>C</b><em>04</em></button>
