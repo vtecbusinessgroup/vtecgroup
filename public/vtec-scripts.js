@@ -657,3 +657,73 @@
     t = setTimeout(function () { menu.classList.remove('scrolling'); }, 800);
   }, { passive: true });
 })();
+
+
+/* ═══ Who We Are — animated VTEC acronym ═══ */
+(function () {
+  const stage = document.getElementById('wuStage');
+  if (!stage) return;
+  const keys = Array.from(stage.querySelectorAll('.wu-key'));
+  const panes = Array.from(stage.querySelectorAll('.wu-pane'));
+  const dot = stage.querySelector('.wu-dot');
+  const fill = stage.querySelector('.wu-fill');
+  const line = stage.querySelector('.wu-line');
+  const bar = stage.querySelector('.wu-prog i');
+  const rail = stage.querySelector('.wu-rail');
+  const STEP = 4500;
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let cur = 0, timer = null, inView = false;
+  stage.style.setProperty('--wu-dur', STEP + 'ms');
+
+  function place() {
+    const k = keys[cur], f = keys[0];
+    const cx = k.offsetLeft + k.offsetWidth / 2;
+    const c0 = f.offsetLeft + f.offsetWidth / 2;
+    const cN = keys[keys.length - 1].offsetLeft + keys[keys.length - 1].offsetWidth / 2;
+    line.style.left = c0 + 'px';
+    line.style.right = (rail.clientWidth - cN) + 'px';
+    dot.style.left = cx + 'px';
+    fill.style.width = (cx - c0) + 'px';
+  }
+  function restartBar() {
+    stage.classList.remove('playing');
+    void bar.offsetWidth;
+    if (!still && inView) stage.classList.add('playing');
+  }
+  function go(i) {
+    cur = (i + keys.length) % keys.length;
+    keys.forEach((k, n) => {
+      const on = n === cur;
+      k.classList.toggle('on', on);
+      k.setAttribute('aria-selected', on ? 'true' : 'false');
+      k.tabIndex = on ? 0 : -1;
+      panes[n].classList.toggle('on', on);
+    });
+    place();
+    restartBar();
+  }
+  function schedule() {
+    clearTimeout(timer);
+    if (still || !inView || document.hidden) return;
+    timer = setTimeout(function () { go(cur + 1); schedule(); }, STEP);
+  }
+  keys.forEach((k, n) => {
+    k.addEventListener('click', function () { go(n); schedule(); });
+    k.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); keys[cur].focus(); schedule(); }
+      if (e.key === 'ArrowLeft')  { e.preventDefault(); go(cur - 1); keys[cur].focus(); schedule(); }
+    });
+  });
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (en) {
+      inView = en[0].isIntersecting;
+      restartBar();
+      schedule();
+    }, { threshold: 0.35 }).observe(stage);
+  } else { inView = true; }
+  document.addEventListener('visibilitychange', function () { restartBar(); schedule(); });
+  window.addEventListener('resize', place, { passive: true });
+  window.addEventListener('load', place);
+  go(0);
+  schedule();
+})();
