@@ -82,6 +82,23 @@ async function readEnv(name: string): Promise<string | undefined> {
   }
 }
 
+function normPhone(p: string) {
+  const d = p.replace(/\D/g, "");
+  if (d.startsWith("0")) return "254" + d.slice(1);
+  return d.length === 9 ? "254" + d : d;
+}
+
+// Duplicate guard. Needs a Workers KV namespace bound as PARTNERS_KV (see wrangler.jsonc).
+async function readKV(): Promise<any | null> {
+  try {
+    // @ts-ignore - only resolvable inside the Cloudflare Workers runtime
+    const mod = await import("cloudflare:workers");
+    return (mod as any).env?.PARTNERS_KV ?? null;
+  } catch {
+    return null;
+  }
+}
+
 function validate(d: Payload): string | null {
   if (clean(d.fullName).length < 3) return "Full name is required.";
   if (!/^\+?[0-9\s-]{9,16}$/.test(clean(d.phone))) return "Phone number looks invalid.";
@@ -223,6 +240,18 @@ export const Route = createFileRoute("/api/partnership")({
           }
           const from = (await readEnv("RESEND_FROM")) || DEFAULT_FROM;
 
+          const kv = await readKV();
+          const emailKey = `email:${d.email.toLowerCase()}`;
+          const phoneKey = `phone:${normPhone(d.phone)}`;
+          if (kv) {
+            const [a, b] = await Promise.all([kv.get(emailKey), kv.get(phoneKey)]);
+            if (a || b) {
+              return json({ ok: false, error: "An application with this email address or phone number has already been received. Our team will be in touch." }, 409);
+            }
+          } else {
+            console.warn("[partnership] PARTNERS_KV is not bound; duplicate check skipped");
+          }
+
           const ref = makeRef();
           const band = ageBand(Number(d.age));
           const slug = d.fullName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "applicant";
@@ -245,6 +274,11 @@ export const Route = createFileRoute("/api/partnership")({
           if (!res.ok) {
             console.error("[partnership] Resend error", res.status, await res.text());
             return json({ ok: false, error: "We couldn't deliver your application. Please try again." }, 502);
+          }
+
+          if (kv) {
+            const rec = JSON.stringify({ ref, at: new Date().toISOString() });
+            await Promise.all([kv.put(emailKey, rec), kv.put(phoneKey, rec)]);
           }
 
           return json({ ok: true, ref });
