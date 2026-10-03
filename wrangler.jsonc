@@ -1,0 +1,24 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "vtecgroup",
+  "compatibility_date": "2026-07-06",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "main": "./src/server.ts",
+  "assets": {
+    "directory": "./dist/client",
+    "binding": "ASSETS"
+  },
+  // Duplicate-application guard. Run: npx wrangler kv namespace create PARTNERS_KV
+  // then replace the id below with the id it prints, and redeploy.
+  "kv_namespaces": [
+    { "binding": "PARTNERS_KV", "id": "PASTE_YOUR_KV_NAMESPACE_ID_HERE" }
+  ],
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true
+    }
+  }
+}
