@@ -315,3 +315,4 @@ export const Route = createFileRoute("/api/partnership")({
     },
   },
 });
+
