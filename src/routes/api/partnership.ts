@@ -82,11 +82,21 @@ async function readEnv(name: string): Promise<string | undefined> {
   }
 }
 
+// Identity keys. Names are not unique, so email and phone are. Both are normalised so that
+// +254 712 345 678, 0712345678 and 712345678 are the same phone, and a.b+x@gmail.com is a@b.com style aliasing.
 function normPhone(p: string) {
   const d = p.replace(/\D/g, "");
-  if (d.startsWith("0")) return "254" + d.slice(1);
-  return d.length === 9 ? "254" + d : d;
+  return /^(0|254)?\d{9}$/.test(d) ? "254" + d.slice(-9) : d;
 }
+
+function normEmail(e: string) {
+  const [l, d = ""] = e.trim().toLowerCase().split("@");
+  const dom = d === "googlemail.com" ? "gmail.com" : d;
+  const local = l.split("+")[0];
+  return `${dom === "gmail.com" ? local.replace(/\./g, "") : local}@${dom}`;
+}
+
+const DUPLICATE_MESSAGE = "An application with this email address or phone number has already been received. Our team will be in touch.";
 
 // Duplicate guard. Needs a Workers KV namespace bound as PARTNERS_KV (see wrangler.jsonc).
 async function readKV(): Promise<any | null> {
@@ -185,6 +195,7 @@ export const Route = createFileRoute("/api/partnership")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        let release: null | (() => Promise<unknown>) = null;
         try {
           const form = await request.formData();
           const raw = form.get("payload");
@@ -241,18 +252,24 @@ export const Route = createFileRoute("/api/partnership")({
           const from = (await readEnv("RESEND_FROM")) || DEFAULT_FROM;
 
           const kv = await readKV();
-          const emailKey = `email:${d.email.toLowerCase()}`;
+          const emailKey = `email:${normEmail(d.email)}`;
           const phoneKey = `phone:${normPhone(d.phone)}`;
           if (kv) {
             const [a, b] = await Promise.all([kv.get(emailKey), kv.get(phoneKey)]);
             if (a || b) {
-              return json({ ok: false, error: "An application with this email address or phone number has already been received. Our team will be in touch." }, 409);
+              return json({ ok: false, error: DUPLICATE_MESSAGE }, 409);
             }
           } else {
             console.warn("[partnership] PARTNERS_KV is not bound; duplicate check skipped");
           }
 
           const ref = makeRef();
+          // Reserve both keys before the email goes out, so a double-tap or a second tab cannot slip through.
+          const reservation = JSON.stringify({ ref, at: new Date().toISOString(), state: "pending" });
+          if (kv) {
+            await Promise.all([kv.put(emailKey, reservation), kv.put(phoneKey, reservation)]);
+            release = () => Promise.all([kv.delete(emailKey), kv.delete(phoneKey)]);
+          }
           const band = ageBand(Number(d.age));
           const slug = d.fullName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "applicant";
           const ext = photo.type === "image/png" ? "png" : photo.type === "image/webp" ? "webp" : "jpg";
@@ -273,17 +290,25 @@ export const Route = createFileRoute("/api/partnership")({
 
           if (!res.ok) {
             console.error("[partnership] Resend error", res.status, await res.text());
+            // Release the reservation so the applicant can retry after a delivery failure.
+            if (kv) await Promise.all([kv.delete(emailKey), kv.delete(phoneKey)]);
             return json({ ok: false, error: "We couldn't deliver your application. Please try again." }, 502);
           }
 
           if (kv) {
-            const rec = JSON.stringify({ ref, at: new Date().toISOString() });
+            const rec = JSON.stringify({ ref, at: new Date().toISOString(), state: "received" });
             await Promise.all([kv.put(emailKey, rec), kv.put(phoneKey, rec)]);
           }
 
+          release = null;
           return json({ ok: true, ref });
         } catch (err) {
           console.error("[partnership] unexpected error", err);
+          try {
+            await release?.();
+          } catch {
+            /* nothing more to do */
+          }
           return json({ ok: false, error: "Something went wrong on our side. Please try again." }, 500);
         }
       },
