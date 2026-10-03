@@ -10,10 +10,8 @@
     "directory": "./dist/client",
     "binding": "ASSETS"
   },
-  // Duplicate-application guard. Run: npx wrangler kv namespace create PARTNERS_KV
-  // then replace the id below with the id it prints, and redeploy.
   "kv_namespaces": [
-    { "binding": "PARTNERS_KV", "id": "PASTE_YOUR_KV_NAMESPACE_ID_HERE" }
+    { "binding": "PARTNERS_KV", "id": "e8cb16de93fe46d0b7f3b260e312affc" }
   ],
   "observability": {
     "logs": {
@@ -22,5 +20,3 @@
     }
   }
 }
-
-
