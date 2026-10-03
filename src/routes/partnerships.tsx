@@ -24,6 +24,7 @@ import {
   PenLine,
   Phone,
   Rocket,
+  Share2,
   ShieldCheck,
   Sparkles,
   Store,
@@ -46,12 +47,14 @@ export const Route = createFileRoute("/partnerships")({
       },
       { property: "og:title", content: "Partner with VTEC Business Group" },
       { property: "og:description", content: "Build the next venture with VTEC. Start your partnership onboarding." },
-      { property: "og:image", content: "https://vtecgroup.co.ke/vtec-logo.png" },
+      { property: "og:image", content: "https://vtecgroup.co.ke/og-image.png" },
     ],
     links: [
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@400;500;600;700&family=Caveat:wght@600&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Playfair+Display:wght@700;900&family=Outfit:wght@400;500;600;700&family=Michroma&family=Caveat:wght@600&display=swap",
       },
     ],
   }),
@@ -70,6 +73,7 @@ type Arm = {
   tag: string;
   status: "Active" | "Live now" | "Coming soon";
   icon: LucideIcon;
+  logo: string;
   roles: string[];
 };
 
@@ -81,6 +85,7 @@ const ARMS: Arm[] = [
     tag: "Financial literacy and investing",
     status: "Active",
     icon: GraduationCap,
+    logo: "/investormind-academy-logo.png",
     roles: ["Co-host programmes and campus sessions", "Bring learners and community chapters", "Contribute content and expert talks"],
   },
   {
@@ -90,6 +95,7 @@ const ARMS: Arm[] = [
     tag: "Your wealth co-pilot",
     status: "Live now",
     icon: Wallet,
+    logo: "/miliki-app-logo.jpg",
     roles: ["Put the app in front of your network", "Integrate financial tools and products", "Serve as a MILIKI ambassador"],
   },
   {
@@ -99,6 +105,7 @@ const ARMS: Arm[] = [
     tag: "Strategy and business growth",
     status: "Coming soon",
     icon: Briefcase,
+    logo: "/vtec-logo.png",
     roles: ["Refer founders and institutions", "Deliver joint client engagements", "Advise on sector playbooks"],
   },
   {
@@ -108,6 +115,7 @@ const ARMS: Arm[] = [
     tag: "Quality. Style. Value.",
     status: "Coming soon",
     icon: Store,
+    logo: "/vtec-logo.png",
     roles: ["Supply or source quality products", "Open distribution and pickup points", "Co-create brand collaborations"],
   },
 ];
@@ -127,7 +135,7 @@ const INDUSTRIES = ["Finance and investing", "Education", "Technology", "Retail 
 const EXPERIENCE = ["Just starting", "1 to 3 years", "4 to 7 years", "8+ years"];
 const HOURS = ["1 to 3 hours", "4 to 8 hours", "9 to 15 hours", "Full-time"];
 const HEARD = ["Instagram", "LinkedIn", "TikTok", "Facebook", "WhatsApp", "Referral", "Event or campus", "Other"];
-const COUNTIES = ["Mombasa", "Kwale", "Kilifi", "Tana River", "Lamu", "Taita-Taveta", "Garissa", "Wajir", "Mandera", "Marsabit", "Isiolo", "Meru", "Tharaka-Nithi", "Embu", "Kitui", "Machakos", "Makueni", "Nyandarua", "Nyeri", "Kirinyaga", "Murang'a", "Kiambu", "Turkana", "West Pokot", "Samburu", "Trans Nzoia", "Uasin Gishu", "Elgeyo-Marakwet", "Nandi", "Baringo", "Laikipia", "Nakuru", "Narok", "Kajiado", "Kericho", "Bomet", "Kakamega", "Vihiga", "Bungoma", "Busia", "Siaya", "Kisumu", "Homa Bay", "Migori", "Kisii", "Nyamira", "Nairobi"];
+const COUNTIES = ["Baringo", "Bomet", "Bungoma", "Busia", "Elgeyo-Marakwet", "Embu", "Garissa", "Homa Bay", "Isiolo", "Kajiado", "Kakamega", "Kericho", "Kiambu", "Kilifi", "Kirinyaga", "Kisii", "Kisumu", "Kitui", "Kwale", "Laikipia", "Lamu", "Machakos", "Makueni", "Mandera", "Marsabit", "Meru", "Migori", "Mombasa", "Murang'a", "Nairobi", "Nakuru", "Nandi", "Narok", "Nyamira", "Nyandarua", "Nyeri", "Samburu", "Siaya", "Taita-Taveta", "Tana River", "Tharaka-Nithi", "Trans Nzoia", "Turkana", "Uasin Gishu", "Vihiga", "Wajir", "West Pokot"];
 
 const TRAITS: { icon: LucideIcon; title: string; text: string }[] = [
   { icon: Target, title: "Visionary", text: "You think in ten-year roadmaps and still ship something this week." },
@@ -308,31 +316,197 @@ function Tilt({ className = "", children }: { className?: string; children: Reac
   );
 }
 
-/* ───────────────────────────── 3D network globe (canvas) ───────────────────────────── */
+/* ───────────────────────────── photo preview + landing-style helpers ───────────────────────────── */
 
-/* Draws the photo onto a canvas so the preview never depends on blob:/data: image rules (CSP). */
+/* Decodes with createImageBitmap (no blob:/data: <img> needed, so CSP cannot block it). */
+async function decodeBlob(blob: Blob): Promise<CanvasImageSource & { width: number; height: number }> {
+  try {
+    return await createImageBitmap(blob);
+  } catch {
+    return await new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(blob);
+      const img = new Image();
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        resolve(img);
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error("decode failed"));
+      };
+      img.src = url;
+    });
+  }
+}
+
+/* Draws a centre-cropped passport-ratio preview onto a canvas. Falls back to a placeholder, never an empty frame. */
 function PhotoThumb({ blob, label }: { blob: Blob; label: string }) {
   const ref = useRef<HTMLCanvasElement>(null);
+  const [failed, setFailed] = useState(false);
   useEffect(() => {
     let off = false;
+    setFailed(false);
     (async () => {
       try {
-        const bmp = await createImageBitmap(blob);
+        const src = await decodeBlob(blob);
         const c = ref.current;
         if (off || !c) return;
-        c.width = bmp.width;
-        c.height = bmp.height;
-        c.getContext("2d")?.drawImage(bmp, 0, 0);
-        bmp.close?.();
+        const W = 240;
+        const H = 300;
+        c.width = W;
+        c.height = H;
+        const ctx = c.getContext("2d");
+        if (!ctx) throw new Error("no canvas");
+        const scale = Math.max(W / src.width, H / src.height);
+        const dw = src.width * scale;
+        const dh = src.height * scale;
+        ctx.fillStyle = "#e8eefb";
+        ctx.fillRect(0, 0, W, H);
+        ctx.drawImage(src, (W - dw) / 2, (H - dh) * 0.25, dw, dh);
+        (src as ImageBitmap).close?.();
       } catch {
-        /* leave the empty frame */
+        if (!off) setFailed(true);
       }
     })();
     return () => {
       off = true;
     };
   }, [blob]);
-  return <canvas ref={ref} role="img" aria-label={label} />;
+  if (failed)
+    return (
+      <span className="pt-thumb-fb" role="img" aria-label={label}>
+        <User size={30} aria-hidden="true" />
+      </span>
+    );
+  return <canvas ref={ref} className="pt-thumb" role="img" aria-label={label} />;
+}
+
+const normEmail = (e: string) => {
+  const [l, d = ""] = e.trim().toLowerCase().split("@");
+  const dom = d === "googlemail.com" ? "gmail.com" : d;
+  const local = l.split("+")[0];
+  return `${dom === "gmail.com" ? local.replace(/\./g, "") : local}@${dom}`;
+};
+const normPhoneKe = (p: string) => {
+  const d = p.replace(/\D/g, "");
+  return /^(0|254)?\d{9}$/.test(d) ? "254" + d.slice(-9) : d;
+};
+
+/* Landing-page counter: rolls from one value to another, once. */
+function Counter({ from, to, dur, white }: { from: number; to: number; dur: number; white?: boolean }) {
+  const [v, setV] = useState(to);
+  useEffect(() => {
+    if (prefersReducedMotion()) return;
+    let raf = 0;
+    const t0 = performance.now();
+    setV(from);
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - t0) / dur);
+      setV(Math.round(from + (to - from) * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [from, to, dur]);
+  return <span className={`pt-cycle${white ? " w" : ""}`}>{v}</span>;
+}
+
+/* Same clock as the landing page nav: day count on the road to 31 Dec 2035. */
+function Timeline() {
+  const [d, setD] = useState<number | null>(null);
+  useEffect(() => {
+    const n = new Date();
+    const day = Math.floor((Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()) - Date.UTC(2025, 9, 1)) / 86400000) + 1;
+    setD(Math.min(Math.max(day, 1), 3744));
+  }, []);
+  if (d === null) return null;
+  return (
+    <div className="pt-timeline">
+      <span className="pt-bars" aria-hidden="true">
+        <i /><i /><i /><i /><i /><i />
+      </span>
+      <span>
+        <small>Timeline</small>
+        <b>Day {d.toLocaleString("en-US")} / 3,744</b>
+      </span>
+    </div>
+  );
+}
+
+/* Real brand logo from /public, with the icon as a fallback. */
+function ArmLogo({ arm, cls, size }: { arm: Arm; cls: string; size: number }) {
+  const [bad, setBad] = useState(false);
+  return (
+    <span className={`${cls}${bad ? " fb" : ""}`}>
+      {bad ? <arm.icon size={size} aria-hidden="true" /> : <img src={arm.logo} alt="" loading="eager" decoding="async" onError={() => setBad(true)} />}
+    </span>
+  );
+}
+
+const BUBBLES: [string, string, string, string][] = [["8%", "5px", "11s", "0s"], ["32%", "7px", "13s", "3.5s"], ["60%", "9px", "12s", "7s"], ["84%", "12px", "14s", "1.8s"]];
+const STARS: [number, number, number][] = [[0, 3, 0.45], [34, 4, 0.55], [68, 4, 0.7], [102, 3, 0.5], [136, 4, 0.65], [170, 3, 0.45]];
+
+/* Live arms: rising bubbles. Coming-soon arms: a star bursts and spirals out. Same language as the landing cards. */
+function CardFx({ soon, i }: { soon: boolean; i: number }) {
+  return (
+    <span className="pt-fx" aria-hidden="true">
+      {soon ? (
+        <span className="pt-orb" style={{ ["--ox" as string]: i % 2 ? "58%" : "62%", ["--oy" as string]: "50%", ["--d" as string]: `${(i * 1.35).toFixed(2)}s` } as CSSProperties}>
+          <b className="flare" />
+          <i className="cstar" />
+          <span className="orbit o1">
+            {STARS.map(([a, s, o]) => (
+              <i key={a} style={{ ["--a" as string]: `${a}deg`, ["--s" as string]: `${s}px`, ["--o" as string]: o } as CSSProperties} />
+            ))}
+          </span>
+        </span>
+      ) : (
+        BUBBLES.map(([x, s, t, d]) => <i key={x} className="b" style={{ ["--x" as string]: x, ["--s" as string]: s, ["--t" as string]: t, ["--d" as string]: d } as CSSProperties} />)
+      )}
+    </span>
+  );
+}
+
+function ShareButton() {
+  const [msg, setMsg] = useState("Share this opportunity");
+  const share = async () => {
+    const url = "https://vtecgroup.co.ke/partnerships";
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "Partner with VTEC Business Group", text: "VTEC's Partnership Phase Two window is open.", url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        setMsg("Link copied");
+        setTimeout(() => setMsg("Share this opportunity"), 2200);
+      }
+    } catch {
+      /* share sheet dismissed */
+    }
+  };
+  return (
+    <button type="button" className="pt-btn pt-btn-quiet" onClick={share}>
+      <Share2 size={18} aria-hidden="true" /> {msg}
+    </button>
+  );
+}
+
+/* Hides itself until /partnership-poster.jpg exists in /public. */
+function PosterFigure() {
+  const [bad, setBad] = useState(false);
+  if (bad) return null;
+  return (
+    <figure className="pt-poster-fig">
+      <img
+        src="/partnership-poster.jpg"
+        alt="VTEC Partnership Phase Two poster. The partnership window is open. Key areas of interest: financial technology, AI and technology, business consulting, and financial literacy, investing and related skills. Send inquiries to Partnerships@vtecgroup.co.ke."
+        width={1402}
+        height={1122}
+        loading="lazy"
+        decoding="async"
+        onError={() => setBad(true)}
+      />
+    </figure>
+  );
 }
 
 function HeroParticles() {
@@ -362,155 +536,6 @@ function HeroParticles() {
       ))}
     </div>
   );
-}
-
-function NetworkGlobe() {
-  const ref = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const cv = ref.current;
-    const ctx = cv?.getContext("2d");
-    if (!cv || !ctx) return;
-
-    const reduce = prefersReducedMotion();
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const N = window.innerWidth < 700 ? 80 : 130;
-    const colors = ["#8fb4ff", "#27ae60", "#f0d580"];
-
-    const pts = Array.from({ length: N }, (_, i) => {
-      const k = (i + 0.5) / N;
-      const phi = Math.acos(1 - 2 * k);
-      const th = Math.PI * (1 + Math.sqrt(5)) * i;
-      return {
-        x: Math.cos(th) * Math.sin(phi),
-        y: Math.cos(phi),
-        z: Math.sin(th) * Math.sin(phi),
-        c: i % 11 === 0 ? colors[2] : i % 5 === 0 ? colors[1] : colors[0],
-      };
-    });
-
-    const edges: [number, number][] = [];
-    for (let i = 0; i < N; i++) {
-      for (let j = i + 1; j < N; j++) {
-        const dx = pts[i].x - pts[j].x;
-        const dy = pts[i].y - pts[j].y;
-        const dz = pts[i].z - pts[j].z;
-        if (dx * dx + dy * dy + dz * dz < 0.3) edges.push([i, j]);
-      }
-    }
-    const packets = Array.from({ length: 7 }, () => ({ e: Math.floor(Math.random() * edges.length), t: Math.random(), s: 0.006 + Math.random() * 0.01 }));
-
-    let w = 0;
-    let h = 0;
-    let ry = 0.6;
-    let rx = 0.35;
-    let targetRx = 0.35;
-    let raf = 0;
-    let visible = true;
-
-    const resize = () => {
-      const r = cv.getBoundingClientRect();
-      w = r.width;
-      h = r.height;
-      cv.width = Math.round(w * dpr);
-      cv.height = Math.round(h * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-
-    const project = (p: { x: number; y: number; z: number }, cx: number, cy: number, R: number) => {
-      const x1 = p.x * Math.cos(ry) + p.z * Math.sin(ry);
-      const z1 = -p.x * Math.sin(ry) + p.z * Math.cos(ry);
-      const y2 = p.y * Math.cos(rx) - z1 * Math.sin(rx);
-      const z2 = p.y * Math.sin(rx) + z1 * Math.cos(rx);
-      const s = 2.4 / (2.4 - z2);
-      return { sx: cx + x1 * R * s, sy: cy + y2 * R * s, z: z2, s };
-    };
-
-    const draw = () => {
-      ctx.clearRect(0, 0, w, h);
-      const wide = w >= 900;
-      const cx = wide ? w * 0.7 : w * 0.5;
-      const cy = wide ? h * 0.5 : h * 0.62;
-      const R = Math.min(w, h) * (wide ? 0.46 : 0.5);
-      if (!reduce) {
-        ry += 0.0024;
-        rx += (targetRx - rx) * 0.04;
-      }
-      const proj = pts.map((p) => project(p, cx, cy, R));
-
-      ctx.lineWidth = 0.8;
-      for (const [a, b] of edges) {
-        const d = (proj[a].z + proj[b].z) / 2;
-        ctx.strokeStyle = `rgba(143,180,255,${(0.05 + (d + 1) * 0.14).toFixed(3)})`;
-        ctx.beginPath();
-        ctx.moveTo(proj[a].sx, proj[a].sy);
-        ctx.lineTo(proj[b].sx, proj[b].sy);
-        ctx.stroke();
-      }
-      for (let i = 0; i < N; i++) {
-        const q = proj[i];
-        ctx.globalAlpha = 0.25 + (q.z + 1) * 0.37;
-        ctx.fillStyle = pts[i].c;
-        ctx.beginPath();
-        ctx.arc(q.sx, q.sy, (pts[i].c === colors[0] ? 1.4 : 2.4) * q.s, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-
-      if (!reduce) {
-        for (const pk of packets) {
-          const [a, b] = edges[pk.e];
-          const x = proj[a].sx + (proj[b].sx - proj[a].sx) * pk.t;
-          const y = proj[a].sy + (proj[b].sy - proj[a].sy) * pk.t;
-          ctx.fillStyle = "#f0d580";
-          ctx.shadowColor = "#f0d580";
-          ctx.shadowBlur = 10;
-          ctx.beginPath();
-          ctx.arc(x, y, 2.2, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.shadowBlur = 0;
-          pk.t += pk.s;
-          if (pk.t >= 1) {
-            pk.t = 0;
-            pk.e = Math.floor(Math.random() * edges.length);
-          }
-        }
-      }
-    };
-
-    const loop = () => {
-      if (visible) draw();
-      raf = requestAnimationFrame(loop);
-    };
-
-    const onPointer = (e: PointerEvent) => {
-      const r = cv.getBoundingClientRect();
-      const y = (e.clientY - r.top) / r.height - 0.5;
-      targetRx = 0.35 + y * 0.5;
-    };
-
-    resize();
-    draw();
-    if (!reduce) raf = requestAnimationFrame(loop);
-
-    const ro = new ResizeObserver(() => {
-      resize();
-      if (reduce) draw();
-    });
-    ro.observe(cv);
-    const io = new IntersectionObserver(([en]) => (visible = en.isIntersecting));
-    io.observe(cv);
-    window.addEventListener("pointermove", onPointer, { passive: true });
-
-    return () => {
-      cancelAnimationFrame(raf);
-      ro.disconnect();
-      io.disconnect();
-      window.removeEventListener("pointermove", onPointer);
-    };
-  }, []);
-
-  return <canvas ref={ref} aria-hidden="true" />;
 }
 
 /* ───────────────────────────── confetti ───────────────────────────── */
@@ -615,7 +640,7 @@ function PartnershipsPage() {
   const [form, setForm] = useState<FormState>(INITIAL);
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState<Errors>({});
-  const [photo, setPhoto] = useState<{ blob: Blob; url: string } | null>(null);
+  const [photo, setPhoto] = useState<{ blob: Blob } | null>(null);
   const [photoBusy, setPhotoBusy] = useState(false);
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState("");
@@ -647,10 +672,6 @@ function PartnershipsPage() {
       /* ignore */
     }
   }, [form, step, done]);
-
-  useEffect(() => () => {
-    if (photo) URL.revokeObjectURL(photo.url);
-  }, [photo]);
 
   // Move focus to the first invalid field after a failed validation.
   useEffect(() => {
@@ -707,10 +728,7 @@ function PartnershipsPage() {
       setPhotoBusy(true);
       try {
         const blob = await compressImage(file);
-        setPhoto((old) => {
-          if (old) URL.revokeObjectURL(old.url);
-          return { blob, url: URL.createObjectURL(blob) };
-        });
+        setPhoto({ blob });
         setErrors((e) => {
           const { photo: _drop, ...rest } = e;
           return rest;
@@ -738,11 +756,7 @@ function PartnershipsPage() {
     setSending(true);
     setSendError("");
     try {
-      const normPhone = (p: string) => {
-        const d = p.replace(/\D/g, "");
-        return d.startsWith("0") ? "254" + d.slice(1) : d.length === 9 ? "254" + d : d;
-      };
-      const mine = { e: form.email.trim().toLowerCase(), p: normPhone(form.phone) };
+      const mine = { e: normEmail(form.email), p: normPhoneKe(form.phone) };
       try {
         const seen = JSON.parse(localStorage.getItem("vtec-partner-submitted") || "[]") as { e: string; p: string }[];
         if (seen.some((x) => x.e === mine.e || x.p === mine.p)) {
@@ -809,6 +823,7 @@ function PartnershipsPage() {
               <small>BUSINESS GROUP</small>
             </span>
           </a>
+          <Timeline />
           <nav className="pt-nav-links" aria-label="Page">
             <a href="/" className="pt-nav-home">
               <ArrowLeft size={16} aria-hidden="true" /> Home
@@ -825,97 +840,110 @@ function PartnershipsPage() {
         <section className="pt-hero">
           <div className="pt-hero-gridlines" aria-hidden="true" />
           <HeroParticles />
-          <NetworkGlobe />
-          <div className="pt-wrap pt-hero-grid">
-            <div>
-              <p className="pt-pill">
-                <span className="pt-dot" /> Partnership onboarding is open
-              </p>
-              <h1 className="pt-serif pt-h1">Build the next <span className="pt-hl">venture</span> with VTEC.</h1>
-              <p className="pt-lead">
-                VTEC Business Group is a Nairobi holding company across financial education, consultancy, retail and wealth technology.
-                We are onboarding partners who plan in decades, not quarters.
-              </p>
-              <div className="pt-cta-row">
-                <a href="#apply" className="pt-btn">
-                  Start onboarding <ArrowRight size={18} aria-hidden="true" />
-                </a>
-                <a href="#arms" className="pt-btn pt-btn-ghost">
-                  See where you fit
-                </a>
+          <div className="pt-hero-in">
+            <p className="pt-pill">
+              <span className="pt-dot" /> Partnership onboarding is open
+            </p>
+            <div className="pt-stats">
+              <div className="pt-stat">
+                <div className="pt-num"><Counter from={0} to={4} dur={1200} /><span>+</span></div>
+                <p>Business arms</p>
               </div>
-              <ul className="pt-facts">
-                <li>
-                  <MapPin size={16} aria-hidden="true" /> Founded October 2025, Nairobi
-                </li>
-                <li>
-                  <Sparkles size={16} aria-hidden="true" /> 4 business arms
-                </li>
-                <li>
-                  <Rocket size={16} aria-hidden="true" /> 2035 empire vision
-                </li>
-              </ul>
+              <div className="pt-stat">
+                <div className="pt-num"><span>#</span><Counter from={9} to={1} dur={1500} white /></div>
+                <p>Holding vision</p>
+              </div>
+              <div className="pt-stat">
+                <div className="pt-num"><Counter from={2025} to={2035} dur={1900} /></div>
+                <p>Empire target</p>
+              </div>
+            </div>
+            <h1 className="pt-serif pt-h1">
+              <span className="pt-ln"><span>Build the next</span></span>
+              <span className="pt-ln"><span className="pt-hl">Venture</span></span>
+              <span className="pt-ln"><span>with VTEC.</span></span>
+            </h1>
+            <p className="pt-lead">
+              VTEC Business Group is a Nairobi holding company across <b>financial education</b>, <b>consultancy</b>, retail and wealth technology. We are onboarding partners who plan in decades, not quarters.
+            </p>
+
+            <div className="pt-hero-arms">
+              {ARMS.map((a, i) => {
+                const soon = a.status === "Coming soon";
+                return (
+                  <div key={a.id} className={`pt-hc ${soon ? "is-soon" : "is-live"}`}>
+                    <CardFx soon={soon} i={i} />
+                    <ArmLogo arm={a} cls="pt-hc-logo" size={18} />
+                    <div className="pt-hc-text">
+                      <strong>{a.name}</strong>
+                      <span>{a.tag}</span>
+                      <span className={`pt-badge ${soon ? "soon" : "live"}`}>
+                        <i />
+                        {a.status}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
-            <div className="pt-stage" aria-hidden="true">
-              <div className="pt-scene">
-                <span className="pt-ring pt-ring-a" />
-                <span className="pt-ring pt-ring-b" />
-                <div className="pt-core">
-                  <img src={LOGO} alt="" />
-                </div>
-                <div className="pt-orbit">
-                  {ARMS.map((a, i) => (
-                    <div key={a.id} className="pt-orb-item" style={{ ["--a" as string]: `${i * 90}deg`, ["--y" as string]: i % 2 ? "34px" : "-34px" }}>
-                      <div className="pt-chip">
-                        <span className="pt-chip-ico">
-                          <a.icon size={16} />
-                        </span>
-                        <span>
-                          <b>{a.short}</b>
-                          <i className={a.status === "Coming soon" ? "soon" : "live"}>{a.status}</i>
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            <div className="pt-cta-row">
+              <a href="#apply" className="pt-btn">
+                Start onboarding <ArrowRight size={18} aria-hidden="true" />
+              </a>
+            </div>
+            <div className="pt-hero-links">
+              <a href="#arms" className="pt-hero-link">
+                See where you fit <Target size={15} aria-hidden="true" />
+              </a>
+              <a href={COMMUNITY_URL} target="_blank" rel="noopener noreferrer" className="pt-hero-link">
+                VTEC Community <Users size={15} aria-hidden="true" />
+              </a>
             </div>
           </div>
-          <svg className="pt-wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M0 50C240 90 480 90 720 55S1200 0 1440 40V90H0Z" fill="#f4f7fc" />
-          </svg>
+          <div className="pt-hero-wave" aria-hidden="true">
+            <svg className="wv wv1" viewBox="0 0 2880 160" preserveAspectRatio="none"><path d="M0 62 Q360 8 720 62 T1440 62 T2160 62 T2880 62 V160 H0Z" /></svg>
+            <svg className="wv wv2" viewBox="0 0 2880 160" preserveAspectRatio="none"><path d="M0 88 Q360 40 720 88 T1440 88 T2160 88 T2880 88 V160 H0Z" /></svg>
+            <svg className="wv wv3" viewBox="0 0 2880 160" preserveAspectRatio="none"><path d="M0 116 Q360 84 720 116 T1440 116 T2160 116 T2880 116 V160 H0Z" /></svg>
+          </div>
         </section>
 
         {/* ── arms ── */}
         <section className="pt-sec" id="arms">
           <div className="pt-wrap">
-            <h2 className="pt-serif">Four arms. Find where you plug in.</h2>
+            <span className="pt-label">Where you fit</span>
+            <h2 className="pt-serif">
+              Four arms.
+              <span className="pt-h2-2">Find where you plug in.</span>
+            </h2>
             <p className="pt-sub">
               Partners join one or more arms. Two are open today. Two are being built, and early partners help shape them.
             </p>
             <div className="pt-arms">
-              {ARMS.map((a) => (
-                <Tilt key={a.id} className="pt-arm">
-                  <div className="pt-arm-top">
-                    <span className="pt-arm-ico">
-                      <a.icon size={24} aria-hidden="true" />
-                    </span>
-                    <span className={`pt-status ${a.status === "Coming soon" ? "soon" : "live"}`}>
-                      <span className="pt-dot" /> {a.status}
-                    </span>
-                  </div>
-                  <h3>{a.name}</h3>
-                  <p className="pt-arm-tag">{a.tag}</p>
-                  <ul>
-                    {a.roles.map((r) => (
-                      <li key={r}>
-                        <Check size={15} aria-hidden="true" /> {r}
-                      </li>
-                    ))}
-                  </ul>
-                </Tilt>
-              ))}
+              {ARMS.map((a, i) => {
+                const soon = a.status === "Coming soon";
+                return (
+                  <Tilt key={a.id} className={`pt-arm ${soon ? "is-soon" : "is-live"}`}>
+                    <CardFx soon={soon} i={i} />
+                    <div className="pt-arm-top">
+                      <ArmLogo arm={a} cls="pt-arm-ico" size={24} />
+                      <span className={`pt-badge ${soon ? "soon" : "live"}`}>
+                        <i />
+                        {a.status}
+                      </span>
+                    </div>
+                    <h3>{a.name}</h3>
+                    <p className="pt-arm-tag">{a.tag}</p>
+                    <ul>
+                      {a.roles.map((r) => (
+                        <li key={r}>
+                          <Check size={15} aria-hidden="true" /> {r}
+                        </li>
+                      ))}
+                    </ul>
+                  </Tilt>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -959,6 +987,36 @@ function PartnershipsPage() {
                 </li>
               ))}
             </ol>
+          </div>
+        </section>
+
+                {/* ── phase two poster ── */}
+        <section className="pt-sec pt-poster" id="phase-two">
+          <div className="pt-wrap pt-poster-grid">
+            <div>
+              <span className="pt-label">Phase two</span>
+              <h2 className="pt-serif">
+                The partnership window is open.
+                <span className="pt-h2-2">Bigger vision. More opportunities.</span>
+              </h2>
+              <p className="pt-sub">
+                We are inviting partners, young talent and ambitious individuals to join VTEC Business Group. Every application is reviewed and considered.
+              </p>
+              <ul className="pt-areas">
+                {["Financial technology", "AI and technology", "Business consulting", "Financial literacy, investing and related skills"].map((t) => (
+                  <li key={t}>
+                    <Check size={16} aria-hidden="true" /> {t}
+                  </li>
+                ))}
+              </ul>
+              <div className="pt-cta-row">
+                <a href="#apply" className="pt-btn">
+                  Apply now <ArrowRight size={18} aria-hidden="true" />
+                </a>
+                <ShareButton />
+              </div>
+            </div>
+            <PosterFigure />
           </div>
         </section>
 
@@ -1034,10 +1092,7 @@ function PartnershipsPage() {
                                       type="button"
                                       className="pt-link-btn"
                                       onClick={() => {
-                                        setPhoto((old) => {
-                                          if (old) URL.revokeObjectURL(old.url);
-                                          return null;
-                                        });
+                                        setPhoto(null);
                                       }}
                                     >
                                       <Trash2 size={15} aria-hidden="true" /> Remove
@@ -1387,111 +1442,178 @@ function SuccessView({ done, photoBlob }: { done: Done; photoBlob?: Blob }) {
 /* ───────────────────────────── styles ───────────────────────────── */
 
 const CSS = `
-@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Playfair+Display:wght@700;900&family=Outfit:wght@400;500;600;700&family=Caveat:wght@600&display=swap");
-.pt-root{--navy:#0D2149;--deep:#050b16;--mid:#163272;--green:#1f8c3b;--gb:#27ae60;--teal:#1aa39a;--gold:#c9a227;--gl:#f0d580;--off:#f4f7fc;--ink:#1a1a2e;--gray:#4a5568;--line:#d5deee;--err:#c0392b;
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Playfair+Display:wght@700;900&family=Outfit:wght@400;500;600;700&family=Michroma&family=Caveat:wght@600&display=swap");
+.pt-root{--navy:#0D2149;--deep:#050b16;--mid:#163272;--green:#1f8c3b;--gb:#27ae60;--teal:#1aa39a;--gold:#c9a227;--gl:#f0d580;--ice:#8ec5ff;--off:#f4f7fc;--ink:#1a1a2e;--gray:#4a5568;--line:#d5deee;--err:#c0392b;
 font-family:'Outfit',system-ui,sans-serif;color:var(--ink);background:var(--off);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;line-height:1.5}
 .pt-root *,.pt-root *::before,.pt-root *::after{box-sizing:border-box}
-.pt-root h1,.pt-root h2,.pt-root h3,.pt-root p,.pt-root ul,.pt-root ol,.pt-root dl,.pt-root dd{margin:0;padding:0}
+.pt-root h1,.pt-root h2,.pt-root h3,.pt-root p,.pt-root ul,.pt-root ol,.pt-root dl,.pt-root dd,.pt-root figure{margin:0;padding:0}
 .pt-root ul,.pt-root ol{list-style:none}
 .pt-root a{color:inherit}
 .pt-root :focus-visible{outline:3px solid var(--gl);outline-offset:2px}
 .pt-serif{font-family:'DM Serif Display','Playfair Display',serif;font-weight:900}
 .pt-wrap{width:min(1140px,100% - 40px);margin-inline:auto}
 
-/* nav */
-.pt-nav{position:sticky;top:0;z-index:50;background:rgba(13,33,73,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
-.pt-nav-in{display:flex;align-items:center;justify-content:space-between;height:68px}
-.pt-brand{display:flex;align-items:center;gap:12px;color:#fff;text-decoration:none}
-.pt-brand b{display:block;letter-spacing:.18em;font-size:15px;font-weight:700}
-.pt-brand small{display:block;color:var(--gb);letter-spacing:.22em;font-size:9.5px}
+/* nav: translucent blue glass, same family as the landing page */
+.pt-nav{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,rgba(22,50,114,.62) 0%,rgba(13,33,73,.66) 100%);backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%);border-bottom:1px solid rgba(255,255,255,.12)}
+.pt-nav-in{display:flex;align-items:center;justify-content:space-between;gap:14px;height:70px}
+.pt-brand{display:flex;align-items:center;gap:12px;color:#fff;text-decoration:none;min-width:0}
+.pt-brand b{display:block;font-family:'Michroma','Outfit',sans-serif;font-weight:400;letter-spacing:3px;font-size:17px;line-height:1}
+.pt-brand small{display:block;color:var(--gb);letter-spacing:3.2px;font-size:9.5px;margin-top:5px}
 .pt-logo{width:44px;height:44px;border-radius:50%;overflow:hidden;border:2px solid var(--gb);background:#fff;flex:none;display:block}
 .pt-logo img{width:100%;height:100%;object-fit:cover;object-position:center 25%;display:block}
+.pt-timeline{display:none;align-items:center;gap:10px;color:#fff}
+.pt-timeline small{display:block;font-size:9px;letter-spacing:2.4px;text-transform:uppercase;color:rgba(190,215,255,.8)}
+.pt-timeline b{display:block;font-size:13px;font-weight:600;letter-spacing:.4px;font-variant-numeric:tabular-nums}
+.pt-bars{display:flex;align-items:flex-end;gap:3px;height:26px}
+.pt-bars i{display:block;width:3px;border-radius:2px;background:rgba(142,197,255,.75);animation:ptBar 3.2s ease-in-out infinite}
+.pt-bars i:nth-child(1){height:30%}.pt-bars i:nth-child(2){height:42%;animation-delay:.2s}.pt-bars i:nth-child(3){height:56%;animation-delay:.4s}.pt-bars i:nth-child(4){height:70%;animation-delay:.6s}.pt-bars i:nth-child(5){height:84%;animation-delay:.8s}.pt-bars i:nth-child(6){height:100%;animation-delay:1s}
+@keyframes ptBar{0%,100%{opacity:.55}50%{opacity:1}}
+@media(min-width:760px){.pt-timeline{display:flex}}
 .pt-nav-links{display:flex;align-items:center;gap:14px}
 .pt-nav-home{display:none;align-items:center;gap:6px;color:#c6d3ee;text-decoration:none;font-size:.92rem}
-@media(min-width:560px){.pt-nav-home{display:inline-flex}}
+@media(min-width:560px){.pt-nav-home{display:inline-flex}.pt-brand b{font-size:21px}}
 
 /* buttons */
-.pt-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 24px;border-radius:999px;border:0;font:inherit;font-weight:600;font-size:1rem;color:#fff;text-decoration:none;cursor:pointer;background:linear-gradient(135deg,var(--gb),var(--teal));box-shadow:0 10px 28px -10px rgba(39,174,96,.7);transition:transform .2s,box-shadow .2s,opacity .2s}
-.pt-btn:hover{transform:translateY(-2px);box-shadow:0 14px 32px -10px rgba(39,174,96,.85)}
+.pt-btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 26px;border-radius:999px;border:0;font:inherit;font-weight:600;font-size:15px;color:#fff;text-decoration:none;cursor:pointer;background:linear-gradient(135deg,var(--green),var(--gb));box-shadow:0 8px 28px rgba(39,174,96,.38);transition:transform .2s,box-shadow .2s,opacity .2s;-webkit-tap-highlight-color:transparent}
+.pt-btn:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(39,174,96,.48)}
+.pt-btn:active{transform:scale(.97)}
+.pt-btn::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:30%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.22),transparent);transform:skewX(-20deg);animation:ptShine 8s ease-in-out infinite;pointer-events:none}
+@keyframes ptShine{0%,65%{left:-60%}100%{left:130%}}
 .pt-btn:disabled{opacity:.65;cursor:progress;transform:none}
 .pt-btn-sm{min-height:40px;padding:0 18px;font-size:.92rem}
-.pt-btn-ghost{background:transparent;border:1.5px solid rgba(255,255,255,.35);box-shadow:none}
-.pt-btn-ghost:hover{background:rgba(255,255,255,.08);box-shadow:none}
 .pt-btn-quiet{background:transparent;color:var(--navy);border:1.5px solid var(--line);box-shadow:none}
+.pt-btn-quiet::after{display:none}
 .pt-btn-quiet:hover{background:#eef3fb;box-shadow:none}
 .pt-btn-gold{background:linear-gradient(135deg,var(--gl),var(--gold));color:var(--navy);box-shadow:0 10px 28px -10px rgba(201,162,39,.8)}
 .pt-spin{animation:ptSpin 1s linear infinite}
 @keyframes ptSpin{to{transform:rotate(360deg)}}
 
-/* hero */
-.pt-hero{position:relative;background:linear-gradient(180deg,rgba(6,14,28,.58) 0%,rgba(8,17,32,.72) 45%,rgba(5,11,22,.94) 88%,#050b16 100%),radial-gradient(ellipse at 20% 60%,rgba(31,140,59,.18) 0%,transparent 55%),radial-gradient(ellipse at 80% 20%,rgba(22,50,114,.4) 0%,transparent 55%),url(/1000100227.jpg) center/cover no-repeat,#050b16;color:#fff;overflow:hidden;padding:44px 0 96px}
-.pt-hero-gridlines{position:absolute;inset:0;opacity:.05;background-image:linear-gradient(var(--green) 1px,transparent 1px),linear-gradient(90deg,var(--green) 1px,transparent 1px);background-size:44px 44px;pointer-events:none}
-.pt-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
-.pt-particles span{position:absolute;top:100%;left:0;border-radius:50%;will-change:transform,opacity;animation:ptFloat linear infinite}
-@keyframes ptFloat{0%{transform:translate3d(var(--x,0),0,0);opacity:0}10%,90%{opacity:var(--op,.25)}100%{transform:translate3d(calc(var(--x,0) + var(--dx,0)),-110vh,0);opacity:0}}
-.pt-hl{background:linear-gradient(120deg,#27ae60,#5b8cff 85%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.pt-hero .pt-wrap>div{animation:ptUp .9s ease both}
-@keyframes ptUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
-@media(prefers-reduced-motion:reduce){.pt-particles,.pt-hero .pt-wrap>div{display:none;animation:none}}
-.pt-hero canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.5;pointer-events:none}
-.pt-hero-grid{position:relative;display:grid;gap:28px;align-items:center}
-@media(min-width:900px){.pt-hero{padding:92px 0 130px}.pt-hero-grid{grid-template-columns:1.1fr .9fr;gap:40px}}
-.pt-pill{display:inline-flex;align-items:center;gap:10px;padding:6px 16px;border-radius:999px;border:1px solid rgba(39,174,96,.4);background:rgba(39,174,96,.12);font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#27ae60;margin-bottom:22px}
-.pt-dot{width:8px;height:8px;border-radius:50%;background:var(--gb);box-shadow:0 0 0 0 rgba(39,174,96,.7);animation:ptPulse 2s infinite;flex:none;display:inline-block}
-@keyframes ptPulse{70%{box-shadow:0 0 0 9px rgba(39,174,96,0)}100%{box-shadow:0 0 0 0 rgba(39,174,96,0)}}
-.pt-h1{font-size:clamp(2.5rem,8vw,4.6rem);line-height:1.03;margin-bottom:18px;letter-spacing:-.01em}
-.pt-lead{color:#c6d3ee;font-size:clamp(1rem,2.4vw,1.15rem);line-height:1.7;max-width:34em;margin-bottom:26px}
-.pt-cta-row{display:flex;flex-wrap:wrap;gap:12px}
-.pt-facts{display:flex;flex-wrap:wrap;gap:10px 24px;margin-top:30px;color:#9fb2d9;font-size:.92rem}
-.pt-facts li{display:flex;align-items:center;gap:8px}
-.pt-wave{position:absolute;left:0;bottom:-1px;width:100%;height:70px;display:block}
+/* hero: landing photo, aurora, grid, particles, glass cards, glass waves */
+.pt-hero{position:relative;isolation:isolate;color:#fff;text-align:center;overflow:hidden;padding:46px 0 150px;background:linear-gradient(180deg,rgba(6,14,28,.58) 0%,rgba(8,17,32,.72) 45%,rgba(5,11,22,.94) 88%,#050b16 100%),radial-gradient(ellipse 720px 520px at 50% 38%,rgba(6,14,28,.15),rgba(6,14,28,.7) 100%),url(/1000100227.jpg) center/cover no-repeat,#050b16}
+.pt-hero::before{content:"";position:absolute;inset:-20%;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 20% 60%,rgba(31,140,59,.18) 0%,transparent 55%),radial-gradient(ellipse at 80% 20%,rgba(22,50,114,.4) 0%,transparent 55%);animation:ptAurora 32s ease-in-out infinite alternate;will-change:transform}
+@keyframes ptAurora{0%{transform:translate3d(-2%,-1%,0) scale(1)}100%{transform:translate3d(3%,2%,0) scale(1.08)}}
+.pt-hero-gridlines{position:absolute;inset:-44px 0 0 0;z-index:0;opacity:.05;background-image:linear-gradient(var(--green) 1px,transparent 1px),linear-gradient(90deg,var(--green) 1px,transparent 1px);background-size:44px 44px;-webkit-mask-image:radial-gradient(ellipse 85% 70% at 50% 45%,#000 20%,transparent 75%);mask-image:radial-gradient(ellipse 85% 70% at 50% 45%,#000 20%,transparent 75%);animation:ptGrid 18s linear infinite;pointer-events:none}
+@keyframes ptGrid{to{transform:translate3d(0,44px,0)}}
+.pt-particles{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none}
+.pt-particles span{position:absolute;bottom:-20px;left:var(--x);border-radius:50%;opacity:0;animation:ptRise linear infinite}
+@keyframes ptRise{0%{transform:translate3d(0,0,0);opacity:0}10%{opacity:var(--op)}100%{transform:translate3d(var(--dx),-110vh,0);opacity:0}}
+.pt-hero-in{position:relative;z-index:2;width:min(780px,100% - 40px);margin-inline:auto;display:flex;flex-direction:column;align-items:center}
+.pt-hero-wave{position:absolute;left:0;right:0;bottom:-1px;height:120px;z-index:3;overflow:hidden;pointer-events:none}
+.pt-hero-wave::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 0%,rgba(120,150,210,.10) 45%,rgba(190,205,235,.22) 100%)}
+.wv{position:absolute;left:0;bottom:0;width:200%;height:100%;will-change:transform}
+.wv1{fill:rgba(244,247,252,.14);animation:ptWv 46s linear infinite}
+.wv2{fill:rgba(244,247,252,.34);animation:ptWv 34s linear infinite reverse}
+.wv3{fill:#f4f7fc;animation:ptWv 58s linear infinite}
+@keyframes ptWv{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
 
-/* 3D stage */
-.pt-stage{position:relative;height:330px;perspective:1100px;display:grid;place-items:center}
-@media(min-width:900px){.pt-stage{height:480px}}
-.pt-scene{position:relative;width:100%;height:100%;transform-style:preserve-3d;animation:ptSway 10s ease-in-out infinite alternate}
-@keyframes ptSway{from{transform:rotateX(16deg) rotateY(-16deg)}to{transform:rotateX(9deg) rotateY(16deg)}}
-.pt-core{position:absolute;left:50%;top:50%;width:128px;height:128px;margin:-64px 0 0 -64px;border-radius:50%;overflow:hidden;border:3px solid var(--gb);background:#fff;box-shadow:0 0 0 10px rgba(39,174,96,.12),0 0 70px rgba(39,174,96,.5)}
-.pt-core img{width:100%;height:100%;object-fit:cover;object-position:center 25%;display:block}
-@media(min-width:900px){.pt-core{width:156px;height:156px;margin:-78px 0 0 -78px}}
-.pt-ring{position:absolute;left:50%;top:50%;border-radius:50%;transform:translate(-50%,-50%) rotateX(76deg)}
-.pt-ring-a{width:250px;height:250px;border:1px solid rgba(240,213,128,.45)}
-.pt-ring-b{width:340px;height:340px;border:1px dashed rgba(143,180,255,.4);animation:ptRing 40s linear infinite}
-@keyframes ptRing{to{transform:translate(-50%,-50%) rotateX(76deg) rotateZ(360deg)}}
-@media(min-width:900px){.pt-ring-a{width:340px;height:340px}.pt-ring-b{width:460px;height:460px}}
-.pt-orbit{position:absolute;inset:0;transform-style:preserve-3d;animation:ptOrbit 28s linear infinite;--r:118px}
-@media(min-width:900px){.pt-orbit{--r:190px}}
-@keyframes ptOrbit{to{transform:rotateY(360deg)}}
-.pt-orb-item{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d;transform:rotateY(var(--a)) translateZ(var(--r)) translateY(var(--y))}
-.pt-chip{position:absolute;left:0;top:0;display:flex;align-items:center;gap:8px;padding:7px 12px 7px 8px;border-radius:14px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);white-space:nowrap;color:#fff;font-size:12px;animation:ptFace 28s linear infinite;box-shadow:0 12px 30px -12px rgba(0,0,0,.6)}
-@keyframes ptFace{from{transform:translate(-50%,-50%) rotateY(calc(-1 * var(--a)))}to{transform:translate(-50%,-50%) rotateY(calc(-1 * var(--a) - 360deg))}}
-.pt-chip-ico{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:linear-gradient(135deg,var(--gb),var(--teal))}
-.pt-chip b{display:block;font-weight:600;font-size:13px}
-.pt-chip i{display:block;font-style:normal;font-size:10.5px;color:#9be3b5}
-.pt-chip i.soon{color:var(--gl)}
+.pt-pill{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:999px;border:1px solid rgba(140,190,255,.42);background:rgba(110,168,255,.12);font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#a9cdff;margin-bottom:24px;animation:ptFade .8s ease both}
+.pt-pill::after{content:"";position:absolute;top:0;bottom:0;left:-50%;width:30%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.14),transparent);transform:skewX(-20deg);animation:ptChip 9s ease-in-out infinite}
+@keyframes ptChip{0%,60%{left:-50%}100%{left:130%}}
+@keyframes ptFade{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+.pt-dot{width:7px;height:7px;border-radius:50%;background:var(--ice);flex:none;display:inline-block;animation:ptPulse 2s infinite}
+@keyframes ptPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)}}
+
+.pt-stats{position:relative;display:flex;gap:28px;flex-wrap:wrap;justify-content:center;padding-bottom:22px;margin-bottom:26px;border-bottom:1px solid rgba(255,255,255,.15);animation:ptFade .9s .2s ease both}
+.pt-stats::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent 0%,transparent 40%,rgba(110,168,255,.95) 50%,transparent 60%,transparent 100%);background-size:300% 100%;animation:ptLine 8s linear infinite}
+@keyframes ptLine{from{background-position:100% 0}to{background-position:0 0}}
+.pt-stat{position:relative;text-align:center}
+.pt-stat:not(:last-child)::after{content:"";position:absolute;right:-14px;top:50%;transform:translateY(-50%);width:1px;height:32px;background:rgba(255,255,255,.15)}
+.pt-num{font-family:'Playfair Display',serif;font-size:30px;font-weight:900;line-height:1;color:#fff;font-variant-numeric:tabular-nums}
+.pt-num span{color:var(--ice);text-shadow:0 0 14px rgba(110,168,255,.35)}
+.pt-num span.w{color:#fff;text-shadow:none}
+.pt-stat p{margin-top:6px;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.7)}
+
+.pt-h1{font-size:clamp(2.3rem,9vw,4rem);line-height:1.08;letter-spacing:-.5px;color:#fff;margin-bottom:18px}
+.pt-ln{display:block;overflow:hidden;padding-bottom:.12em;margin-bottom:-.12em}
+.pt-ln>span{display:inline-block;animation:ptLn 1s cubic-bezier(.2,.8,.2,1) both}
+.pt-ln:nth-child(1)>span{animation-delay:.1s}.pt-ln:nth-child(2)>span{animation-delay:.28s}.pt-ln:nth-child(3)>span{animation-delay:.46s}
+@keyframes ptLn{from{transform:translateY(105%)}to{transform:none}}
+.pt-ln>.pt-hl{position:relative;color:#7fb0ff;background:linear-gradient(110deg,#3f78e8 0%,#6ea8ff 40%,#bcd6ff 50%,#6ea8ff 60%,#3f78e8 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:ptLn 1s cubic-bezier(.2,.8,.2,1) .28s both,ptShineTxt 9s ease-in-out 1.4s infinite}
+@keyframes ptShineTxt{0%,25%{background-position:100% 0}75%,100%{background-position:0 0}}
+.pt-lead{max-width:34em;color:rgba(255,255,255,.74);font-size:clamp(.95rem,2.6vw,1.05rem);line-height:1.8;margin-bottom:30px;animation:ptFade .9s .3s ease both}
+.pt-lead b{color:#fff;font-weight:600;padding-bottom:1px;background:linear-gradient(var(--gb),var(--gb)) 0 100%/100% 2px no-repeat}
+
+.pt-hero-arms{display:grid;grid-template-columns:repeat(2,1fr);grid-auto-rows:1fr;gap:10px;width:100%;margin-bottom:28px;animation:ptFade .9s .35s ease both}
+@media(min-width:900px){.pt-hero{padding-top:70px}.pt-hero-in{width:min(1000px,100% - 40px)}.pt-hero-arms{grid-template-columns:repeat(4,1fr);gap:12px}}
+.pt-hc{position:relative;overflow:hidden;isolation:isolate;display:flex;align-items:stretch;gap:10px;padding:12px 10px;text-align:left;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(160deg,rgba(22,50,114,.28) 0%,rgba(13,33,73,.30) 55%,rgba(8,20,45,.38) 100%);-webkit-backdrop-filter:blur(8px) saturate(120%);backdrop-filter:blur(8px) saturate(120%);box-shadow:0 8px 22px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.12);transition:transform .25s ease,border-color .25s ease}
+.pt-hc:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.22)}
+.pt-hc.is-live{border-color:rgba(39,174,96,.38);animation:ptLive 7s ease-in-out infinite}
+@keyframes ptLive{0%,100%{border-color:rgba(39,174,96,.28)}50%{border-color:rgba(39,174,96,.58)}}
+.pt-hc::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 12% 0%,rgba(255,255,255,.07),transparent 55%)}
+.pt-hc.is-live::before{background:radial-gradient(circle at 12% 0%,rgba(39,174,96,.14),transparent 58%)}
+.pt-hc::after{content:"";position:absolute;top:0;bottom:0;left:-70%;width:35%;z-index:-1;pointer-events:none;background:linear-gradient(100deg,transparent,rgba(255,255,255,.06),transparent);transform:skewX(-18deg);animation:ptSweep 12s ease-in-out infinite}
+.pt-hc:nth-child(2)::after{animation-delay:3s}.pt-hc:nth-child(3)::after{animation-delay:6s}.pt-hc:nth-child(4)::after{animation-delay:9s}
+@keyframes ptSweep{0%,70%{left:-70%}100%{left:140%}}
+.pt-hc-logo,.pt-arm-ico{display:grid;place-items:center;flex:none;overflow:hidden;background:#fff;border:1px solid rgba(255,255,255,.4)}
+.pt-hc-logo{width:34px;height:34px;border-radius:50%}
+.pt-hc-logo img,.pt-arm-ico img{width:100%;height:100%;object-fit:contain;display:block}
+.pt-hc-logo.fb,.pt-arm-ico.fb{background:rgba(255,255,255,.08);color:var(--ice)}
+.pt-hc-text{display:flex;flex-direction:column;flex:1;min-width:0}
+.pt-hc-text strong{display:block;color:#fff;font-size:12px;font-weight:700;line-height:1.3;margin-bottom:2px}
+.pt-hc-text>span:not(.pt-badge){display:block;color:rgba(255,255,255,.62);font-size:11px;line-height:1.35;margin-bottom:8px}
+.pt-badge{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:6px;width:100%;height:22px;margin-top:auto;padding:0 6px;border-radius:6px;font-size:9px;font-weight:700;line-height:1;letter-spacing:.9px;text-transform:uppercase;white-space:nowrap}
+.pt-badge i{position:relative;width:5px;height:5px;border-radius:50%;flex:none}
+.pt-badge.live{color:#6ee79a;background:rgba(39,174,96,.14);border:1px solid rgba(39,174,96,.42)}
+.pt-badge.live i{background:var(--gb)}
+.pt-badge.live i::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--gb);animation:ptPing 3s ease-out infinite}
+@keyframes ptPing{0%{transform:scale(1);opacity:.8}100%{transform:scale(3.2);opacity:0}}
+.pt-badge.soon{color:#dcc274;border:1px dashed rgba(201,162,39,.45);background:linear-gradient(-45deg,rgba(201,162,39,.09) 25%,transparent 25% 50%,rgba(201,162,39,.09) 50% 75%,transparent 75%) 0 0/14px 14px,rgba(201,162,39,.04)}
+.pt-badge.soon i{background:var(--gold)}
+
+/* card effects: bubbles rise on live arms, a star bursts and spirals on coming-soon arms */
+.pt-fx{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden;border-radius:inherit}
+.pt-fx .b{position:absolute;bottom:-20px;left:var(--x);width:var(--s);height:var(--s);border-radius:50%;opacity:0;border:1px solid rgba(190,255,220,.75);background:radial-gradient(circle at 30% 28%,rgba(255,255,255,.95) 0%,rgba(150,255,200,.55) 28%,rgba(39,174,96,.28) 58%,transparent 74%);box-shadow:0 0 6px 1px rgba(140,255,195,.8),0 0 16px 3px rgba(39,174,96,.45),inset 0 0 5px rgba(255,255,255,.55);animation:ptBubble var(--t) ease-in-out infinite;animation-delay:var(--d);will-change:transform,opacity}
+@keyframes ptBubble{0%{transform:translate3d(0,0,0);opacity:0}12%{opacity:1}50%{transform:translate3d(5px,-110px,0);opacity:.95}85%{opacity:.7}100%{transform:translate3d(-4px,-240px,0);opacity:0}}
+.pt-orb{position:absolute;left:var(--ox);top:var(--oy);width:0;height:0;perspective:240px}
+.pt-orb::before{content:"";position:absolute;left:-34px;top:-34px;width:68px;height:68px;border-radius:50%;background:radial-gradient(circle,rgba(255,244,205,.6),rgba(201,162,39,.2) 45%,transparent 68%);opacity:0;animation:ptFlash 5.5s ease-out infinite;animation-delay:var(--d)}
+.pt-orb .cstar{position:absolute;left:-7px;top:-7px;width:14px;height:14px;opacity:0;background:#fff6d2;clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);animation:ptStar 5.5s ease-out infinite;animation-delay:var(--d)}
+.pt-orb .orbit{position:absolute;left:0;top:0;width:0;height:0;opacity:0;filter:drop-shadow(0 0 3px rgba(240,213,128,.95)) drop-shadow(0 0 7px rgba(201,162,39,.6));animation:ptRing 5.5s cubic-bezier(.2,.7,.3,1) infinite;animation-delay:calc(var(--d) + .1s);will-change:transform,opacity}
+.pt-orb .orbit i{position:absolute;left:0;top:0;width:var(--s);height:var(--s);margin:calc(var(--s)/-2);background:#fff3c4;opacity:var(--o);clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);transform:rotate(var(--a)) translateX(46px) rotate(calc(var(--a)*-1))}
+@keyframes ptFlash{0%{opacity:0;transform:scale(.1)}4%{opacity:1;transform:scale(.9)}30%,100%{opacity:0;transform:scale(1.7)}}
+@keyframes ptStar{0%{opacity:0;transform:scale(.2) rotate(0)}5%{opacity:1;transform:scale(1.9) rotate(45deg)}18%{opacity:.95;transform:scale(1.1) rotate(90deg)}45%{opacity:0;transform:scale(.5) rotate(180deg)}100%{opacity:0}}
+@keyframes ptRing{0%{opacity:0;transform:rotateX(66deg) rotateZ(0) scale(.05)}6%{opacity:1}55%{opacity:.7}78%,100%{opacity:0;transform:rotateX(66deg) rotateZ(300deg) scale(1)}}
+
+.pt-cta-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.pt-hero-links{display:flex;align-items:center;justify-content:center;gap:26px;margin-top:10px}
+.pt-hero-link{position:relative;display:inline-flex;align-items:center;gap:7px;padding:8px 2px;min-height:40px;color:rgba(255,255,255,.84);font-size:14px;font-weight:600;text-decoration:none;transition:color .2s}
+.pt-hero-link svg{color:var(--gb);flex:none;transition:transform .25s}
+.pt-hero-link::after{content:"";position:absolute;left:0;right:0;bottom:4px;height:1px;background:linear-gradient(90deg,var(--gb),rgba(255,255,255,.35));opacity:.35;transition:opacity .25s}
+.pt-hero-link:hover{color:#fff}.pt-hero-link:hover::after{opacity:1}.pt-hero-link:hover svg{transform:translateX(2px)}
 
 /* sections */
 .pt-sec{padding:72px 0}
-.pt-sec h2,.pt-process h2{font-size:clamp(1.9rem,5.2vw,2.9rem);line-height:1.1;color:var(--navy);margin-bottom:14px}
-.pt-sub{color:var(--gray);line-height:1.7;max-width:40em;font-size:1.05rem;margin-bottom:34px}
+.pt-label{display:flex;align-items:center;gap:12px;margin-bottom:14px;color:var(--green);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase}
+.pt-label::before{content:"";width:28px;height:2px;background:var(--green);flex:none}
+.pt-sec h2{font-size:clamp(1.9rem,5.2vw,2.9rem);line-height:1.1;color:var(--navy);margin-bottom:14px}
+.pt-h2-2{display:block;color:var(--green)}
+.pt-sub{color:var(--gray);line-height:1.8;max-width:40em;font-size:1.02rem;margin-bottom:30px}
 
 /* arms */
 .pt-arms{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
-.pt-tilt{transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .18s ease-out;will-change:transform;position:relative}
-.pt-arm{background:linear-gradient(160deg,var(--mid),var(--navy) 60%,var(--deep));color:#fff;border-radius:22px;padding:24px;border:1px solid rgba(255,255,255,.08);box-shadow:0 24px 50px -28px rgba(13,33,73,.8);overflow:hidden}
-.pt-arm::after{content:"";position:absolute;inset:0;background:radial-gradient(240px circle at var(--gx,50%) var(--gy,0%),rgba(255,255,255,.14),transparent 60%);pointer-events:none}
+.pt-arm{position:relative;isolation:isolate;overflow:hidden;background:linear-gradient(160deg,var(--mid),var(--navy) 60%,var(--deep));color:#fff;border-radius:22px;padding:24px;border:1px solid rgba(255,255,255,.1);box-shadow:0 24px 50px -28px rgba(13,33,73,.8);transition:transform .25s,border-color .25s}
+.pt-arm.is-live{border-color:rgba(39,174,96,.4)}
 .pt-arm-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
-.pt-arm-ico{width:50px;height:50px;border-radius:15px;display:grid;place-items:center;background:rgba(255,255,255,.1);color:var(--gb)}
-.pt-status{display:inline-flex;align-items:center;gap:8px;font-size:.78rem;font-weight:600;padding:6px 12px;border-radius:999px;background:rgba(39,174,96,.18);color:#9be3b5}
-.pt-status.soon{background:rgba(240,213,128,.14);color:var(--gl)}
-.pt-status.soon .pt-dot{background:var(--gl);animation:none}
+.pt-arm-ico{width:54px;height:54px;border-radius:16px;padding:5px}
+.pt-arm .pt-badge{width:auto;height:26px;padding:0 12px;margin:0}
 .pt-arm h3{font-size:1.25rem;font-weight:600;margin-bottom:4px}
 .pt-arm-tag{color:#9fb2d9;font-size:.95rem;margin-bottom:16px}
 .pt-arm li{display:flex;gap:10px;align-items:flex-start;font-size:.93rem;color:#dbe6ff;padding:7px 0;border-top:1px solid rgba(255,255,255,.08)}
 .pt-arm li svg{color:var(--gb);flex:none;margin-top:3px}
+.pt-tilt{transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .18s ease-out;will-change:transform;position:relative}
+
+/* phase two poster */
+.pt-poster{background:#fff}
+.pt-poster-grid{display:grid;gap:34px;align-items:center}
+@media(min-width:900px){.pt-poster-grid{grid-template-columns:1fr 1.05fr;gap:60px}}
+.pt-areas{display:grid;gap:10px;margin-bottom:28px}
+.pt-areas li{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--off);border:1px solid #e3eaf6;color:var(--navy);font-weight:500}
+.pt-areas svg{color:var(--green);flex:none}
+.pt-poster-fig img{display:block;width:100%;height:auto;border-radius:20px;box-shadow:0 30px 60px -30px rgba(13,33,73,.55);border:1px solid #e3eaf6}
+.pt-poster:has(.pt-poster-fig) .pt-poster-grid{align-items:center}
+.pt-poster-grid:not(:has(.pt-poster-fig)){grid-template-columns:1fr;max-width:640px}
 
 /* who */
-.pt-who{background:#fff}
+.pt-who{background:var(--off)}
 .pt-who-grid{display:grid;gap:34px}
 @media(min-width:900px){.pt-who-grid{grid-template-columns:1fr 1fr;gap:70px;align-items:start}.pt-who .pt-sub{margin-bottom:0}}
 .pt-traits li{display:flex;gap:16px;padding:20px 0;border-top:1px solid var(--line)}
@@ -1501,11 +1623,11 @@ font-family:'Outfit',system-ui,sans-serif;color:var(--ink);background:var(--off)
 .pt-traits p{color:var(--gray);font-size:.97rem}
 
 /* process */
-.pt-process{padding-bottom:40px}
+.pt-process{padding-bottom:40px;background:#fff}
 .pt-steps-line{display:grid;gap:26px;margin-top:30px;position:relative}
 .pt-steps-line::before{content:"";position:absolute;left:21px;top:10px;bottom:10px;width:2px;background:linear-gradient(var(--gb),#4a7bd8)}
 .pt-steps-line li{position:relative;padding-left:64px}
-.pt-step-n{position:absolute;left:0;top:0;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:#fff;font-weight:700;border:3px solid var(--off);box-shadow:0 0 0 2px var(--gb)}
+.pt-step-n{position:absolute;left:0;top:0;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:#fff;font-weight:700;border:3px solid #fff;box-shadow:0 0 0 2px var(--gb)}
 .pt-steps-line h3{font-size:1.1rem;font-weight:600;color:var(--navy)}
 .pt-steps-line p{color:var(--gray);font-size:.97rem}
 @media(min-width:900px){
@@ -1513,6 +1635,10 @@ font-family:'Outfit',system-ui,sans-serif;color:var(--ink);background:var(--off)
  .pt-steps-line::before{left:22px;right:22px;top:21px;bottom:auto;width:auto;height:2px;background:linear-gradient(90deg,var(--gb),#4a7bd8)}
  .pt-steps-line li{padding:60px 0 0}
 }
+
+/* photo preview */
+.pt-thumb{display:block;background:#e8eefb}
+.pt-thumb-fb{display:grid;place-items:center;width:96px;height:120px;border-radius:12px;background:#e8eefb;color:#7d8ba3;border:2px solid #fff;flex:none}
 
 /* apply */
 .pt-apply{position:relative;padding:76px 0 90px;background:radial-gradient(110% 80% at 50% 0%,#1b3d86 0%,var(--navy) 50%,var(--deep) 100%);background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px),radial-gradient(110% 80% at 50% 0%,#1b3d86 0%,var(--navy) 50%,var(--deep) 100%);background-size:44px 44px,44px 44px,auto}
